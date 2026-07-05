@@ -23,8 +23,8 @@
   .form-card {
     width: 100%;
     max-width: 420px;
-    background: #fdfbf7;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    background: var(--card-bg);
+    border: 1px solid rgba(245, 158, 11, 0.3);
     padding: 3rem 2.5rem;
     border-radius: 24px;
     box-shadow: var(--shadow-lg);
@@ -34,7 +34,7 @@
   .role-icon {
     width: 64px;
     height: 64px;
-    background: #f5f3ff;
+    background: var(--primary-light);
     color: var(--primary);
     border-radius: 16px;
     display: flex;
@@ -81,13 +81,13 @@
     border-radius: 12px;
     font-family: inherit;
     transition: all 0.3s ease;
-    background: #fdfbf7;
+    background: #f0fdf4;
   }
 
   .form-group input:focus {
     outline: none;
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.1);
   }
 
   .form-actions {

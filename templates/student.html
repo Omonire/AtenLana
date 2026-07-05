@@ -33,7 +33,7 @@
 
   /* Session Box & Manual Form */
   .session-box, .manual-entry-box {
-    background: #fdfbf7df5;
+    background: var(--card-bg);
     border: 2px solid var(--accent-yellow);
     border-radius: 20px;
     padding: 1.5rem md:2rem;
@@ -74,14 +74,14 @@
   .session-input {
     padding: 14px 16px;
     border-radius: 12px;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--border);
     font-size: 1.1rem;
     font-weight: 700;
     text-align: center;
     letter-spacing: 3px;
     outline: none;
     transition: all 0.2s;
-    background: #fdfbf7;
+    background: var(--card-bg);
   }
 
   .session-input:focus {
@@ -108,7 +108,7 @@
   }
 
   .success-bg { background: #dcfce7; color: #166534; display: block !important; border: 1px solid #bbf7d0; }
-  .error-bg { background: #fee2e2; color: #991b1b; display: block !important; border: 1px solid #fecaca; }
+  .error-bg { background: #fef2f2; color: #dc2626; display: block !important; border: 1px solid #fecaca; }
 
 </style>
 
@@ -134,7 +134,7 @@
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {% for sess in sessions %}
-        <div style="background:#fdfbf7; border:1px solid var(--border); padding:10px; border-radius:10px;">
+        <div style="background:var(--card-bg); border:1px solid var(--border); padding:10px; border-radius:10px;">
           <strong>{{sess['course_name']}}</strong>
           <div class="muted" style="font-size:0.85rem;">Started: {{sess['start_time']}}</div>
           <div class="muted" style="font-size:0.75rem; margin-top:4px;">
@@ -540,13 +540,13 @@ function showUploadStatus(msg, type) {
     uploadStatus.style.display = 'block';
     if (type === 'error') {
         uploadStatus.style.background = '#fee2e2';
-        uploadStatus.style.color = '#991b1b';
+        uploadStatus.style.color = '#dc2626';
     } else if (type === 'success') {
         uploadStatus.style.background = '#dcfce7';
         uploadStatus.style.color = '#166534';
     } else {
         uploadStatus.style.background = '#f1f5f9';
-        uploadStatus.style.color = '#475569';
+        uploadStatus.style.color = 'var(--text-muted)';
     }
 }
 
@@ -558,7 +558,7 @@ function showWalletStatus(msg, isSuccess) {
     walletStatus.textContent = msg;
     walletStatus.style.display = 'block';
     walletStatus.style.background = isSuccess ? '#dcfce7' : '#fee2e2';
-    walletStatus.style.color = isSuccess ? '#166534' : '#991b1b';
+    walletStatus.style.color = isSuccess ? '#047857' : '#dc2626';
 }
 
 document.getElementById('connectWalletBtn')?.addEventListener('click', async function() {
@@ -641,13 +641,13 @@ emailForm?.addEventListener('submit', async function(e) {
         } else {
             emailStatus.textContent = data.message || 'Failed to save email.';
             emailStatus.style.background = '#fee2e2';
-            emailStatus.style.color = '#991b1b';
+            emailStatus.style.color = '#dc2626';
         }
     } catch (err) {
         emailStatus.style.display = 'block';
         emailStatus.textContent = 'Network error.';
         emailStatus.style.background = '#fee2e2';
-        emailStatus.style.color = '#991b1b';
+        emailStatus.style.color = '#dc2626';
     }
 });
 

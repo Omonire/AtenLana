@@ -2,7 +2,7 @@
 {% block body %}
 <style>
   body {
-    background: #fdfbf7;
+    background: var(--card-bg);
   }
 
   /* Overlay for better text readability */
@@ -25,7 +25,7 @@
   .form-card {
     width: 100%;
     max-width: 550px;
-    background: #fdfbf7;
+    background: var(--card-bg);
     border-radius: 24px;
     padding: 1.5rem md:3rem;
     box-shadow: var(--shadow-lg);
@@ -96,16 +96,16 @@
 
   input:focus, select:focus {
     outline: none;
-    background: #fdfbf7;
+    background: var(--card-bg);
     border-color: var(--primary-light);
-    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.1);
   }
 
   /* Multi-select styling */
   select[multiple] {
     height: auto;
     padding: 10px;
-    background: #fdfbf7;
+    background: var(--card-bg);
   }
 
   option {

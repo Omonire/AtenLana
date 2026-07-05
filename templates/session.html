@@ -44,7 +44,7 @@
 
   /* Data Visualization Section */
   .chart-wrap {
-    background: #fdfbf7;
+    background: var(--card-bg);
     border: 1px solid var(--border);
     padding: 1.5rem;
     border-radius: 16px;
@@ -54,7 +54,7 @@
 
   /* Live Log Terminal */
   .log-container {
-    background: #0f172a;
+    background: #022c22;
     border-radius: 20px;
     padding: 1rem md:1.5rem;
     border: 1px solid var(--primary-light);
@@ -74,7 +74,7 @@
     overflow-y: auto;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.85rem;
-    color: #e2e8f0;
+    color: #f0fdf4;
     line-height: 1.6;
   }
 
@@ -193,8 +193,8 @@
   // Initialize Chart
   const ctx = document.getElementById('attendanceChart').getContext('2d');
   const redGradient = ctx.createLinearGradient(0, 0, 0, 200);
-  redGradient.addColorStop(0, 'rgba(220, 38, 38, 0.4)');
-  redGradient.addColorStop(1, 'rgba(220, 38, 38, 0)');
+  redGradient.addColorStop(0, 'rgba(4, 120, 87, 0.4)');
+  redGradient.addColorStop(1, 'rgba(4, 120, 87, 0)');
 
   const chart = new Chart(ctx, {
     type: 'line',
@@ -203,7 +203,7 @@
       datasets: [{
         label: 'Signed-in Students',
         data: [],
-        borderColor: '#dc2626',
+        borderColor: '#0d9488',
         backgroundColor: redGradient,
         fill: true,
         tension: 0.4,
