@@ -2554,16 +2554,6 @@ def admin_dashboard():
     db_reset_enabled = True  # Always enabled as requested
     return render_template('admin.html', users=users, lecturers=lecturers, faculties=faculties, departments=departments, db_reset_enabled=db_reset_enabled, page=page, total_pages=total_pages, website_status=website_status, security_mode=security_mode)
 
-@app.route('/superadmin/curriculum')
-def admin_infrastructure():
-    if not g.user or g.user['role'] not in ['admin', 'superadmin']:
-        return redirect(url_for('login', role='admin'))
-
-    faculties = query_db('SELECT * FROM faculties ORDER BY name ASC')
-    departments = query_db('SELECT * FROM departments ORDER BY name ASC')
-    courses = query_db('SELECT * FROM courses ORDER BY name ASC')
-    return render_template('superadmin_curriculum.html', faculties=faculties, departments=departments, courses=courses)
-
 @app.route('/admin/faculty/create', methods=['POST'])
 def create_faculty():
     if not g.user or g.user['role'] not in ['admin', 'superadmin']:
@@ -2572,14 +2562,14 @@ def create_faculty():
     code = request.form.get('faculty_code')
     if not name:
         flash('Faculty name required')
-        return redirect(url_for('admin_infrastructure'))
+        return redirect(url_for('superadmin_dashboard'))
 
     commit_db('INSERT INTO faculties (name, code) VALUES (?, ?) ON CONFLICT (name) DO NOTHING', (name, code))
     f_row = query_db('SELECT id FROM faculties WHERE name = ?', (name,), one=True)
     if f_row:
         log_action(g.user['id'], 'add', 'faculties', f_row['id'], None, {'name': name, 'code': code})
     flash('Faculty created')
-    return redirect(url_for('admin_infrastructure'))
+    return redirect(url_for('superadmin_dashboard'))
 
 @app.route('/admin/department/create', methods=['POST'])
 def create_department():
@@ -2591,14 +2581,14 @@ def create_department():
 
     if not name or not faculty_id:
         flash('Department name and Faculty required')
-        return redirect(url_for('admin_infrastructure'))
+        return redirect(url_for('superadmin_dashboard'))
 
     commit_db('INSERT INTO departments (faculty_id, name, code) VALUES (?, ?, ?) ON CONFLICT DO NOTHING', (faculty_id, name, code))
     d_row = query_db('SELECT id FROM departments WHERE name = ? AND faculty_id = ?', (name, faculty_id), one=True)
     if d_row:
         log_action(g.user['id'], 'add', 'departments', d_row['id'], None, {'name': name, 'code': code, 'faculty_id': faculty_id})
     flash('Department created')
-    return redirect(url_for('admin_infrastructure'))
+    return redirect(url_for('superadmin_dashboard'))
 
 @app.route('/student-profile/<int:student_id>')
 def student_profile(student_id):
@@ -2657,13 +2647,13 @@ def create_course():
     name = code or title
     if not name:
         flash('Course code or title required')
-        return redirect(url_for('admin_infrastructure'))
+        return redirect(url_for('superadmin_dashboard'))
     commit_db('INSERT INTO courses (name, code, title) VALUES (?, ?, ?) ON CONFLICT (name) DO NOTHING', (name, code or None, title or None))
     c_row = query_db('SELECT id FROM courses WHERE name = ?', (name,), one=True)
     if c_row:
         log_action(g.user['id'], 'add', 'courses', c_row['id'], None, {'code': code, 'title': title})
     flash('Course created')
-    return redirect(url_for('admin_infrastructure'))
+    return redirect(url_for('superadmin_dashboard'))
 
 @app.route('/admin/settings/update', methods=['POST'])
 def update_settings():
