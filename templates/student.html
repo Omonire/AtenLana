@@ -33,7 +33,7 @@
 
   /* Session Box & Manual Form */
   .session-box, .manual-entry-box {
-    background: var(--card-bg);
+    background: #fdfbf7df5;
     border: 2px solid var(--accent-yellow);
     border-radius: 20px;
     padding: 1.5rem md:2rem;
@@ -81,7 +81,7 @@
     letter-spacing: 3px;
     outline: none;
     transition: all 0.2s;
-    background: var(--card-bg);
+    background: #fdfbf7;
   }
 
   .session-input:focus {
@@ -134,7 +134,7 @@
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {% for sess in sessions %}
-        <div style="background:var(--card-bg); border:1px solid var(--border); padding:10px; border-radius:10px;">
+        <div style="background:#fdfbf7; border:1px solid var(--border); padding:10px; border-radius:10px;">
           <strong>{{sess['course_name']}}</strong>
           <div class="muted" style="font-size:0.85rem;">Started: {{sess['start_time']}}</div>
           <div class="muted" style="font-size:0.75rem; margin-top:4px;">

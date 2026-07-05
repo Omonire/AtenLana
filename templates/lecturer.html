@@ -32,13 +32,13 @@
   input:focus {
     outline: none;
     border-color: var(--primary-light);
-    background: var(--card-bg);
-    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.1);
+    background: #fdfbf7;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
   }
 
   /* Session Cards */
   .session-card {
-    background: var(--card-bg);
+    background: #fdfbf7;
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 1.5rem;
@@ -86,7 +86,7 @@
   .location-item {
     padding: 0.75rem;
     border-left: 3px solid var(--accent-gold);
-    background: var(--card-bg);
+    background: #fdfbf7df5;
     margin-bottom: 0.5rem;
     border-radius: 0 8px 8px 0;
     font-size: 0.9rem;
@@ -115,7 +115,7 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="md:col-span-2">
       <label>Institutional Course Node</label>
-      <select name="course_id" id="course_select" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); width:100%;">
+      <select name="course_id" id="course_select" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fdfbf7; width:100%;">
         <option value="">-- Select course --</option>
         {% for c in courses %}
           <option value="{{c['id']}}">{{c['name']}}</option>
@@ -146,7 +146,7 @@
 
     <div>
       <label>Attendance Mode</label>
-      <select name="attendance_mode" id="attendance_mode" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); width:100%;">
+      <select name="attendance_mode" id="attendance_mode" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fdfbf7; width:100%;">
         <option value="both">Token + Location (Secured)</option>
         <option value="location">Location Only (Automatic)</option>
         <option value="token">Token Only (Remote/Manual)</option>
@@ -155,7 +155,7 @@
 
     <div>
       <label>Device Security</label>
-      <select name="strict_mode" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); width:100%;">
+      <select name="strict_mode" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fdfbf7; width:100%;">
         <option value="1">Strict (1 Device per Student)</option>
         <option value="0">Lenient (Allow Shared Devices)</option>
       </select>
@@ -204,7 +204,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
         <div class="md:col-span-2">
             <label>Target Audience</label>
-            <select id="announcement-target-type" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); width:100%;">
+            <select id="announcement-target-type" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fdfbf7; width:100%;">
                 <option value="system">Full System (Everyone)</option>
                 <option value="students">All Students Only</option>
                 <option value="lecturers">All Lecturers Only</option>
@@ -218,15 +218,15 @@
             <label id="target-id-label">Target</label>
             <div id="student-search-wrap" style="display:none;">
                 <input type="text" id="student-search-input" placeholder="Type student name or University ID...">
-                <div id="student-search-results" style="background:var(--card-bg); border:1px solid var(--border); border-top:none; border-radius:0 0 10px 10px; display:none; max-height:200px; overflow-y:auto; position:absolute; z-index:100; width:100%;"></div>
+                <div id="student-search-results" style="background:#fdfbf7; border:1px solid var(--border); border-top:none; border-radius:0 0 10px 10px; display:none; max-height:200px; overflow-y:auto; position:absolute; z-index:100; width:100%;"></div>
                 <input type="hidden" id="selected-student-id">
             </div>
-            <select id="faculty-dept-select" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); width:100%; display:none;"></select>
+            <select id="faculty-dept-select" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fdfbf7; width:100%; display:none;"></select>
         </div>
 
         <div class="md:col-span-2">
             <label>Priority Protocol</label>
-            <select id="announcement-priority" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); width:100%;">
+            <select id="announcement-priority" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fdfbf7; width:100%;">
                 <option value="normal">Normal Information</option>
                 <option value="important">Important (Yellow)</option>
                 <option value="urgent">Urgent / Alert (Red)</option>

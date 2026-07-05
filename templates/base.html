@@ -16,6 +16,7 @@
           colors: {
             primary: 'var(--primary)',
             secondary: 'var(--secondary)',
+            white: '#fdfbf7',
           }
         }
       }
@@ -27,20 +28,11 @@
 
   <style>
     :root {
-      --primary: {{ site_settings.get('primary_color', '#047857') }};
-      --secondary: {{ site_settings.get('secondary_color', '#0d9488') }};
-      --accent-gold: #f59e0b;
-      --primary-light: #d1fae5;
-      --accent-yellow: #fbbf24;
-      --bg: #ecfdf5;
-      --text: #064e3b;
-      --text-muted: #6b7280;
-      --card-bg: #f0fdf4;
-      --border: #d1d5db;
-      --border-light: rgba(4, 120, 87, 0.12);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
-      --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+      --primary: {{ site_settings.get('primary_color', '#991b1b') }};
+      --secondary: {{ site_settings.get('secondary_color', '#dc2626') }};
+      --accent-gold: #d4af37;
+      --bg: #fdfbf7;
+      --text: #0f172a;
     }
 
     body {
@@ -53,7 +45,7 @@
     }
 
     .glass-nav {
-      background: rgba(236, 253, 245, 0.88);
+      background: rgba(253, 251, 247, 0.85);
       backdrop-filter: blur(30px) saturate(180%);
       -webkit-backdrop-filter: blur(30px) saturate(180%);
       border-bottom: 1px solid var(--border-light);
@@ -162,8 +154,8 @@
     /* Enhanced button styles */
     .btn-primary, .btn-auth, .btn-signup, .btn-submit, .btn-login, button[type="submit"], .btn-student, .btn-staff, .btn-admin, .btn-placeholder {
       background: var(--primary) !important;
-      color: #ffffff !important;
-      box-shadow: 0 10px 30px rgba(4, 120, 87, 0.3);
+      color: #fdfbf7 !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
       border: 1px solid var(--accent-gold);
@@ -201,7 +193,7 @@
 
     /* Alert box enhancement */
     .alert-box {
-      background: var(--bg);
+      background: #fdfbf7;
       backdrop-filter: blur(20px);
       border: 1px solid rgba(245, 158, 11, 0.3);
       animation: slideInDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
