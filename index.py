@@ -679,6 +679,7 @@ def generate_token(length=8):
 
 # Use helpers for location and device fingerprinting
 from location import haversine, geocode
+from solana_client import mint_token, mint_badge, record_attendance, get_assets
 from auth_helpers import device_fp
 
 
@@ -2204,6 +2205,15 @@ def export_session(session_id):
             return 'PDF export requires "fpdf" python package. Install it or export Excel/CSV instead.'
     return 'Unsupported export type', 400
 
+@app.route('/api/wallet/assets')
+def api_wallet_assets():
+    if not g.user:
+        return jsonify({'tokens': [], 'nfts': []})
+    wallet = g.user.get('wallet_address')
+    if not wallet:
+        return jsonify({'tokens': [], 'nfts': []})
+    return jsonify(get_assets(wallet))
+
 # Student dashboard - shows current sessions and ability to mark attendance
 @app.route('/student')
 def student_dashboard():
@@ -2439,6 +2449,21 @@ def mark_attendance():
         send_attendance_receipt(g.user.get('email'), f"{g.user['first_name']} {g.user['last_name']}", s.get('course_name', 'Class'), timestamp, s['id'])
     except Exception:
         pass
+
+    # Solana on-chain integration
+    wallet = g.user.get('wallet_address')
+    if wallet:
+        try:
+            mint_token(wallet, 10)
+            record_attendance(g.user['id'], s['id'], timestamp, wallet)
+            total_att = query_db("SELECT COUNT(*) as c FROM attendance WHERE student_id = ?", (g.user['id'],), one=True)['c']
+            milestone = None
+            if total_att in [10, 25, 50, 100]:
+                tiers = {10: 'bronze', 25: 'silver', 50: 'gold', 100: 'diamond'}
+                mint_badge(wallet, tiers[total_att])
+                milestone = tiers[total_att]
+        except Exception:
+            app.logger.exception("Solana integration error")
 
     payload = {'success': True, 'message': message, 'status': status, 'grace_seconds': grace_seconds, 'distance_m': info.get('distance_m'), 'points_earned': points_earned, 'streak': new_streak}
     return jsonify(payload)

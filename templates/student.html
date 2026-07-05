@@ -236,6 +236,13 @@
         <div style="font-size: 0.75rem; color: #166534; font-weight: 700;">WALLET LINKED</div>
         <div style="font-family: monospace; font-size: 0.85rem; color: #15803d; word-break: break-all;">{{ wallet }}</div>
       </div>
+      <div id="walletAssets" style="margin-top: 8px;">
+        <div style="display:flex; align-items:center; gap:8px; padding:8px; background:#f8fafc; border-radius:8px;">
+          <span style="font-size:0.85rem; font-weight:700; color:var(--primary);">$ATND Balance:</span>
+          <span id="atndBalance" style="font-size:0.85rem; font-weight:900; color:#14b8a6;">Loading...</span>
+        </div>
+        <div id="badgeList" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;"></div>
+      </div>
       <form id="unlinkWalletForm" style="margin-top: 8px;">
         <button type="submit" class="btn-outline" style="width:100%; padding:8px; border-color:#ef4444; color:#ef4444; font-size:0.8rem; border:none; cursor:pointer;">
           Unlink Wallet
@@ -643,6 +650,33 @@ emailForm?.addEventListener('submit', async function(e) {
         emailStatus.style.color = '#991b1b';
     }
 });
+
+// --- Wallet Assets (on-chain balance + badges) ---
+(async function loadWalletAssets() {
+    const assetsDiv = document.getElementById('walletAssets');
+    if (!assetsDiv) return;
+    try {
+        const resp = await fetch('/api/wallet/assets');
+        const data = await resp.json();
+        const tokens = data.tokens || [];
+        const nfts = data.nfts || [];
+
+        const atnd = tokens.find(t => t.symbol === 'ATND');
+        document.getElementById('atndBalance').textContent = atnd ? atnd.balance : '0';
+
+        const badgeContainer = document.getElementById('badgeList');
+        badgeContainer.innerHTML = '';
+        nfts.forEach(nft => {
+            const badge = document.createElement('span');
+            badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#fef3c7;border-radius:50px;font-size:0.7rem;font-weight:700;color:#92400e;';
+            badge.textContent = nft.content?.metadata?.name || 'Badge';
+            badgeContainer.appendChild(badge);
+        });
+    } catch (e) {
+        const bal = document.getElementById('atndBalance');
+        if (bal) bal.textContent = 'Unavailable';
+    }
+})();
 
 </script>
 {% endblock %}
