@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+  .lb-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  .lb-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .lb-header h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+  }
+  .lb-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+  .lb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .lb-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    border-radius: 12px;
+    padding: 12px 20px;
+    border: 1px solid var(--border);
+    transition: transform 0.15s;
+  }
+  .lb-item:hover {
+    transform: translateX(4px);
+  }
+  .lb-rank {
+    font-size: 1.2rem;
+    font-weight: 900;
+    width: 36px;
+    text-align: center;
+    color: var(--text-muted);
+  }
+  .lb-rank.gold { color: #f59e0b; }
+  .lb-rank.silver { color: #94a3b8; }
+  .lb-rank.bronze { color: #d97706; }
+  .lb-name {
+    flex: 1;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  .lb-id {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-right: 1rem;
+  }
+  .lb-points {
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--primary);
+  }
+  .lb-streak {
+    font-size: 0.75rem;
+    color: var(--accent-gold);
+    font-weight: 700;
+    background: #fef3c7;
+    padding: 2px 8px;
+    border-radius: 50px;
+  }
+  .lb-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+  }
+</style>
+
+<div class="lb-container">
+  <div class="lb-header">
+    <h2>Leaderboard</h2>
+    <p>Top students ranked by reward points</p>
+  </div>
+
+  <div class="lb-list">
+    {% for student in top %}
+      <div class="lb-item">
+        <div class="lb-rank{% if loop.index == 1 %} gold{% elif loop.index == 2 %} silver{% elif loop.index == 3 %} bronze{% endif %}">
+          #{{ loop.index }}
+        </div>
+        <div class="lb-name">{{ student['first_name'] }} {{ student['last_name'] }}</div>
+        <div class="lb-id">{{ student['ub_id'] }}</div>
+        {% if student['streak'] >= 3 %}
+          <div class="lb-streak">{{ student['streak'] }} day streak</div>
+        {% endif %}
+        <div class="lb-points">{{ student['reward_points'] }} pts</div>
+      </div>
+    {% else %}
+      <div class="lb-empty">No students yet. Start attending classes to earn points!</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -373,7 +373,11 @@ def init_db():
                        ('biometric_data', 'TEXT'), ('faculty_id', 'INTEGER'),
                        ('assigned_dept_id', 'INTEGER'), ('github_token', 'TEXT'),
                        ('vercel_token', 'TEXT'), ('vercel_project_id', 'TEXT'),
-                       ('blocked_until', 'TIMESTAMP')]:
+                        ('blocked_until', 'TIMESTAMP'),
+                        ('reward_points', 'INTEGER DEFAULT 0'),
+                        ('streak', 'INTEGER DEFAULT 0'),
+                        ('last_attendance_date', 'DATE'),
+                        ('wallet_address', 'TEXT')]:
         safe_execute(f"ALTER TABLE users ADD COLUMN IF NOT EXISTS {col} {ctype}")
 
     # Sessions
@@ -2089,7 +2093,17 @@ def student_dashboard():
     # Student attendance summary
     total_expected = query_db('SELECT COUNT(*) as c FROM sessions', (), one=True)['c']
     attended = query_db('SELECT COUNT(*) as c FROM attendance WHERE student_id = ?', (g.user['id'],), one=True)['c']
-    return render_template('student.html', s=s, sessions=sessions, total_expected=total_expected, attended=attended)
+    # Reward data
+    reward_points = g.user.get('reward_points') or 0
+    streak = g.user.get('streak') or 0
+    rank_row = query_db("SELECT COUNT(*) as r FROM users WHERE role = 'student' AND COALESCE(reward_points,0) > ?", (reward_points,), one=True)
+    rank = (rank_row['r'] + 1) if rank_row else 0
+    return render_template('student.html', s=s, sessions=sessions, total_expected=total_expected, attended=attended, reward_points=reward_points, streak=streak, rank=rank)
+
+@app.route('/leaderboard')
+def leaderboard():
+    top = query_db("SELECT id, first_name, last_name, ub_id, COALESCE(reward_points,0) as reward_points, COALESCE(streak,0) as streak FROM users WHERE role = 'student' ORDER BY reward_points DESC NULLS LAST LIMIT 50")
+    return render_template('leaderboard.html', top=top)
 
 @app.route('/student/upload-card', methods=['POST'])
 def upload_card():
@@ -2125,6 +2139,24 @@ def upload_card():
     except Exception as e:
         app.logger.error(f"Card upload error: {e}")
         return jsonify({'success': False, 'message': 'Internal server error during upload'}), 500
+
+@app.route('/student/link-wallet', methods=['POST'])
+def link_wallet():
+    if not g.user or g.user['role'] != 'student':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    data = request.get_json()
+    wallet = data.get('wallet_address', '').strip()
+    if not wallet:
+        commit_db("UPDATE users SET wallet_address = NULL WHERE id = ?", (g.user['id'],))
+        return jsonify({'success': True, 'message': 'Wallet unlinked successfully', 'wallet_address': None})
+    if not wallet.startswith('5') or len(wallet) < 32:
+        return jsonify({'success': False, 'message': 'Invalid wallet address'}), 400
+    # Check if wallet already linked to another student
+    existing = query_db("SELECT id FROM users WHERE wallet_address = ? AND id != ?", (wallet, g.user['id']), one=True)
+    if existing:
+        return jsonify({'success': False, 'message': 'This wallet is already linked to another account'}), 409
+    commit_db("UPDATE users SET wallet_address = ? WHERE id = ?", (wallet, g.user['id']))
+    return jsonify({'success': True, 'message': 'Wallet linked successfully', 'wallet_address': wallet})
 
 @app.route('/student/history')
 def student_history():
@@ -2237,7 +2269,37 @@ def mark_attendance():
     commit_db('INSERT INTO attendance (session_id, student_id, timestamp, ip, device_fp, lat, lon, status, first_name, middle_name, last_name) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
               (s['id'], g.user['id'], timestamp, ip, fp, lat, lon, status, g.user['first_name'], g.user['middle_name'], g.user['last_name']))
 
-    payload = {'success': True, 'message': message, 'status': status, 'grace_seconds': grace_seconds, 'distance_m': info.get('distance_m')}
+    # Reward system: award +5 pts + streak bonuses
+    today = datetime.now(timezone.utc).date()
+    last_date = g.user.get('last_attendance_date')
+    current_streak = g.user.get('streak') or 0
+    new_streak = 1
+    if last_date:
+        last = last_date
+        if isinstance(last_date, str):
+            from datetime import date as dt_date
+            last = dt_date.fromisoformat(last_date)
+        diff = (today - last).days
+        if diff == 1:
+            new_streak = current_streak + 1
+        elif diff == 0:
+            new_streak = current_streak
+        else:
+            new_streak = 1
+
+    streak_bonus = 0
+    if new_streak >= 10:
+        streak_bonus = 10
+    elif new_streak >= 5:
+        streak_bonus = 5
+    elif new_streak >= 3:
+        streak_bonus = 2
+
+    points_earned = 5 + streak_bonus
+    commit_db('UPDATE users SET reward_points = COALESCE(reward_points,0) + ?, streak = ?, last_attendance_date = ? WHERE id = ?',
+              (points_earned, new_streak, today.isoformat(), g.user['id']))
+
+    payload = {'success': True, 'message': message, 'status': status, 'grace_seconds': grace_seconds, 'distance_m': info.get('distance_m'), 'points_earned': points_earned, 'streak': new_streak}
     return jsonify(payload)
 
 # API: Check session status for a student (helps UI show what will happen before marking)
