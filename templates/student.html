@@ -151,7 +151,10 @@
   <!-- Summary Stats -->
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-12 mb-6">
     <h4 class="text-sm font-black uppercase tracking-widest text-slate-400">Temporal Synchronization Stats</h4>
-    <a href="{{ url_for('student_history') }}" class="btn-mini btn-outline bg-white !text-secondary border-purple-200">History Log</a>
+    <div class="flex gap-2">
+      <a href="{{ url_for('student_history') }}" class="btn-mini btn-outline bg-white !text-secondary border-purple-200">History Log</a>
+      <a href="{{ url_for('leaderboard') }}" class="btn-mini btn-outline bg-white !text-secondary border-purple-200">Leaderboard</a>
+    </div>
   </div>
   <div class="stats-grid">
     <div class="stat-item">
@@ -167,6 +170,18 @@
         {% if total_expected > 0 %}{{ (attended / total_expected * 100)|round(1) }}{% else %}0{% endif %}%
       </span>
       <span class="stat-label">Eligibility</span>
+    </div>
+    <div class="stat-item" style="border-color: var(--primary);">
+      <span class="stat-value" style="color: var(--primary);">{{ reward_points }}</span>
+      <span class="stat-label">Points</span>
+    </div>
+    <div class="stat-item" style="border-color: #f59e0b;">
+      <span class="stat-value" style="color: #f59e0b;">{{ streak }}</span>
+      <span class="stat-label">Day Streak</span>
+    </div>
+    <div class="stat-item" style="border-color: #10b981;">
+      <span class="stat-value" style="color: #10b981;">#{{ rank }}</span>
+      <span class="stat-label">Rank</span>
     </div>
   </div>
 
@@ -188,6 +203,34 @@
       </button>
     </form>
     <div id="uploadStatus" style="margin-top: 10px; font-size: 0.85rem; text-align: center; display: none; padding: 8px; border-radius: 8px;"></div>
+  </div>
+
+  <!-- Phantom Wallet Linking -->
+  <div class="manual-entry-box" style="margin-top: 2rem; border-color: #9945FF;">
+    <h4 style="margin-bottom: 0.5rem;">Solana Wallet (Phantom)</h4>
+    <p class="muted" style="font-size: 0.85rem;">Link your Phantom wallet to receive attendance rewards and NFT badges on Solana.</p>
+
+    <div id="walletStatus" style="margin-bottom: 12px; font-size: 0.9rem; display: none; padding: 10px; border-radius: 8px;"></div>
+
+    {% set wallet = g.user.get('wallet_address') %}
+    {% if wallet and wallet != '' %}
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px;">
+        <div style="font-size: 0.75rem; color: #166534; font-weight: 700;">WALLET LINKED</div>
+        <div style="font-family: monospace; font-size: 0.85rem; color: #15803d; word-break: break-all;">{{ wallet }}</div>
+      </div>
+      <form id="unlinkWalletForm" style="margin-top: 8px;">
+        <button type="submit" class="btn-outline" style="width:100%; padding:8px; border-color:#ef4444; color:#ef4444; font-size:0.8rem; border:none; cursor:pointer;">
+          Unlink Wallet
+        </button>
+      </form>
+    {% else %}
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button id="connectWalletBtn" class="btn-auth" style="border:none; cursor:pointer; background: linear-gradient(135deg, #9945FF, #14F195); color: white; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <span style="font-size:1.2rem;">▲</span> Connect Phantom
+        </button>
+        <p class="muted" style="font-size: 0.7rem; text-align: center;">Powered by Solana • Install <a href="https://phantom.app" target="_blank" style="color: var(--primary);">Phantom</a> wallet first</p>
+      </div>
+    {% endif %}
   </div>
 
   <!-- Manual Session Entry: students must input token provided by lecturer -->
@@ -292,7 +335,8 @@ async function handleAttendance(token, sessionId = null, sourceBtn = null) {
                     `Success! Your presence has been confirmed.\n\n` +
                     `📍 Distance: ${dist}m from classroom center\n` +
                     `✅ Status: ${statusStr}\n` +
-                    `🕒 Timestamp: ${new Date().toLocaleTimeString()}\n\n` +
+                    `🕒 Timestamp: ${new Date().toLocaleTimeString()}\n` +
+                    `⭐ +${data.points_earned || 5} points earned (🔥 ${data.streak || 1} day streak)\n\n` +
                     `Location data was used strictly for classroom proximity verification.`,
                     { buttonClass: 'bg-green-600' }
                 );
@@ -486,6 +530,73 @@ function showUploadStatus(msg, type) {
         uploadStatus.style.color = '#475569';
     }
 }
+
+// --- Phantom Wallet Integration ---
+const walletStatus = document.getElementById('walletStatus');
+
+function showWalletStatus(msg, isSuccess) {
+    if (!walletStatus) return;
+    walletStatus.textContent = msg;
+    walletStatus.style.display = 'block';
+    walletStatus.style.background = isSuccess ? '#dcfce7' : '#fee2e2';
+    walletStatus.style.color = isSuccess ? '#166534' : '#991b1b';
+}
+
+document.getElementById('connectWalletBtn')?.addEventListener('click', async function() {
+    if (!window.solana || !window.solana.isPhantom) {
+        showWalletStatus('Please install the Phantom wallet extension first.', false);
+        return;
+    }
+
+    try {
+        const resp = await window.solana.connect();
+        const walletAddr = resp.publicKey.toString();
+
+        const serverResp = await fetch('/student/link-wallet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ wallet_address: walletAddr })
+        });
+
+        const data = await serverResp.json();
+        if (data.success) {
+            showWalletStatus('Wallet linked successfully! Refreshing...', true);
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showWalletStatus(data.message || 'Failed to link wallet.', false);
+        }
+    } catch (err) {
+        if (err.code === 4001) {
+            showWalletStatus('Connection rejected. Approve the request in Phantom.', false);
+        } else {
+            showWalletStatus('Error connecting wallet: ' + err.message, false);
+        }
+    }
+});
+
+document.getElementById('unlinkWalletForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+        const resp = await fetch('/student/link-wallet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ wallet_address: '' })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            showWalletStatus('Wallet unlinked. Refreshing...', true);
+            setTimeout(() => location.reload(), 1500);
+        }
+    } catch (err) {
+        showWalletStatus('Error unlinking wallet.', false);
+    }
+});
 
 </script>
 {% endblock %}

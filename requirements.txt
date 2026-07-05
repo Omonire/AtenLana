@@ -10,3 +10,5 @@ serverless-wsgi
 Flask-Limiter
 requests
 beautifulsoup4
+PyNaCl
+base58
