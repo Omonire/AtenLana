@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+    :root {
+        --primary: #4c1d95;
+        --primary-light: #6d28d9;
+        --accent-gold: #b29447;
+        --accent-gold-light: #d4af37;
+        --text: #1e1b4b;
+        --text-muted: #64748b;
+        --white: #ffffff;
+        --bg-soft: #f8fafc;
+        --border: #e2e8f0;
+    }
+
+    .dashboard-container {
+        animation: fadeIn 0.6s ease-out;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-bottom: 3rem;
+    }
+
+    .welcome-header {
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .welcome-header h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: -0.025em;
+    }
+
+    /* Functional Grid */
+    .function-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .feature-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 2rem;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--accent-gold);
+        box-shadow: 0 20px 25px -5px rgba(76, 29, 149, 0.1);
+    }
+
+    .feature-card .icon-wrapper {
+        width: 54px;
+        height: 54px;
+        background: #f5f3ff;
+        color: var(--primary);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .icon-wrapper {
+        background: var(--primary);
+        color: var(--white);
+    }
+
+    .feature-card h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+
+    .feature-card .arrow-hint {
+        margin-top: 1.5rem;
+        color: var(--accent-gold);
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .arrow-hint {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    /* Auth State Card */
+    .auth-banner {
+        background: var(--white);
+        border-radius: 30px;
+        padding: 3rem;
+        border: 1px solid var(--border);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-top: 2rem;
+    }
+
+    .auth-banner::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 6px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent-gold) 100%);
+    }
+
+    .btn-action {
+        background: var(--primary);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-action:hover {
+        background: var(--primary-light);
+        transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+        .welcome-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        .auth-banner { padding: 2rem 1.5rem; }
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="welcome-header">
+        <div>
+            <h1>Lecturer <span style="color: var(--accent-gold); font-weight: 300;">Management</span></h1>
+            <p style="color: var(--text-muted);">UNIBEN • Academic Portal</p>
+        </div>
+        {% if g.user and g.user['role']=='lecturer' %}
+            <span class="uniben-badge" style="background: #f1f5f9; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: var(--primary);">
+                ID: {{ g.user['uid']|truncate(12) }}
+            </span>
+        {% endif %}
+    </div>
+
+    {% if g.user and g.user['role']=='lecturer' %}
+        <div class="function-grid">
+            <a href="{{ url_for('lecturer_dashboard') }}" class="feature-card">
+                <div class="icon-wrapper"><i data-lucide="radio" size="24"></i></div>
+                <h3>Live Session</h3>
+                <p>Initiate a new attendance session for your current lecture.</p>
+                <div class="arrow-hint">Start Tracking <i data-lucide="chevron-right" size="16"></i></div>
+            </a>
+
+            <a href="{{ url_for('lecturer_dashboard') }}" class="feature-card">
+                <div class="icon-wrapper"><i data-lucide="qr-code" size="24"></i></div>
+                <h3>QR Generator</h3>
+                <p>Generate secure, time-sensitive QR codes for student verification.</p>
+                <div class="arrow-hint">Generate Code <i data-lucide="chevron-right" size="16"></i></div>
+            </a>
+
+            <a href="{{ url_for('statistics') }}" class="feature-card">
+                <div class="icon-wrapper"><i data-lucide="bar-chart-3" size="24"></i></div>
+                <h3>Analytics & Reports</h3>
+                <p>View attendance trends and export detailed PDF/Excel student reports.</p>
+                <div class="arrow-hint">View Data <i data-lucide="chevron-right" size="16"></i></div>
+            </a>
+
+            <a href="{{ url_for('lecturer_update') }}" class="feature-card">
+                <div class="icon-wrapper"><i data-lucide="user-check" size="24"></i></div>
+                <h3>Eligibility List</h3>
+                <p>Monitor student lecture hours against the 75% exam eligibility threshold.</p>
+                <div class="arrow-hint">Manage Students <i data-lucide="chevron-right" size="16"></i></div>
+            </a>
+        </div>
+    {% else %}
+        <div class="auth-banner">
+            <div style="width: 60px; height: 60px; background: #fef2f2; color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i data-lucide="lock" size="28"></i>
+            </div>
+            <h3>Protected Access</h3>
+            <p>Please authenticate with your staff account to access the lecturer portal and session management tools.</p>
+            <a class="btn-action" href="{{ url_for('login', role='lecturer') }}">
+                <span>Sign in as Lecturer</span>
+                <i data-lucide="log-in" size="18"></i>
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}

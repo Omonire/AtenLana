@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="luxury-card p-12 rounded-[3rem] relative overflow-hidden">
+    <div class="flex items-center justify-between mb-16">
+        <div>
+            <span class="text-secondary font-black text-xs uppercase tracking-widest mb-2 block">System Restoration & Security</span>
+            <h2 class="text-4xl font-black text-slate-900">Identity Vault</h2>
+            <p class="text-slate-400 text-xs mt-2 font-medium">Restoration Protocol: Use the 'Restoration Hash' to recover credentials if the entity cluster fails.</p>
+        </div>
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Vault Status</span>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-xs font-bold text-slate-900 uppercase">Secure Encryption Active</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b border-slate-100">
+                    <th class="pb-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">User Entity</th>
+                    <th class="pb-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Identifiers</th>
+                    <th class="pb-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Restoration Hash</th>
+                    <th class="pb-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Access Intel</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                {% for u in users %}
+                <tr class="group hover:bg-slate-50/50 transition-colors">
+                    <td class="py-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white text-xs font-black">
+                                {{ (u.first_name or u.username or 'U')[0] | upper }}
+                            </div>
+                            <div>
+                                <span class="text-sm font-bold text-slate-900 block">{{ u.first_name }} {{ u.last_name }}</span>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-tight">{{ u.role }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-6">
+                        <div class="space-y-1">
+                            {% if u.username %}
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] font-black text-slate-400 uppercase w-12">User:</span>
+                                <span class="text-xs font-bold text-slate-700">{{ u.username }}</span>
+                            </div>
+                            {% endif %}
+                            {% if u.ub_id %}
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] font-black text-slate-400 uppercase w-12">UB ID:</span>
+                                <span class="text-xs font-bold text-slate-700">{{ u.ub_id }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="py-6">
+                        <div class="group/hash relative">
+                            <code class="text-[10px] font-mono text-slate-400 truncate block max-w-[150px] bg-slate-100 px-2 py-1 rounded">
+                                {{ u.password_hash[:20] }}...
+                            </code>
+                            <div class="absolute bottom-full left-0 mb-2 p-2 bg-slate-900 text-white text-[8px] rounded hidden group-hover/hash:block z-50">
+                                {{ u.password_hash }}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-6">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-slate-900">{{ u.current_ip or 'No active link' }}</span>
+                            <span class="text-[9px] font-medium text-slate-400">{{ u.last_activity }}</span>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

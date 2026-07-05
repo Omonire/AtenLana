@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+    .history-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+    }
+
+    .history-table th {
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid var(--bg-soft);
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .history-table td {
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid var(--bg-soft);
+        font-size: 0.95rem;
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .status-marked { background: #dcfce7; color: #166534; }
+    .status-grace_marked { background: #fef3c7; color: #92400e; }
+    .status-manual { background: #e0e7ff; color: #3730a3; }
+</style>
+
+<div class="dashboard-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="color: var(--primary); margin: 0;">My Attendance History</h2>
+            <p class="muted">A detailed record of all your validated classroom presences.</p>
+        </div>
+        <a href="{{ url_for('student_dashboard') }}" class="btn-mini btn-outline">Back to Dashboard</a>
+    </div>
+
+    <div class="history-card">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                    <th>Verified At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in history %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 700; color: var(--text);">{{ entry.course_name }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ entry.host or 'Main Hall' }}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600;">{{ entry.start_time }}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ entry.status }}">
+                            {{ entry.status.replace('_', ' ') }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">{{ entry.timestamp }}</div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No attendance records found yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

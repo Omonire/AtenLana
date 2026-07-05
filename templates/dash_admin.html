@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+    :root {
+        --primary: #4c1d95;
+        --primary-light: #6d28d9;
+        --accent-gold: #b29447;
+        --accent-gold-light: #d4af37;
+        --text: #1e1b4b;
+        --text-muted: #64748b;
+        --white: #ffffff;
+        --bg-soft: #f8fafc;
+        --border: #e2e8f0;
+    }
+
+    .dashboard-container {
+        animation: fadeIn 0.6s ease-out;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-bottom: 3rem;
+    }
+
+    .welcome-header {
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .welcome-header h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: -0.025em;
+    }
+
+    .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .admin-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 2rem;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .admin-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--accent-gold);
+        box-shadow: 0 20px 25px -5px rgba(76, 29, 149, 0.1);
+    }
+
+    .admin-card .icon-wrapper {
+        width: 54px;
+        height: 54px;
+        background: #faf5ff;
+        color: var(--primary);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .admin-card:hover .icon-wrapper {
+        background: var(--primary);
+        color: var(--white);
+    }
+
+    .admin-card h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-card p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+
+    .admin-card .status-indicator {
+        margin-top: 1.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .auth-banner {
+        background: var(--white);
+        border-radius: 30px;
+        padding: 4rem 2rem;
+        border: 1px solid var(--border);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-top: 2rem;
+    }
+
+    .auth-banner::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 6px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent-gold) 100%);
+    }
+
+    .btn-action {
+        background: var(--primary);
+        color: white;
+        padding: 0.9rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 15px -3px rgba(76, 29, 149, 0.2);
+    }
+
+    .btn-action:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+        .welcome-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="welcome-header">
+        <div>
+            <h1>System <span style="color: var(--accent-gold); font-weight: 300;">Administration</span></h1>
+            <p style="color: var(--text-muted);">UNIBEN • AtendeX Central Control</p>
+        </div>
+        {% if g.user and g.user['role']=='admin' %}
+            <span style="background: #fefce8; border: 1px solid #fef08a; padding: 6px 16px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; color: #854d0e;">
+                SUPERUSER
+            </span>
+        {% endif %}
+    </div>
+
+    {% if g.user and (g.user['role']=='admin' or g.user['role']=='superadmin') %}
+        <div class="admin-grid">
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-card">
+                <div class="icon-wrapper"><i data-lucide="users" size="24"></i></div>
+                <h3>User Management</h3>
+                <p>Provision accounts for lecturers, students, and departmental staff members.</p>
+                <div class="status-indicator"><i data-lucide="shield" size="14"></i> Identity Control</div>
+            </a>
+
+            <a href="{{ url_for('admin_infrastructure') }}" class="admin-card">
+                <div class="icon-wrapper"><i data-lucide="landmark" size="24"></i></div>
+                <h3>Curriculum Hub</h3>
+                <p>Configure academic structures, manage faculties, and department listings.</p>
+                <div class="status-indicator"><i data-lucide="layers" size="14"></i> Structure</div>
+            </a>
+
+            <a href="{{ url_for('superadmin_settings' if g.user['role'] == 'superadmin' else 'admin_dashboard') }}" class="admin-card">
+                <div class="icon-wrapper"><i data-lucide="settings-2" size="24"></i></div>
+                <h3>Global Settings</h3>
+                <p>Define attendance thresholds and system-wide notifications.</p>
+                <div class="status-indicator"><i data-lucide="cpu" size="14"></i> Core Config</div>
+            </a>
+
+            <a href="{{ url_for('superadmin_governance' if g.user['role'] == 'superadmin' else 'admin_dashboard') }}" class="admin-card">
+                <div class="icon-wrapper"><i data-lucide="activity" size="24"></i></div>
+                <h3>Audit Logs</h3>
+                <p>Monitor system health, access logs, and security verification attempts.</p>
+                <div class="status-indicator"><i data-lucide="history" size="14"></i> Security</div>
+            </a>
+        </div>
+    {% else %}
+        <div class="auth-banner">
+            <div style="width: 70px; height: 70px; background: #fdf2f8; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+                <i data-lucide="fingerprint" size="32"></i>
+            </div>
+            <h3>Admin Console Locked</h3>
+            <p>Elevated privileges are required to access global settings and user management.</p>
+            <a class="btn-action" href="{{ url_for('login', role='admin') }}">
+                <span>Sign in as Administrator</span>
+                <i data-lucide="key-round" size="18"></i>
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}

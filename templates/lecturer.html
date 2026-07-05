@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+  /* Professional Form Grid */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .form-grid .full { grid-column: span 2; }
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: inherit;
+    transition: all 0.2s;
+    background: #fafafa;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+  }
+
+  /* Session Cards */
+  .session-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .session-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+  }
+
+  .token-badge {
+    display: inline-block;
+    background: #f5f3ff;
+    color: var(--primary);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .session-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-mini {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .btn-outline { border: 1px solid var(--border); color: var(--text-muted); }
+  .btn-outline:hover { background: #f8fafc; color: var(--text); border-color: var(--text); }
+
+  .location-item {
+    padding: 0.75rem;
+    border-left: 3px solid var(--accent-gold);
+    background: #fffdf5;
+    margin-bottom: 0.5rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+  }
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary);
+  }
+</style>
+
+<div class="card" style="margin-bottom: 2rem;">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <h3 class="text-xl md:text-2xl font-black text-slate-800">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-secondary"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Initialize Session Grid
+      </h3>
+      <div class="flex items-center gap-2 px-3 py-1.5 bg-purple-50 text-secondary rounded-full border border-purple-100">
+        <span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+        <span class="text-[10px] font-black uppercase tracking-widest">Active Node</span>
+      </div>
+  </div>
+  <form method="post" action="{{url_for('create_session')}}" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="md:col-span-2">
+      <label>Institutional Course Node</label>
+      <select name="course_id" id="course_select" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fff; width:100%;">
+        <option value="">-- Select course --</option>
+        {% for c in courses %}
+          <option value="{{c['id']}}">{{c['name']}}</option>
+        {% endfor %}
+        <option value="other">Other (type below)</option>
+      </select>
+    </div>
+
+    <div class="md:col-span-2" id="course_other_wrap" style="display:none;">
+      <label>Manual Course Identifier</label>
+      <input name="course_name" placeholder="e.g., MEE312: Machine Design">
+    </div>
+
+    <div>
+      <label>Host (optional)</label>
+      <input name="host" placeholder="e.g., Lecture Hall A / Zoom ID">
+    </div>
+
+    <div>
+      <label>Duration (Minutes)</label>
+      <input type="number" name="duration" value="20">
+    </div>
+
+    <div>
+      <label>Grace Period (Minutes)</label>
+      <input type="number" name="grace" value="5">
+    </div>
+
+    <div>
+      <label>Attendance Mode</label>
+      <select name="attendance_mode" id="attendance_mode" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fff; width:100%;">
+        <option value="both">Token + Location (Secured)</option>
+        <option value="location">Location Only (Automatic)</option>
+        <option value="token">Token Only (Remote/Manual)</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Device Security</label>
+      <select name="strict_mode" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fff; width:100%;">
+        <option value="1">Strict (1 Device per Student)</option>
+        <option value="0">Lenient (Allow Shared Devices)</option>
+      </select>
+    </div>
+
+
+    <div class="md:col-span-2" id="location_capture_section">
+      <label>Location Capture</label>
+      <button type="button" id="use_device_loc" class="btn-mini" style="width: 100%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 12px; font-weight: 700;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Detect My Current Location
+      </button>
+      <div style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
+        <p class="muted" style="font-size: 0.8rem;">Click to automatically sync coordinates</p>
+        <span style="color: var(--border);">|</span>
+        <a href="https://www.gps-coordinates.net/my-location" target="_blank" class="muted" style="font-size: 0.8rem; text-decoration: underline; color: var(--primary);">Manual Finder</a>
+      </div>
+    </div>
+
+    <input type="hidden" id="latitude" name="latitude">
+    <input type="hidden" id="longitude" name="longitude">
+
+    <div class="md:col-span-2" id="location_status" style="display:none; padding: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; text-align: center; color: #166534; font-weight: 600;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline; margin-right: 8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Location Successfully Mapped
+      <div id="coords_display" class="muted" style="font-size: 0.75rem; margin-top: 4px; font-weight: 400;"></div>
+    </div>
+
+    <div class="md:col-span-2" id="radius_section">
+      <label>Proximity Lattice Radius (Meters)</label>
+      <input type="number" name="radius" value="30">
+      <p class="muted" style="font-size:0.75rem; margin-top:4px;">Radius is ignored in Token-Only mode.</p>
+    </div>
+    <div class="md:col-span-2">
+      <button class="btn-auth w-full bg-slate-900 !text-white hover:bg-black transition-all py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl">Generate Synchronization Token</button>
+    </div>
+  </form>
+
+  <div class="mt-12 pt-12 border-t-2 border-dashed border-slate-100">
+    <h3 class="text-xl font-black text-slate-800 mb-2">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-amber-500"><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0L20 8l-2-2-6.7 13L4.7 6l-2 2z"/></svg>
+        Neural Broadcast
+    </h3>
+    <p class="muted" style="margin-bottom: 1.5rem;">Push real-time notifications to specific students, departments, or the entire system.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+        <div class="md:col-span-2">
+            <label>Target Audience</label>
+            <select id="announcement-target-type" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fff; width:100%;">
+                <option value="system">Full System (Everyone)</option>
+                <option value="students">All Students Only</option>
+                <option value="lecturers">All Lecturers Only</option>
+                <option value="faculty">Full Faculty</option>
+                <option value="department">Full Department</option>
+                <option value="student">Specific Student</option>
+            </select>
+        </div>
+
+        <div class="md:col-span-2" id="target-id-wrap" style="display:none;">
+            <label id="target-id-label">Target</label>
+            <div id="student-search-wrap" style="display:none;">
+                <input type="text" id="student-search-input" placeholder="Type student name or University ID...">
+                <div id="student-search-results" style="background:#fff; border:1px solid var(--border); border-top:none; border-radius:0 0 10px 10px; display:none; max-height:200px; overflow-y:auto; position:absolute; z-index:100; width:100%;"></div>
+                <input type="hidden" id="selected-student-id">
+            </div>
+            <select id="faculty-dept-select" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fff; width:100%; display:none;"></select>
+        </div>
+
+        <div class="md:col-span-2">
+            <label>Priority Protocol</label>
+            <select id="announcement-priority" style="padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#fff; width:100%;">
+                <option value="normal">Normal Information</option>
+                <option value="important">Important (Yellow)</option>
+                <option value="urgent">Urgent / Alert (Red)</option>
+            </select>
+        </div>
+
+        <div class="md:col-span-2">
+            <label>Transmission Payload</label>
+            <textarea id="announcement-message" rows="3" class="w-full p-4 border rounded-2xl bg-slate-50 focus:bg-white transition-all outline-none" placeholder="Enter transmission data..."></textarea>
+        </div>
+
+        <div class="md:col-span-2">
+            <button id="send-announcement-btn" class="btn-auth w-full bg-slate-800 !text-white hover:bg-black transition-all py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg">Execute Broadcast</button>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle custom course input
+    document.getElementById('course_select').addEventListener('change', function(e){
+      const wrap = document.getElementById('course_other_wrap');
+      if(this.value === 'other') wrap.style.display = 'block'; else wrap.style.display = 'none';
+    });
+
+    // Use Device GPS
+    document.getElementById('use_device_loc').addEventListener('click', function(){
+      const btn = this;
+      btn.disabled = true;
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = 'Locating...';
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+          document.getElementById('latitude').value = lat;
+          document.getElementById('longitude').value = lon;
+
+          // Show status display
+          document.getElementById('location_status').style.display = 'block';
+          document.getElementById('coords_display').textContent = `Lat: ${lat}, Lon: ${lon}`;
+
+          showToast('GPS coordinates captured!');
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          btn.style.background = '#059669'; // Success green
+          btn.textContent = 'Update Location';
+        }, function(error) {
+          showToast('GPS Error: ' + error.message, 'warning');
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+        }, { enableHighAccuracy: true });
+      } else {
+        showToast('Geolocation not supported', 'error');
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
+    });
+
+    // Announcement Logic
+    const targetType = document.getElementById('announcement-target-type');
+    const targetIdWrap = document.getElementById('target-id-wrap');
+    const targetIdLabel = document.getElementById('target-id-label');
+    const studentSearchWrap = document.getElementById('student-search-wrap');
+    const facultyDeptSelect = document.getElementById('faculty-dept-select');
+    const studentSearchInput = document.getElementById('student-search-input');
+    const studentSearchResults = document.getElementById('student-search-results');
+    const selectedStudentId = document.getElementById('selected-student-id');
+
+    targetType.addEventListener('change', async function() {
+        const val = this.value;
+        targetIdWrap.style.display = (val === 'system' || val === 'students' || val === 'lecturers') ? 'none' : 'block';
+        studentSearchWrap.style.display = val === 'student' ? 'block' : 'none';
+        facultyDeptSelect.style.display = (val === 'faculty' || val === 'department') ? 'block' : 'none';
+
+        if (val === 'faculty') {
+            targetIdLabel.textContent = 'Select Faculty';
+            const resp = await fetch('/api/faculties');
+            const data = await resp.json();
+            facultyDeptSelect.innerHTML = data.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+        } else if (val === 'department') {
+            targetIdLabel.textContent = 'Select Department';
+            const resp = await fetch('/api/departments');
+            const data = await resp.json();
+            facultyDeptSelect.innerHTML = data.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+        } else if (val === 'student') {
+            targetIdLabel.textContent = 'Search Student';
+        }
+    });
+
+    const handleStudentSearch = debounce(async (q) => {
+        if (q.length < 2) {
+            studentSearchResults.style.display = 'none';
+            return;
+        }
+        try {
+            const resp = await fetch(`/api/students/search?q=${encodeURIComponent(q)}`);
+            const data = await resp.json();
+            if (data.length > 0) {
+                studentSearchResults.innerHTML = '';
+                data.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 text-sm';
+                    div.textContent = `${s.name} `;
+                    const span = document.createElement('span');
+                    span.className = 'text-[10px] text-slate-400 font-mono';
+                    span.textContent = s.ub_id;
+                    div.appendChild(span);
+                    div.addEventListener('click', () => {
+                        selectedStudentId.value = s.id;
+                        studentSearchInput.value = `${s.name} (${s.ub_id})`;
+                        studentSearchResults.style.display = 'none';
+                    });
+                    studentSearchResults.appendChild(div);
+                });
+                studentSearchResults.style.display = 'block';
+                studentSearchResults.style.width = studentSearchInput.offsetWidth + 'px';
+            } else {
+                studentSearchResults.style.display = 'none';
+            }
+        } catch (e) {
+            console.error("Search error:", e);
+        }
+    }, 300);
+
+    studentSearchInput.addEventListener('input', (e) => handleStudentSearch(e.target.value.trim()));
+
+    document.getElementById('send-announcement-btn').addEventListener('click', async function() {
+        const type = targetType.value;
+        const msg = document.getElementById('announcement-message').value.trim();
+        const priority = document.getElementById('announcement-priority').value;
+        let targetId = null;
+
+        if (!msg) { showToast('Message cannot be empty', 'warning'); return; }
+
+        if (type === 'student') {
+            targetId = selectedStudentId.value;
+            if (!targetId) { showToast('Please select a student', 'warning'); return; }
+        } else if (type === 'faculty' || type === 'department') {
+            targetId = facultyDeptSelect.value;
+        }
+
+        const resp = await fetch('/api/announcements/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ target_type: type, target_id: targetId, message: msg, priority: priority })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            showToast(data.message, 'success');
+            document.getElementById('announcement-message').value = '';
+            studentSearchInput.value = '';
+            selectedStudentId.value = '';
+        } else {
+            showToast(data.message, 'error');
+        }
+    });
+
+    async function handleDeleteSession(sessionId, courseName) {
+        const confirmed = await showConfirm('Permanent Deletion', `Delete session for "${courseName}" and all associated attendance data?`);
+        if (!confirmed) return;
+
+        try {
+            const resp = await fetch(`/session/${sessionId}/delete`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+            const data = await resp.json();
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(data.message || 'Deletion failed', 'error');
+            }
+        } catch (err) {
+            showToast('Network error during deletion', 'error');
+        }
+    }
+
+    // Update current location
+    document.getElementById('update_location_btn').addEventListener('click', function(){
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          fetch('/locations/update-current', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ lat: lat, lon: lon })
+          })
+          .then(r => r.json())
+          .then(j => {
+            if(j.success){
+              showToast('Current location updated successfully');
+              setTimeout(() => location.reload(), 1000);
+            } else {
+              showToast('Failed to update location: ' + j.message, 'error');
+            }
+          }).catch(err => showToast('Error updating location: ' + err, 'error'));
+        }, function(error) {
+          showToast('Geolocation error: ' + error.message, 'error');
+        });
+      } else {
+        showToast('Geolocation is not supported by this browser', 'error');
+      }
+    });
+  </script>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+  <h3>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    Campus Geofences
+  </h3>
+  <div style="margin-top:1rem;">
+    <button id="update_location_btn" class="btn-mini btn-outline" style="margin-bottom: 1rem;">Update Current Location</button>
+    {% for loc in locations %}
+      <div class="location-item">
+        <strong>{{loc['name']}}</strong>
+        <span class="muted" style="margin-left: 10px;">{{loc['latitude']}}, {{loc['longitude']}}</span>
+      </div>
+    {% else %}
+      <div class="muted">No saved coordinates available.</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+      <h3 class="text-xl md:text-2xl font-black text-slate-800">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-blue-600"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+        Real-time Node Monitoring
+      </h3>
+      <div class="flex flex-wrap gap-2 w-full md:w-auto">
+        <a href="{{ url_for('statistics') }}" class="flex-1 md:flex-none text-center px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-amber-200">Stats Engine</a>
+        <a href="{{ url_for('lecturer_update') }}" class="flex-1 md:flex-none text-center px-4 py-2 bg-secondary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-purple-200">Entity Registry</a>
+      </div>
+  </div>
+  <div style="margin-top:1.5rem;">
+    {% for s in sessions %}
+      <div class="session-card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <strong style="font-size: 1.2rem; color: var(--text);">{{s['course_name']}}</strong>
+            <a class="token-badge" href="{{ url_for('session_detail', session_id=s['id']) }}">{{s['token']}}</a>
+          </div>
+          <span class="badge badge-active">Live</span>
+        </div>
+        <p class="muted" style="font-size: 0.85rem;">
+          Started: <strong>{{s['start_time']}}</strong> • Window: {{s['duration_min']}}m (+{{s['grace_min']}}m grace)
+        </p>
+        <p class="muted" style="font-size: 0.8rem;">
+          Mode: <span class="badge" style="background:#e2e8f0; color:#475569;">{{ (s['attendance_mode']|capitalize if s['attendance_mode'] else 'Both') }}</span>
+          • Security: <span class="badge" style="background:#e2e8f0; color:#475569;">{{ 'Strict' if s['strict_mode'] != 0 else 'Lenient' }}</span>
+        </p>
+
+        <div class="session-actions">
+          <a class="btn-mini btn-outline" href="{{url_for('session_detail', session_id=s['id'])}}">Live Roster</a>
+          {% if s['active'] == 1 %}
+            <form method="post" action="{{ url_for('terminate_session', session_id=s['id']) }}" style="display:inline; margin:0;" onsubmit="event.preventDefault(); showConfirm('Terminate Session', 'Are you sure you want to terminate this session and disable the token?').then(res => { if(res) this.submit(); });">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn-mini btn-cancel" style="border:none; background:transparent; cursor:pointer; padding:8px 12px;">Terminate</button>
+            </form>
+          {% else %}
+            <span class="badge badge-inactive">Terminated</span>
+          {% endif %}
+          <button onclick="handleDeleteSession({{s['id']}}, '{{s['course_name']}}')" class="btn-mini" style="border:none; background:transparent; color:#ef4444; cursor:pointer; padding:8px 12px; font-weight:600;">Delete</button>
+        </div>
+      </div>
+    {% else %}
+      <div class="muted" style="text-align: center; padding: 2rem;">No active attendance sessions currently running.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

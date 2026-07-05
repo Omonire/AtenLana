@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+  .search-row { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; margin-bottom:20px; }
+  .search-row > * { flex: 1; min-width: 200px; }
+  .search-row button { flex: 0 0 auto; min-width: 100px; }
+
+  .stat-table { width:100%; border-collapse:collapse; min-width: 700px; }
+  .stat-table th, .stat-table td { padding:8px; border-bottom:1px solid var(--border); }
+  .chart-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); }
+  .chart-card { background:#fff; padding:16px; border-radius:12px; width:90%; max-width:800px; }
+</style>
+
+<div class="card">
+  <h3>Attendance Update & Analytics</h3>
+  <form id="filterForm" method="get" class="search-row">
+    <select name="course_id" id="course_id" style="padding:8px; border-radius:8px;">
+      <option value="">All Courses</option>
+      {% for c in courses %}
+        <option value="{{c['id']}}" {% if request.args.get('course_id') == c['id']|string %}selected{% endif %}>{{c['name']}}</option>
+      {% endfor %}
+    </select>
+
+    <select name="faculty_id" id="faculty_id" style="padding:8px; border-radius:8px;">
+      <option value="">All Faculties</option>
+      {% for f in faculties %}
+        <option value="{{ f.id }}" {% if request.args.get('faculty_id') == f.id|string %}selected{% endif %}>{{ f.name }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="department_id" id="department_id" style="padding:8px; border-radius:8px;">
+      <option value="">All Departments</option>
+      {% if request.args.get('faculty_id') %}
+        {% for d in departments %}
+          {% if d.faculty_id|string == request.args.get('faculty_id') %}
+            <option value="{{ d.id }}" {% if request.args.get('department_id') == d.id|string %}selected{% endif %}>{{ d.name }}</option>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </select>
+
+    <input type="date" name="start" id="start_date" value="{{ request.args.get('start','') }}">
+    <input type="date" name="end" id="end_date" value="{{ request.args.get('end','') }}">
+    <input type="text" name="q" id="search_q" placeholder="Search University ID or name" value="{{ request.args.get('q','') }}" style="padding:8px; border-radius:8px;">
+    <button class="btn-mini btn-outline" type="submit">Filter</button>
+  </form>
+
+  <div style="margin-top:12px; overflow:auto;">
+    <table class="stat-table">
+      <thead>
+        <tr><th>#</th><th>University ID / Matric</th><th>Name</th><th>Present</th><th>Total</th><th>%</th><th>Action</th></tr>
+      </thead>
+      <tbody id="statBody">
+        {% for r in rows %}
+          <tr>
+            <td>{{loop.index}}</td>
+            <td style="font-family:monospace;">
+                <a href="{{ url_for('student_profile', student_id=r.student_id) }}" class="hover:underline text-secondary font-bold">{{r.ub or r.matric or ''}}</a>
+            </td>
+            <td>
+                <a href="{{ url_for('student_profile', student_id=r.student_id) }}" class="hover:text-secondary transition-colors">{{r.first_name}} {{r.middle_name}} {{r.last_name}}</a>
+            </td>
+            <td>{{r.present}}</td>
+            <td>{{r.total}}</td>
+            <td style="{% if r.percent < 75 %}color: #dc2626; font-weight: 800;{% endif %}">{{r.percent}}%</td>
+            <td>
+                <div class="flex gap-1">
+                    <button class="btn-mini btn-outline" onclick="showStudentChart({{r.student_id}},'{{r.first_name}} {{r.last_name}}')">Chart</button>
+                    <a href="{{ url_for('student_profile', student_id=r.student_id) }}" class="btn-mini btn-outline">Profile</a>
+                </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="chart-modal" id="chartModal">
+  <div class="chart-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <h4 id="chartTitle">Student Attendance</h4>
+      <div>
+        <select id="chartType">
+          <option value="bar">Bar</option>
+          <option value="line">Line</option>
+          <option value="pie">Pie</option>
+        </select>
+        <button onclick="closeChart()" class="btn-mini btn-outline">Close</button>
+      </div>
+    </div>
+    <canvas id="studentChart" width="700" height="300"></canvas>
+  </div>
+</div>
+
+<script>
+  // Live Search Logic
+  const filterForm = document.getElementById('filterForm');
+  const statBody = document.getElementById('statBody');
+
+  const updateTable = async () => {
+    const formData = new FormData(filterForm);
+    const params = new URLSearchParams(formData);
+    params.set('format', 'json');
+
+    try {
+        const resp = await fetch(`{{ url_for('lecturer_update') }}?${params.toString()}`);
+        const data = await resp.json();
+
+        statBody.innerHTML = data.rows.map((r, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td style="font-family:monospace;">
+                <a href="/student-profile/${r.student_id}" class="hover:underline text-secondary font-bold">${r.ub || r.matric || ''}</a>
+            </td>
+            <td>
+                <a href="/student-profile/${r.student_id}" class="hover:text-secondary transition-colors">${r.first_name} ${r.middle_name || ''} ${r.last_name}</a>
+            </td>
+            <td>${r.present}</td>
+            <td>${r.total}</td>
+            <td style="${r.percent < 75 ? 'color: #dc2626; font-weight: 800;' : ''}">${r.percent}%</td>
+            <td>
+                <div class="flex gap-1">
+                    <button class="btn-mini btn-outline" onclick="showStudentChart(${r.student_id},'${r.first_name} ${r.last_name}')">Chart</button>
+                    <a href="/student-profile/${r.student_id}" class="btn-mini btn-outline">Profile</a>
+                </div>
+            </td>
+          </tr>
+        `).join('');
+    } catch (e) {
+        console.error("Update failed", e);
+    }
+  };
+
+  const debouncedUpdate = debounce(updateTable, 300);
+
+  document.getElementById('search_q').addEventListener('input', debouncedUpdate);
+  document.getElementById('course_id').addEventListener('change', updateTable);
+  document.getElementById('start_date').addEventListener('change', updateTable);
+  document.getElementById('end_date').addEventListener('change', updateTable);
+  document.getElementById('faculty_id').addEventListener('change', async (e) => {
+    const facultyId = e.target.value;
+    const deptSelect = document.getElementById('department_id');
+    deptSelect.innerHTML = '<option value="">All Departments</option>';
+    if (facultyId) {
+      try {
+        const resp = await fetch(`/api/departments/${facultyId}`);
+        const depts = await resp.json();
+        depts.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = d.name;
+          deptSelect.appendChild(opt);
+        });
+      } catch (err) { console.error("Failed to load departments", err); }
+    }
+    updateTable();
+  });
+  document.getElementById('department_id').addEventListener('change', updateTable);
+
+  filterForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      updateTable();
+  });
+
+  let studentChart = null;
+  function showStudentChart(studentId, name){
+    fetch(`/lecturer/student-attendance/${studentId}?course_id={{ request.args.get('course_id','') }}&start={{ request.args.get('start','') }}&end={{ request.args.get('end','') }}`)
+      .then(r=>r.json())
+      .then(data=>{
+        const labels = data.labels || [];
+        const counts = data.counts || [];
+        const ctx = document.getElementById('studentChart').getContext('2d');
+        const type = document.getElementById('chartType').value || 'bar';
+        if(studentChart) studentChart.destroy();
+        studentChart = new Chart(ctx, { type: type, data: { labels: labels, datasets:[{label:'Attendance', data:counts, backgroundColor:'#7c3aed'}] }, options:{responsive:true} });
+        document.getElementById('chartTitle').textContent = name + ' — Attendance';
+        document.getElementById('chartModal').style.display = 'flex';
+      });
+  }
+  function closeChart(){ document.getElementById('chartModal').style.display='none'; }
+  document.getElementById('chartType').addEventListener('change', function(){ if(studentChart){ studentChart.config.type=this.value; studentChart.update(); } });
+</script>
+
+{% endblock %}

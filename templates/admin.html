@@ -1,0 +1,525 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<!-- Modern Dashboard Wrapper -->
+<div class="min-h-screen bg-slate-50 flex flex-col md:flex-row antialiased text-slate-900">
+
+    <!-- Content Area -->
+    <main class="flex-1 p-6 lg:p-10 space-y-8 max-w-7xl mx-auto w-full">
+
+        <!-- Header Section -->
+        <header class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-2">
+            <div class="text-center lg:text-left">
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight text-slate-800">Super Admin Control</h1>
+                <p class="text-slate-500 text-sm">Manage identity validation and academic settings.</p>
+                <button onclick="triggerUnibenSync('sync-uniben-btn')" id="sync-uniben-btn" class="mt-4 btn-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                    <svg id="sync-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                    Sync UNIBEN (Auto-Update)
+                </button>
+            </div>
+
+            <!-- Sync Status Dashboard (Injected via JS) -->
+            <div id="sync-status-box" class="hidden mt-4 lg:mt-0 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm min-w-[280px] animate-in fade-in slide-in-from-right-4 duration-500">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-secondary">
+                            <svg class="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-[9px] font-black uppercase tracking-widest text-slate-400">Syncing UNIBEN</h4>
+                            <p id="sync-msg" class="text-xs font-bold text-slate-700 truncate max-w-[150px]">Initializing...</p>
+                        </div>
+                    </div>
+                    <span id="sync-pct" class="text-sm font-black text-secondary">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div id="sync-progress-bar" class="bg-secondary h-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col items-end border-l border-slate-200 pl-4 ml-4">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Security Mode</span>
+                    <span id="security-status-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase {{ 'bg-red-100 text-red-700' if security_mode == 'on' else 'bg-slate-100 text-slate-700' }}">
+                        {{ 'THREAT_MODE' if security_mode == 'on' else 'OFF' }}
+                    </span>
+                </div>
+                <button id="toggle-security-btn" class="px-4 py-2 {{ 'bg-red-600' if security_mode == 'on' else 'bg-slate-600' }} text-white rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+                    <span id="security-btn-text">Toggle Security</span>
+                </button>
+                <div class="hidden sm:flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-xl border border-green-100">
+                    <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">Live</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Section 0: Bulk User Generation -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+                </div>
+                <h2 class="text-lg font-bold">Identity Generation (Bulk)</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-blue-50/30 rounded-2xl border border-blue-100">
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Count</label>
+                    <input type="number" id="gen-count" value="10" min="1" max="500" class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold outline-none">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Assign Role</label>
+                    <select id="gen-role" class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold outline-none">
+                        <option value="student">Student</option>
+                        <option value="lecturer">Lecturer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Target Faculty</label>
+                    <select id="gen-faculty" onchange="updateGenDepartments()" class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold outline-none">
+                        <option value="">N/A (Global)</option>
+                        {% for f in faculties %}
+                        <option value="{{ f.id }}">{{ f.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Target Department</label>
+                    <select id="gen-dept" class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold outline-none">
+                        <option value="">N/A (Global)</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="handleBulkGenerate(event)" class="w-full py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-lg shadow-purple-100">
+                        Generate Users
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 1: Identity Management -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 rounded-lg text-black">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                    </div>
+                    <h2 class="text-lg font-semibold">Identity Management</h2>
+                </div>
+                <form method="get" class="flex flex-wrap gap-2 items-center">
+                    <input type="text" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search name or ID..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all flex-1 min-w-[150px]">
+
+                    <select name="faculty_id" id="search-faculty" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none min-w-[150px]">
+                        <option value="">All Faculties</option>
+                        {% for f in faculties %}
+                            <option value="{{ f.id }}" {{ 'selected' if request.args.get('faculty_id') == f.id|string }}>{{ f.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="department_id" id="search-department" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none min-w-[150px]">
+                        <option value="">All Departments</option>
+                        {% if request.args.get('faculty_id') %}
+                            {% for d in departments %}
+                                {% if d.faculty_id|string == request.args.get('faculty_id') %}
+                                    <option value="{{ d.id }}" {{ 'selected' if request.args.get('department_id') == d.id|string }}>{{ d.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+
+                    <button type="submit" class="p-2 bg-secondary text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-purple-200">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </button>
+                </form>
+            </div>
+
+            <div class="overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b">University ID</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b">Full Name</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b">Status</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for u in users %}
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-semibold text-black text-sm">
+                                <a href="{{ url_for('student_profile', student_id=u['id']) }}" class="hover:underline">{{u['ub_id']}}</a>
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium text-slate-700">
+                                <a href="{{ url_for('student_profile', student_id=u['id']) }}" class="hover:text-secondary transition-colors">
+                                    {{u['first_name']}} {{u['last_name']}}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ 'bg-green-100 text-green-700' if u['active'] else 'bg-amber-100 text-amber-700' }}">
+                                    {{ 'Active' if u['active'] else 'Pending' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button onclick="handleEditRole({{ u['id'] }}, '{{ u['first_name'] }} {{ u['last_name'] }}', '{{ u['role'] }}')" class="text-[10px] font-bold text-secondary hover:text-purple-700 px-2 py-1 rounded border border-secondary hover:bg-purple-50 transition-all">Role</button>
+                                    {% if u['active'] %}
+                                        <a href="{{url_for('toggle_user', user_id=u['id'])}}" class="text-[10px] font-bold text-amber-600 hover:text-amber-700 px-2 py-1 rounded border border-amber-200 hover:bg-amber-50 transition-all">Deactivate</a>
+                                    {% else %}
+                                        <a href="{{url_for('toggle_user', user_id=u['id'])}}" class="text-[10px] font-bold text-white bg-black hover:bg-gray-900 px-2 py-1 rounded shadow-sm transition-all">Validate</a>
+                                    {% endif %}
+                                    <button onclick="handleDeleteUser({{ u['id'] }}, '{{ u['first_name'] }} {{ u['last_name'] }}')" class="text-[10px] font-bold text-red-600 hover:text-red-700 px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-all">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                <div class="text-sm text-slate-500">
+                    Showing page {{ page }} of {{ total_pages }}
+                </div>
+                <div class="flex gap-2">
+                    {% if page > 1 %}
+                    <a href="{{ url_for('admin_dashboard', page=page-1, q=request.args.get('q', ''), faculty_id=request.args.get('faculty_id', ''), department_id=request.args.get('department_id', '')) }}" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">Previous</a>
+                    {% endif %}
+                    {% if page < total_pages %}
+                    <a href="{{ url_for('admin_dashboard', page=page+1, q=request.args.get('q', ''), faculty_id=request.args.get('faculty_id', ''), department_id=request.args.get('department_id', '')) }}" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">Next</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Section 1.5: Lecturer Management -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-purple-50 rounded-lg text-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h2 class="text-lg font-semibold">Lecturer Management</h2>
+                </div>
+                <form method="get" class="flex gap-2">
+                    <input type="text" name="l_q" value="{{ request.args.get('l_q', '') }}" placeholder="Search lecturers..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none">
+                    <button type="submit" class="p-2 bg-secondary text-white rounded-xl">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </button>
+                </form>
+            </div>
+
+            <div class="overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b">Username</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b">Full Name</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b">Status</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for l in lecturers %}
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-semibold text-secondary text-sm">{{l['username']}}</td>
+                            <td class="px-6 py-4 text-sm font-medium text-slate-700">{{l['first_name']}} {{l['last_name']}}</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ 'bg-green-100 text-green-700' if l['active'] else 'bg-amber-100 text-amber-700' }}">
+                                    {{ 'Active' if l['active'] else 'Disabled' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button onclick="handleEditRole({{ l['id'] }}, '{{ l['first_name'] }} {{ l['last_name'] }}', '{{ l['role'] }}')" class="text-[10px] font-bold text-secondary hover:text-purple-700 px-2 py-1 rounded border border-secondary hover:bg-purple-50 transition-all">Role</button>
+                                    <a href="{{url_for('toggle_user', user_id=l['id'])}}" class="text-[10px] font-bold {{ 'text-amber-600 border-amber-200' if l['active'] else 'text-green-600 border-green-200' }} px-2 py-1 rounded border hover:bg-slate-50 transition-all">
+                                        {{ 'Disable' if l['active'] else 'Enable' }}
+                                    </a>
+                                    <button onclick="handleDeleteUser({{ l['id'] }}, '{{ l['first_name'] }} {{ l['last_name'] }}')" class="text-[10px] font-bold text-red-600 hover:text-red-700 px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-all">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 2.5: Developer & Branding -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Developer Settings -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-8">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="p-2 bg-slate-900 rounded-lg text-white">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+                    </div>
+                    <h2 class="text-lg font-semibold">Developer Integration</h2>
+                </div>
+
+                <div class="space-y-4">
+                    {% if g.user['role'] == 'admin' and site_settings.get('github_access_for_admin') == 'off' %}
+                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-[10px] font-bold text-amber-700 uppercase tracking-tight">
+                        GitHub Documentation Sync is currently disabled for Admins by the Superadmin.
+                    </div>
+                    {% endif %}
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">GitHub Personal Access Token</label>
+                        <input type="password" id="github-token" value="{{ g.user.github_token or '' }}" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-500/20 outline-none text-sm" {{ 'disabled' if g.user['role'] == 'admin' and site_settings.get('github_access_for_admin') == 'off' }}>
+                        <p class="text-[9px] text-slate-400 mt-1">Optional. Required for documentation auto-sync.</p>
+                    </div>
+                    <button onclick="saveDevSettings()" class="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-black transition-all">Save Developer Settings</button>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-8">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="p-2 bg-purple-50 rounded-lg text-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                    </div>
+                    <h2 class="text-lg font-semibold">System Branding</h2>
+                </div>
+
+            <form method="post" action="{{ url_for('upload_logo') }}" enctype="multipart/form-data" class="space-y-4">
+                <label class="block text-sm font-bold text-slate-700 uppercase tracking-tight">Upload Login Background Image</label>
+                <input type="file" name="logo" accept="image/*" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all" required>
+                <p class="text-xs text-slate-500">Upload a JPG, PNG, or other image file to set as the login page background.</p>
+                <button class="w-full btn-admin text-sm py-2.5 rounded-xl">Upload & Set Background</button>
+            </form>
+        </section>
+
+    </main>
+</div>
+
+<!-- Role Assignment Modal -->
+<div id="role-modal" class="fixed inset-0 z-[1100] hidden flex items-center justify-center p-6 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300">
+    <div class="luxury-card max-w-md w-full p-8 rounded-[2rem]" id="role-modal-content">
+        <h3 class="text-xl font-extrabold text-slate-900 mb-6">Manage User Role</h3>
+        <p class="text-slate-500 text-sm mb-6" id="role-user-display"></p>
+
+        <input type="hidden" id="role-target-user-id">
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Assign Role</label>
+                <select id="role-select" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm outline-none">
+                    <option value="student">Student</option>
+                    <option value="lecturer">Lecturer</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Academic Faculty</label>
+                <select id="faculty-role-select" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm outline-none">
+                    <option value="">N/A</option>
+                    {% for f in faculties %}
+                        <option value="{{f.id}}">{{f.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Academic Department</label>
+                <select id="dept-role-select" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm outline-none">
+                    <option value="">N/A</option>
+                    {% for d in departments %}
+                        <option value="{{d.id}}">{{d.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="flex gap-4 mt-8">
+            <button onclick="closeRoleModal()" class="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 border border-slate-200">Cancel</button>
+            <button onclick="submitRoleUpdate()" class="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-secondary hover:scale-105 transition-all shadow-lg">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Role Management
+const roleModal = document.getElementById('role-modal');
+const roleSelect = document.getElementById('role-select');
+const facWrap = document.getElementById('faculty-link-wrap');
+const deptWrap = document.getElementById('dept-link-wrap');
+
+function handleEditRole(userId, name, currentRole) {
+    document.getElementById('role-target-user-id').value = userId;
+    document.getElementById('role-user-display').textContent = `Updating role for ${name}`;
+    roleSelect.value = currentRole;
+    updateModalFields();
+    roleModal.classList.remove('hidden');
+}
+
+function closeRoleModal() {
+    roleModal.classList.add('hidden');
+}
+
+async function updateGenDepartments() {
+    const facId = document.getElementById('gen-faculty').value;
+    const deptSelect = document.getElementById('gen-dept');
+    deptSelect.innerHTML = '<option value="">N/A (Global)</option>';
+    if (!facId) return;
+    try {
+        const resp = await fetch(`/api/departments/${facId}`);
+        const depts = await resp.json();
+        depts.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.id;
+            opt.textContent = d.name;
+            deptSelect.appendChild(opt);
+        });
+    } catch (e) {}
+}
+
+async function handleBulkGenerate(event) {
+    const btn = event.currentTarget;
+    const originalText = btn.innerText;
+    const count = document.getElementById('gen-count').value;
+    const role = document.getElementById('gen-role').value;
+    const faculty_id = document.getElementById('gen-faculty').value;
+    const dept_id = document.getElementById('gen-dept').value;
+
+    const confirmed = await showConfirm('Identity Generation', `Are you sure you want to generate ${count} random ${role} accounts?`);
+    if (!confirmed) return;
+
+    btn.disabled = true;
+    btn.innerHTML = `<svg class="animate-spin h-4 w-4 mr-2 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg> Generating...`;
+
+    try {
+        const resp = await fetch('/admin/bulk-generate-users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ count, role, faculty_id, dept_id })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            showToast(data.message, 'success');
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            showToast(data.message, 'error');
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    } catch (err) {
+        showToast('Generation failed', 'error');
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }
+}
+
+async function submitRoleUpdate() {
+    const userId = document.getElementById('role-target-user-id').value;
+    const role = roleSelect.value;
+    const facId = document.getElementById('faculty-role-select').value;
+    const deptId = document.getElementById('dept-role-select').value;
+
+    const resp = await fetch('/admin/update-role', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+            user_id: userId,
+            role: role,
+            faculty_id: facId || null,
+            dept_id: deptId || null
+        })
+    });
+    const data = await resp.json();
+    if (data.success) {
+        showToast('Role updated', 'success');
+        setTimeout(() => location.reload(), 800);
+    } else {
+        showToast(data.message || 'Failed to update role', 'error');
+    }
+}
+
+async function handleDeleteUser(userId, name) {
+    const confirmed = await showConfirm('Delete User', `Are you sure you want to PERMANENTLY DELETE student "${name}"? This action cannot be undone.`, {
+        confirmClass: 'bg-red-600'
+    });
+    if (confirmed) {
+        try {
+            const resp = await fetch(`/admin/delete/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+            const data = await resp.json();
+            if (data.success) {
+                showToast('User deleted successfully', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(data.message || 'Deletion failed', 'error');
+            }
+        } catch (err) {
+            showToast('Network error', 'error');
+        }
+    }
+}
+
+document.getElementById('toggle-security-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('toggle-security-btn');
+    const btnText = document.getElementById('security-btn-text');
+    const originalContent = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = `<svg class="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg> Updating...`;
+
+    try {
+        const resp = await fetch('/admin/toggle-security', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+        });
+        const data = await resp.json();
+        if (data.success) {
+            const badge = document.getElementById('security-status-badge');
+            badge.innerText = data.new_status === 'on' ? 'THREAT_MODE' : 'OFF';
+            badge.className = `px-3 py-1 rounded-full text-xs font-black uppercase ${data.new_status === 'on' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}`;
+            btn.className = `px-4 py-2 ${data.new_status === 'on' ? 'bg-red-600' : 'bg-slate-600'} text-white rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg flex items-center gap-2`;
+            showToast(`Security Mode: ${data.new_status.toUpperCase()}`, data.new_status === 'on' ? 'warning' : 'success');
+        }
+    } catch (e) {
+        showToast('Operation failed', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+    }
+});
+
+
+async function saveDevSettings() {
+    const ghToken = document.getElementById('github-token').value;
+    const vToken = document.getElementById('vercel-token')?.value || null;
+    const vProjectId = document.getElementById('vercel-project-id')?.value || null;
+
+    const resp = await fetch('/admin/developer-settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+            github_token: ghToken,
+            vercel_token: vToken,
+            vercel_project_id: vProjectId
+        })
+    });
+    const data = await resp.json();
+    if (data.success) {
+        showToast('Developer settings updated', 'success');
+    } else {
+        showToast(data.message || 'Update failed', 'error');
+    }
+}
+</script>
+{% endblock %}

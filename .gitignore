@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+instance/
+.env
+.env.*
+*.db
+atendex.db
+*.pyc
+venv/
+.DS_Store
+
+.vercel
+*.log
+TODO.md

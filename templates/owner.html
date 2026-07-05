@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="luxury-card relative p-12 lg:p-20 rounded-[3rem] overflow-hidden max-w-4xl mx-auto">
+    <!-- Ambient Light Gradients -->
+    <div class="absolute -top-48 -left-48 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px]"></div>
+    <div class="absolute -bottom-48 -right-48 w-[500px] h-[500px] bg-yellow-100 rounded-full blur-[120px]"></div>
+
+    <div class="relative z-10">
+        <div class="flex flex-col items-center text-center">
+            <div class="user-badge w-32 h-32 rounded-3xl flex items-center justify-center text-white text-5xl font-extrabold mb-8 rotate-3 shadow-2xl">
+                OG
+            </div>
+
+            <h1 class="text-5xl font-extrabold tracking-tight text-slate-900 mb-4 glow-text">
+                OMONIRE O. <span style="color: #d4af37;">GREAT</span>
+            </h1>
+
+            <div class="uniben-badge mb-8">
+                <div class="pulse-dot"></div>
+                <span>Certified Cybersecurity Professional • Freelancer</span>
+            </div>
+
+            <p class="text-slate-600 text-xl mb-12 leading-relaxed font-medium max-w-3xl">
+                Omonire O. Great is a Benin City, Nigeria-based freelancer with over two years of experience specializing in Python programming, data analytics, web development, and graphics. As a certified cybersecurity professional, they offer remote technical services in these fields.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                <div class="p-6 bg-purple-50 rounded-2xl border border-purple-100 text-left">
+                    <span class="text-[10px] uppercase tracking-widest font-extrabold text-purple-500 block mb-2">Role</span>
+                    <span class="text-lg font-bold text-slate-900">Python Programmer, Cybersecurity Personnel & Developer</span>
+                </div>
+                <div class="p-6 bg-yellow-50 rounded-2xl border border-yellow-200 text-left">
+                    <span class="text-[10px] uppercase tracking-widest font-extrabold text-yellow-600 block mb-2">Skills</span>
+                    <span class="text-lg font-bold text-slate-900">Python Programming, Data Analytics, Web Dev & Graphics</span>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-left">
+                    <span class="text-[10px] uppercase tracking-widest font-extrabold text-slate-500 block mb-2">Location</span>
+                    <span class="text-lg font-bold text-slate-900">Benin City, Nigeria (Remote Work Available)</span>
+                </div>
+                <div class="p-6 bg-indigo-50 rounded-2xl border border-indigo-100 text-left">
+                    <span class="text-[10px] uppercase tracking-widest font-extrabold text-indigo-500 block mb-2">Experience</span>
+                    <span class="text-lg font-bold text-slate-900">2+ Years</span>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-left md:col-span-2">
+                    <span class="text-[10px] uppercase tracking-widest font-extrabold text-slate-500 block mb-2">Vision</span>
+                    <span class="text-lg font-bold text-slate-900">To revolutionize campus operations through precision engineering and luxury digital experiences.</span>
+                </div>
+            </div>
+
+            <div class="mt-16">
+                <a href="/" class="btn-primary text-white px-10 py-4 rounded-2xl text-base font-extrabold hover:scale-105 transition-all shadow-2xl inline-flex items-center gap-3">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    Back to Portal
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

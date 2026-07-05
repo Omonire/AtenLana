@@ -1,0 +1,491 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+  /* Metric Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .stat-item {
+    padding: 1rem md:1.5rem;
+    background: #f8fafc;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  /* Session Box & Manual Form */
+  .session-box, .manual-entry-box {
+    background: #fffdf5;
+    border: 2px solid var(--accent-yellow);
+    border-radius: 20px;
+    padding: 1.5rem md:2rem;
+    margin-top: 2rem;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(251, 191, 36, 0.1);
+  }
+
+  .session-box {
+    animation: pulse-border 2s infinite;
+  }
+
+  @keyframes pulse-border {
+    0% { border-color: var(--accent-yellow); }
+    50% { border-color: var(--accent-gold); }
+    100% { border-color: var(--accent-yellow); }
+  }
+
+  .session-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: var(--gradient-gold);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .input-group {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .session-input {
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 3px;
+    outline: none;
+    transition: all 0.2s;
+    background: white;
+  }
+
+  .session-input:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1);
+  }
+
+  code {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  #markResult {
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 12px;
+    display: none;
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  .success-bg { background: #dcfce7; color: #166534; display: block !important; border: 1px solid #bbf7d0; }
+  .error-bg { background: #fee2e2; color: #991b1b; display: block !important; border: 1px solid #fecaca; }
+
+</style>
+
+<div class="card">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+        <h3 class="text-xl md:text-2xl font-black text-slate-800">Student Control Center</h3>
+        <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">ID ENTITY: <span class="text-secondary font-black">{{g.user['ub_id']}}</span></p>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <div class="flex items-center gap-2 mb-4">
+        <h4 class="text-sm font-black uppercase tracking-widest text-slate-400">Available Class Syncs</h4>
+        <div class="flex-1 h-px bg-slate-100"></div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for sess in sessions %}
+        <div style="background:#fff; border:1px solid var(--border); padding:10px; border-radius:10px;">
+          <strong>{{sess['course_name']}}</strong>
+          <div class="muted" style="font-size:0.85rem;">Started: {{sess['start_time']}}</div>
+          <div class="muted" style="font-size:0.75rem; margin-top:4px;">
+            Mode: <span style="color:var(--primary); font-weight:600;">{{ (sess['attendance_mode']|capitalize if sess['attendance_mode'] else 'Both') }}</span>
+          </div>
+          <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;">
+            {% if sess['attendance_mode'] == 'location' %}
+              <button class="btn-mini" style="background:var(--accent-gold); color:white; border:none; cursor:pointer;" onclick="handleAttendance(null, {{sess['id']}})">Check-In (GPS)</button>
+            {% else %}
+              <a class="btn-mini btn-outline" href="#join-panel" onclick="document.getElementById('manualCode').focus();">Join Session</a>
+            {% endif %}
+            <a class="btn-mini btn-outline" href="{{ url_for('session_detail', session_id=sess['id']) }}">View</a>
+          </div>
+        </div>
+      {% else %}
+        <div class="muted">No sessions available.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-12 mb-6">
+    <h4 class="text-sm font-black uppercase tracking-widest text-slate-400">Temporal Synchronization Stats</h4>
+    <a href="{{ url_for('student_history') }}" class="btn-mini btn-outline bg-white !text-secondary border-purple-200">History Log</a>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-item">
+      <span class="stat-value">{{attended}}</span>
+      <span class="stat-label">Present</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{total_expected}}</span>
+      <span class="stat-label">Total Lectures</span>
+    </div>
+    <div class="stat-item" style="border-color: var(--accent-gold);">
+      <span class="stat-value" style="color: var(--accent-gold);">
+        {% if total_expected > 0 %}{{ (attended / total_expected * 100)|round(1) }}{% else %}0{% endif %}%
+      </span>
+      <span class="stat-label">Eligibility</span>
+    </div>
+  </div>
+
+  <!-- ID Card Submission -->
+  <div class="manual-entry-box" style="margin-top: 2rem; border-color: var(--primary);">
+    <h4 style="margin-bottom: 0.5rem;">Official ID Card Submission</h4>
+    <p class="muted" style="font-size: 0.85rem;">Upload a digital copy of your student ID card or any valid government-issued ID for identity verification.</p>
+
+    <form id="cardUploadForm" class="input-group">
+      <div style="position: relative; overflow: hidden; display: inline-block;">
+        <input type="file" id="cardFile" name="card_file" accept=".png,.jpg,.jpeg,.pdf" style="font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer;">
+        <button type="button" class="btn-outline" style="width: 100%; padding: 12px; border-radius: 12px; border: 2px dashed var(--primary); color: var(--primary); font-weight: 700;">
+          Select Card File (PNG, JPG, PDF)
+        </button>
+      </div>
+      <div id="fileNameDisplay" class="muted" style="font-size: 0.75rem; text-align: center;">No file selected</div>
+      <button type="submit" class="btn-auth" id="uploadCardBtn" style="border:none; cursor:pointer; background: var(--primary); color: white;">
+        Upload Identity Card
+      </button>
+    </form>
+    <div id="uploadStatus" style="margin-top: 10px; font-size: 0.85rem; text-align: center; display: none; padding: 8px; border-radius: 8px;"></div>
+  </div>
+
+  <!-- Manual Session Entry: students must input token provided by lecturer -->
+  <div class="manual-entry-box">
+    <h4 style="margin-bottom: 0.5rem;">Join Class Session</h4>
+    <p class="muted" style="font-size: 0.85rem;">Enter the session code provided by your lecturer to verify your presence.</p>
+
+    <div class="input-group">
+      <input type="text" id="manualCode" class="session-input" placeholder="Enter code" maxlength="15" autocomplete="off">
+      <button class="btn-auth btn-student" id="manualMarkBtn" style="border:none; cursor:pointer;">
+        Validate & Check-In
+      </button>
+    </div>
+
+    <div id="markResult"></div>
+    <div style="margin-top:12px;">
+      <div style="font-size:0.9rem; color:var(--text-muted);">Session Time</div>
+      <div id="student-timer" style="font-weight:800; font-size:1.1rem;">--:--</div>
+      <div id="student-grace" style="color:#f59e0b; display:none;">Grace: --:--</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * Shared logic for marking attendance via GPS
+ */
+async function handleAttendance(token, sessionId = null, sourceBtn = null) {
+    const resultDiv = document.getElementById('markResult');
+    const activeBtn = sourceBtn || document.getElementById('markBtn') || document.getElementById('manualMarkBtn');
+
+    if (!sessionId && (!token || token.trim().length === 0)) {
+        showResult("Please enter a valid session code.", false);
+        return;
+    }
+
+    // UI Feedback
+    activeBtn.disabled = true;
+    const originalText = activeBtn.innerText;
+    activeBtn.innerText = "Accessing GPS...";
+    resultDiv.style.display = 'none';
+
+    // 1. Check Geolocation Support
+    if (!navigator.geolocation) {
+        showResult("Geolocation is not supported by your browser.", false);
+        resetButton(activeBtn, originalText);
+        return;
+    }
+
+    // 2. Get Coordinates
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        const userLat = position.coords.latitude;
+        const userLon = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+        activeBtn.innerText = "Verifying Location...";
+
+        if (accuracy > 200) {
+           showToast(`GPS accuracy is low (${Math.round(accuracy)}m). Try moving near a window.`, 'warning');
+        }
+
+        try {
+            // 3. Post to Server
+            const resp = await fetch('/session/mark', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                  token: token ? token.trim() : null,
+                  session_id: sessionId,
+                  lat: userLat,
+                  lon: userLon,
+                  accuracy: accuracy,
+                  device_id: window.atendexDeviceId || null
+                })
+            });
+
+            let data = null;
+            try { data = await resp.json(); } catch (e) { }
+
+            if (!resp.ok) {
+                const msg = (data && data.message) ? data.message : 'Session code invalid or expired.';
+                showResult(msg, false);
+                resetButton(activeBtn, "Retry Verification");
+                return;
+            }
+
+            if (data && data.success) {
+                showResult(data.message || "Attendance successfully verified!", true);
+                activeBtn.style.display = 'none';
+                if(document.getElementById('manualCode')) {
+                  document.getElementById('manualCode').disabled = true;
+                  document.getElementById('manualCode').style.background = '#f1f5f9';
+                }
+
+                // Show detailed success popup with location usage info
+                const dist = data.distance_m ? Math.round(data.distance_m) : 'N/A';
+                const statusStr = (data.status === 'grace_marked') ? 'Approved (Grace Period)' : 'Approved (On-Time)';
+
+                showAlert('Attendance Verified',
+                    `Success! Your presence has been confirmed.\n\n` +
+                    `📍 Distance: ${dist}m from classroom center\n` +
+                    `✅ Status: ${statusStr}\n` +
+                    `🕒 Timestamp: ${new Date().toLocaleTimeString()}\n\n` +
+                    `Location data was used strictly for classroom proximity verification.`,
+                    { buttonClass: 'bg-green-600' }
+                );
+
+            } else {
+                showResult((data && data.message) ? data.message : 'Validation failed.', false);
+                resetButton(activeBtn, "Retry Verification");
+
+                // Show modal for duplicate attendance as requested
+                if (data && data.message && data.message.includes('already marked')) {
+                    showAlert('Already Marked', 'You have already marked attendance for this session.', { buttonClass: 'bg-secondary' });
+                }
+            }
+        } catch (err) {
+            showResult("Network error. Please check your internet connection.", false);
+            resetButton(activeBtn, "Retry Verification");
+        }
+    }, (error) => {
+        // Handle GPS permission/off errors
+        let errorMsg = "Please enable location services to mark attendance.";
+        if (error.code === error.PERMISSION_DENIED) {
+          errorMsg = "Location access denied. Please allow GPS permissions in your browser.";
+        }
+        showResult(errorMsg, false);
+        resetButton(activeBtn, "Retry (Allow GPS)");
+    }, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    });
+}
+
+function resetButton(btn, text) {
+    btn.disabled = false;
+    btn.innerText = text;
+}
+
+function showResult(msg, isSuccess) {
+    const resultDiv = document.getElementById('markResult');
+    resultDiv.innerText = msg;
+    resultDiv.className = isSuccess ? 'success-bg' : 'error-bg';
+}
+
+// Event Listeners
+document.getElementById('markBtn')?.addEventListener('click', function() {
+    const container = document.getElementById('session-container');
+    handleAttendance(container.dataset.token);
+});
+
+// Allow "Enter" key on the input field
+document.getElementById('manualCode')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('manualMarkBtn').click();
+    }
+});
+
+// Show countdown for a token by calling /session/check
+async function showCountdownForToken(token, sessionId = null){
+  const timerEl = document.getElementById('student-timer');
+  const graceEl = document.getElementById('student-grace');
+  if(!sessionId && (!token || token.trim().length===0)){ timerEl.textContent='--:--'; graceEl.style.display='none'; return; }
+  try{
+    const resp = await fetch('/session/check', {
+      method: 'POST',
+      headers: {
+        'Content-Type':'application/json',
+        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({token: token ? token.trim() : null, session_id: sessionId, device_id: window.atendexDeviceId || null})
+    });
+    if(!resp.ok) return;
+    const info = await resp.json();
+    if(!info) return;
+    // info.time_until_end (s), info.grace_seconds
+    function update(){
+      if(info.status === 'active'){
+        const s = Math.max(0, info.time_until_end);
+        timerEl.textContent = new Date(s*1000).toISOString().substr(14,5);
+        graceEl.style.display='none';
+      } else if(info.status === 'grace'){
+        timerEl.textContent = '00:00';
+        graceEl.style.display='block';
+        graceEl.textContent = 'Grace: ' + new Date((info.grace_seconds||0)*1000).toISOString().substr(14,5);
+      } else {
+        timerEl.textContent = 'Session Ended';
+        graceEl.style.display='none';
+      }
+    }
+    update();
+    // refresh every 5 seconds while active/grace
+    const iv = setInterval(async ()=>{
+      const r = await fetch('/session/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type':'application/json',
+          'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({token: token ? token.trim() : null, session_id: sessionId, device_id: window.atendexDeviceId || null})
+      });
+      if(!r.ok){ clearInterval(iv); return; }
+      const ii = await r.json();
+      info.status = ii.status; info.time_until_end = ii.time_until_end; info.grace_seconds = ii.grace_seconds;
+      update();
+      if(info.status === 'ended') clearInterval(iv);
+    }, 5000);
+  }catch(e){ }
+}
+
+// Trigger countdown and handle attendance when user clicks validate
+document.getElementById('manualMarkBtn')?.addEventListener('click', function(){
+  const codeInput = document.getElementById('manualCode');
+  showCountdownForToken(codeInput.value);
+  handleAttendance(codeInput.value);
+});
+
+// Also show countdown when input loses focus
+document.getElementById('manualCode')?.addEventListener('blur', function(){
+  showCountdownForToken(this.value);
+});
+
+// Card Upload Logic
+const cardFile = document.getElementById('cardFile');
+const fileNameDisplay = document.getElementById('fileNameDisplay');
+const cardUploadForm = document.getElementById('cardUploadForm');
+const uploadStatus = document.getElementById('uploadStatus');
+const uploadBtn = document.getElementById('uploadCardBtn');
+
+cardFile?.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+        fileNameDisplay.textContent = `Selected: ${this.files[0].name}`;
+        uploadStatus.style.display = 'none';
+    } else {
+        fileNameDisplay.textContent = 'No file selected';
+    }
+});
+
+cardUploadForm?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!cardFile.files || !cardFile.files[0]) {
+        showUploadStatus('Please select a file first.', 'error');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('card_file', cardFile.files[0]);
+
+    uploadBtn.disabled = true;
+    uploadBtn.innerText = 'Uploading...';
+    showUploadStatus('Sending encrypted file...', 'info');
+
+    try {
+        const resp = await fetch('/student/upload-card', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: formData
+        });
+
+        const data = await resp.json();
+        if (data.success) {
+            showUploadStatus(data.message, 'success');
+            uploadBtn.innerText = 'Upload Successful';
+            setTimeout(() => {
+                uploadBtn.disabled = false;
+                uploadBtn.innerText = 'Update Identity Card';
+            }, 3000);
+        } else {
+            showUploadStatus(data.message || 'Upload failed', 'error');
+            uploadBtn.disabled = false;
+            uploadBtn.innerText = 'Retry Upload';
+        }
+    } catch (err) {
+        showUploadStatus('Network error during upload', 'error');
+        uploadBtn.disabled = false;
+        uploadBtn.innerText = 'Retry Upload';
+    }
+});
+
+function showUploadStatus(msg, type) {
+    uploadStatus.textContent = msg;
+    uploadStatus.style.display = 'block';
+    if (type === 'error') {
+        uploadStatus.style.background = '#fee2e2';
+        uploadStatus.style.color = '#991b1b';
+    } else if (type === 'success') {
+        uploadStatus.style.background = '#dcfce7';
+        uploadStatus.style.color = '#166534';
+    } else {
+        uploadStatus.style.background = '#f1f5f9';
+        uploadStatus.style.color = '#475569';
+    }
+}
+
+</script>
+{% endblock %}

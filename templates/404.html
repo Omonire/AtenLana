@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="min-h-[70vh] flex flex-col items-center justify-center text-center p-6">
+    <div class="relative mb-12">
+        <div class="absolute inset-0 bg-purple-500 blur-[100px] opacity-20"></div>
+        <div class="luxury-card morphing-blob w-64 h-64 flex items-center justify-center border-2 border-purple-200 shadow-2xl relative z-10">
+            <span class="text-8xl font-black text-secondary drop-shadow-2xl">404</span>
+        </div>
+    </div>
+
+    <h2 class="text-4xl md:text-5xl font-black text-slate-800 mb-6 tracking-tight">Node Not Found</h2>
+    <p class="text-slate-500 text-lg max-w-md mx-auto mb-10 leading-relaxed font-medium">
+        The spatial coordinates you provided do not correspond to any active node in the AtendeX lattice.
+    </p>
+
+    <div class="flex flex-wrap justify-center gap-4">
+        <a href="/" class="btn-primary px-10 py-4 rounded-2xl text-sm font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl">
+            Return to Kernel
+        </a>
+        <button onclick="history.back()" class="px-10 py-4 rounded-2xl text-sm font-black uppercase tracking-widest text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+            Go Back
+        </button>
+    </div>
+</div>
+{% endblock %}

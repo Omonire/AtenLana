@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+  /* Session Hero Header */
+  .session-hero {
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    lg:flex-row lg:justify-between lg:items-center
+    gap: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .session-hero { flex-direction: row; }
+  }
+
+  .token-display {
+    background: var(--gradient-gold);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    lg:min-width: 300px;
+    lg:width: auto;
+  }
+
+  .token-display code {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    font-family: 'Poppins', monospace;
+  }
+
+  .token-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.9;
+  }
+
+  /* Data Visualization Section */
+  .chart-wrap {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin: 2rem 0;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Live Log Terminal */
+  .log-container {
+    background: #0f172a;
+    border-radius: 20px;
+    padding: 1rem md:1.5rem;
+    border: 1px solid var(--primary-light);
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+  }
+
+  .log-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 1rem;
+  }
+
+  .live-log {
+    height: 250px;
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    color: #e2e8f0;
+    line-height: 1.6;
+  }
+
+  .log-entry {
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .log-time { color: var(--accent-yellow); font-weight: 600; margin-right: 8px; }
+  .log-success { color: #10b981; font-weight: 600; }
+
+  .status-dot {
+    height: 8px;
+    width: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    box-shadow: 0 0 8px #10b981;
+  }
+</style>
+
+<div class="card">
+  <div class="session-hero">
+    <div class="text-center lg:text-left">
+      <h3 class="text-2xl md:text-3xl font-black text-slate-800">{{s['course_name']}}</h3>
+      <div class="muted" style="margin-top: 5px; font-weight: 500;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom; margin-right: 4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {% if s['host'] %}<strong>Host:</strong> {{s['host']}} • {% endif %} {{s['latitude']}}, {{s['longitude']}} ({{s['radius_m']}}m Geofence)
+      </div>
+    </div>
+
+    <div class="token-display">
+      {% if g.user and g.user['role'] == 'lecturer' %}
+        <span class="token-label">Active Session Token</span>
+        {% if s['active'] == 1 %}
+          <code>{{s['token']}}</code>
+          <div style="margin-top:8px; display:flex; gap:8px; justify-content:center; flex-wrap: wrap;">
+            <a class="btn-mini btn-outline" href="{{ url_for('export_session', session_id=s['id']) }}?t=excel">Export Excel</a>
+            <a class="btn-mini btn-outline" href="{{ url_for('export_session', session_id=s['id']) }}?t=pdf">Export PDF</a>
+            <button onclick="handleDeleteSession()" class="btn-mini" style="background: #ef4444; color: white; border: none;">Delete Session</button>
+          </div>
+        {% else %}
+          <code>— Token Disabled —</code>
+        {% endif %}
+      {% else %}
+        <span class="token-label">Session Info</span>
+        <div style="font-size:1rem; font-weight:700; margin-top:6px;">{{ s['course_name'] }}</div>
+        <div class="muted" style="margin-top:6px;">Required Proximity: <strong>{{s['radius_m']}} meters</strong></div>
+        <div style="margin-top:8px;"><a class="btn-mini btn-outline" href="#join-panel">Join / Mark Attendance</a></div>
+      {% endif %}
+    </div>
+    <div style="min-width:240px; text-align:center;">
+      <div style="font-size:0.9rem; color:var(--text-muted);">Time Remaining</div>
+      <div id="main-timer" style="font-size:1.2rem; font-weight:800; color:var(--primary);">--:--</div>
+      <div id="grace-timer" style="font-size:0.85rem; color:#f59e0b; display:none;">Grace: --:--</div>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    {% if g.user and g.user['role'] == 'lecturer' %}
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h4 style="margin:0; font-weight: 600;">Attendance Velocity</h4>
+      <span class="muted" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Live Telemetry</span>
+    </div>
+    <canvas id="attendanceChart" width="600" height="200"></canvas>
+    {% else %}
+      <div class="muted" style="padding:1rem;">Graphs are visible to lecturers. Use the Join panel below to mark attendance.</div>
+    {% endif %}
+  </div>
+
+  <div class="log-container">
+    {% if g.user and g.user['role'] == 'lecturer' %}
+    <div class="log-header">
+      <div style="color: white; font-weight: 600; font-size: 0.8rem; letter-spacing: 1px;">
+        <span class="status-dot"></span> LIVE VERIFICATION STREAM
+      </div>
+      <button onclick="clearLog()" style="background:transparent; border:none; color:rgba(255,255,255,0.4); cursor:pointer; font-size: 0.7rem;">CLEAR</button>
+    </div>
+    <div class="live-log" id="live-log-screen">
+      <div class="log-entry"><span class="log-time">[{{s['start_time']}}]</span> <span class="log-msg">Session protocol initiated...</span></div>
+    </div>
+    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+      <div style="color: white; font-weight: 600; font-size: 0.8rem; margin-bottom: 0.5rem; letter-spacing: 1px;">MANUAL ATTENDANCE OVERRIDE</div>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="manualStudentId" placeholder="Enter University ID or Matric" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.5rem; border-radius: 8px; font-size: 0.85rem;">
+        <button onclick="handleManualMark()" class="btn-mini" style="background: var(--accent-gold); color: white; border: none; white-space: nowrap;">Mark Present</button>
+      </div>
+    </div>
+    {% else %}
+      <div class="muted" style="padding:1rem;">Live verification stream is available to lecturers monitoring this session.</div>
+    {% endif %}
+  </div>
+</div>
+
+{% if not (g.user and g.user['role'] == 'lecturer') %}
+  <!-- Student Join Panel -->
+  <div class="card" id="join-panel" style="margin-top:1.5rem;">
+    <h4>Join & Mark Attendance</h4>
+    <p class="muted">Enter the session token provided by your lecturer and allow location access to mark attendance.</p>
+    <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+      <input id="joinToken" placeholder="Enter session token" style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border); font-weight:700;">
+      <button id="joinMarkBtn" class="btn-mini btn-outline">Mark Attendance</button>
+    </div>
+    <div id="joinResult" style="margin-top:10px; font-weight:700;"></div>
+  </div>
+{% endif %}
+
+<script>
+  // Initialize Chart
+  const ctx = document.getElementById('attendanceChart').getContext('2d');
+  const purpleGradient = ctx.createLinearGradient(0, 0, 0, 200);
+  purpleGradient.addColorStop(0, 'rgba(124, 58, 237, 0.4)');
+  purpleGradient.addColorStop(1, 'rgba(124, 58, 237, 0)');
+
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [], // Time slots
+      datasets: [{
+        label: 'Signed-in Students',
+        data: [],
+        borderColor: '#7c3aed',
+        backgroundColor: purpleGradient,
+        fill: true,
+        tension: 0.4,
+        borderWidth: 3,
+        pointBackgroundColor: '#fbbf24'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // Live Polling Logic
+  const sessionId = "{{s['id']}}";
+  let shownNames = new Set();
+
+  // Countdown logic for lecturer view
+  function startLecturerCountdown() {
+    const start = new Date('{{s['start_time'].replace(' ', 'T')}}Z');
+    const durationMin = {{s['duration_min'] or 20}};
+    const graceMin = {{s['grace_min'] or 5}};
+    const end = new Date(start.getTime() + durationMin*60000);
+    const graceEnd = new Date(end.getTime() + graceMin*60000);
+
+    function tick(){
+      const now = new Date();
+      const mainEl = document.getElementById('main-timer');
+      const graceEl = document.getElementById('grace-timer');
+      if(now <= end){
+        const s = Math.max(0, Math.floor((end - now)/1000));
+        mainEl.textContent = new Date(s*1000).toISOString().substr(14,5);
+        graceEl.style.display = 'none';
+      } else if(now > end && now <= graceEnd){
+        // show grace countdown
+        mainEl.textContent = '00:00';
+        const gs = Math.max(0, Math.floor((graceEnd - now)/1000));
+        graceEl.style.display = 'block';
+        graceEl.textContent = 'Grace: ' + new Date(gs*1000).toISOString().substr(14,5);
+      } else {
+        mainEl.textContent = 'Session Ended';
+        graceEl.style.display = 'none';
+      }
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+  startLecturerCountdown();
+
+  function updateSessionData() {
+    // Fetch chart stats
+    fetch(`/session/${sessionId}/stats`)
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.labels && data.counts) {
+          chart.data.labels = data.labels;
+          chart.data.datasets[0].data = data.counts;
+          chart.update();
+        }
+      }).catch(()=>{});
+
+    // Fetch live names for log
+    fetch(`/session/${sessionId}/live`)
+      .then(r => r.json())
+      .then(j => {
+        if (!j || !j.names) return;
+        const logScreen = document.getElementById('live-log-screen');
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        j.names.forEach(n => {
+          if (shownNames.has(n)) return;
+          const entry = document.createElement('div');
+          entry.className = 'log-entry';
+          entry.innerHTML = `<span class="log-time">[${now}]</span> <span class="log-success">SUCCESS:</span> ${n}`;
+          logScreen.prepend(entry);
+          shownNames.add(n);
+        });
+      }).catch(()=>{});
+  }
+
+  function clearLog() {
+    document.getElementById('live-log-screen').innerHTML = '';
+  }
+
+  async function handleDeleteSession() {
+    const confirmed = await showConfirm('Critical Action', 'Permanently delete this session and all its attendance records? This cannot be easily undone.');
+    if(!confirmed) return;
+
+    try {
+      const resp = await fetch(`/session/${sessionId}/delete`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        }
+      });
+      const data = await resp.json();
+      if(data.success) {
+        showToast(data.message, 'success');
+        setTimeout(() => {
+          window.location.href = "{{ url_for('lecturer_dashboard') if g.user['role'] == 'lecturer' else url_for('admin_dashboard') }}";
+        }, 1500);
+      } else {
+        showToast(data.message || 'Deletion failed', 'error');
+      }
+    } catch(err) {
+      showToast('Network error during deletion', 'error');
+    }
+  }
+
+  async function handleManualMark() {
+    const input = document.getElementById('manualStudentId');
+    const id = input.value.trim();
+    if(!id) { showToast('Please enter a student ID', 'warning'); return; }
+
+    try {
+      const resp = await fetch(`/session/${sessionId}/mark-manual`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ identifier: id })
+      });
+      const data = await resp.json();
+      if(data.success) {
+        showToast(data.message, 'success');
+        input.value = '';
+        updateSessionData(); // Refresh chart and log
+      } else {
+        showToast(data.message || 'Failed to mark student', 'error');
+      }
+    } catch(err) {
+      showToast('Network error during manual marking', 'error');
+    }
+  }
+
+  // Poll every 15 seconds to save bandwidth, but only if session is active
+  const pollInterval = setInterval(() => {
+    const timerText = document.getElementById('main-timer').textContent;
+    if (timerText === 'Session Ended') {
+      clearInterval(pollInterval);
+      return;
+    }
+    updateSessionData();
+  }, 15000);
+
+  // Student join panel logic (if present)
+  document.getElementById('joinMarkBtn')?.addEventListener('click', function(){
+    const t = document.getElementById('joinToken').value;
+    if(!t){ document.getElementById('joinResult').textContent='Enter session token'; return; }
+    // reuse student marking flow: request geolocation then POST to /session/mark
+    if(!navigator.geolocation){ document.getElementById('joinResult').textContent='Geolocation not supported'; return; }
+    const btn = this; btn.disabled = true; btn.textContent = 'Accessing GPS...';
+    navigator.geolocation.getCurrentPosition(async (pos)=>{
+      try{
+        const resp = await fetch('/session/mark', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({token: t.trim(), lat: pos.coords.latitude, lon: pos.coords.longitude})
+        });
+        const j = await resp.json().catch(()=>null);
+        if(resp.ok && j && j.success){ document.getElementById('joinResult').textContent = j.message || 'Attendance marked'; btn.style.display='none'; }
+        else { document.getElementById('joinResult').textContent = (j && j.message) ? j.message : 'Failed to mark attendance'; btn.disabled=false; btn.textContent='Mark Attendance'; }
+      }catch(e){ document.getElementById('joinResult').textContent = 'Network error'; btn.disabled=false; btn.textContent='Mark Attendance'; }
+    }, (err)=>{ document.getElementById('joinResult').textContent='Enable location to mark attendance'; btn.disabled=false; btn.textContent='Mark Attendance'; }, {enableHighAccuracy:true, timeout:10000});
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="min-h-screen bg-slate-50 antialiased text-slate-900 pb-20">
+    <main class="max-w-7xl mx-auto w-full px-6 py-10 space-y-12">
+
+        <!-- Navigation Header -->
+        <header class="flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="{{ url_for('superadmin_dashboard') }}" class="p-4 bg-white rounded-2xl shadow-lg border border-slate-100 text-slate-400 hover:text-secondary transition-all">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-black text-slate-900 tracking-tight">System Governance</h1>
+                    <p class="text-slate-500 text-sm font-medium">Architecture, security protocols, and history.</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Security Toggles -->
+            <div class="lg:col-span-1 space-y-8">
+                <section class="luxury-card p-10 rounded-[3rem]">
+                    <h2 class="text-xl font-black text-slate-900 uppercase tracking-tighter mb-8">Sentinel Protocols</h2>
+
+                    <div class="space-y-10">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Portal Access</span>
+                                <span id="website-status-badge" class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ 'bg-green-100 text-green-700' if website_status == 'on' else 'bg-red-100 text-red-700' }}">
+                                    {{ website_status }}
+                                </span>
+                            </div>
+                            <button id="toggle-website-btn" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg">
+                                Toggle Availability
+                            </button>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Threat Mode</span>
+                                <span id="security-status-badge" class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ 'bg-red-100 text-red-700' if security_mode == 'on' else 'bg-slate-100 text-slate-700' }}">
+                                    {{ 'THREAT_MODE' if security_mode == 'on' else 'STABLE' }}
+                                </span>
+                            </div>
+                            <button id="toggle-security-btn" class="w-full py-4 {{ 'bg-red-600' if security_mode == 'on' else 'bg-slate-600' }} text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg">
+                                Toggle Shielding
+                            </button>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global Integrity</span>
+                                <span id="integrity-status-badge" class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ 'bg-indigo-100 text-indigo-700' if strict_integrity == 'on' else 'bg-slate-100 text-slate-700' }}">
+                                    {{ 'STRICT' if strict_integrity == 'on' else 'FLEXIBLE' }}
+                                </span>
+                            </div>
+                            <button id="toggle-integrity-btn" class="w-full py-4 {{ 'bg-indigo-600' if strict_integrity == 'on' else 'bg-slate-800' }} text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg">
+                                Toggle Strictness
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="luxury-card p-10 rounded-[3rem] border border-red-50">
+                    <h2 class="text-xl font-black text-red-600 uppercase tracking-tighter mb-4">Danger Zone</h2>
+                    <p class="text-xs text-slate-400 font-medium mb-8">Wipe all records and re-initialize the database schema from scratch.</p>
+                    <form method="post" action="{{ url_for('reset_database') }}" onsubmit="event.preventDefault(); showConfirm('Lattice Reset', 'DANGER: This will purge ALL data permanently. Proceed?').then(res => { if(res) this.submit(); });">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input name="confirm" placeholder="Type RESET DATABASE" class="w-full px-5 py-3 rounded-xl border border-red-100 text-sm mb-4 outline-none focus:border-red-300 font-bold" required>
+                        <button class="w-full bg-red-600 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all">Initialize Wipe</button>
+                    </form>
+                </section>
+            </div>
+
+            <!-- Role Shutdown & Action History -->
+            <div class="lg:col-span-2 space-y-8">
+                <section class="luxury-card p-10 rounded-[3rem]">
+                    <h2 class="text-xl font-black text-slate-900 uppercase tracking-tighter mb-8">Lattice Power Controls</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {% for role in ['student', 'lecturer', 'admin'] %}
+                        <div class="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 flex flex-col items-center text-center">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">{{ role }} Cluster</span>
+                            <div class="space-y-2 w-full">
+                                <button onclick="handleRoleShutdown('{{ role }}', 'shutdown')" class="w-full px-4 py-2 bg-red-600 text-white text-[10px] font-black uppercase rounded-xl hover:bg-red-700 transition-all shadow-sm">
+                                    Shutdown
+                                </button>
+                                <button onclick="handleRoleShutdown('{{ role }}', 'activate')" class="w-full px-4 py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-xl hover:bg-green-700 transition-all shadow-sm">
+                                    Activate
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <section class="luxury-card rounded-[3rem] overflow-hidden">
+                    <div class="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+                        <h2 class="text-xl font-black text-slate-900 uppercase tracking-tighter">System Audit History</h2>
+                        <button onclick="loadActions()" class="text-[10px] font-black uppercase text-secondary hover:underline tracking-widest">Resync Logs</button>
+                    </div>
+                    <div id="actions-list" class="divide-y divide-slate-50 max-h-[500px] overflow-y-auto no-scrollbar">
+                        <div class="p-12 text-center text-slate-400 text-sm font-medium italic">Synchronizing audit lattice...</div>
+                    </div>
+                </section>
+
+                <section class="luxury-card rounded-[3rem] overflow-hidden border-red-100">
+                    <div class="px-10 py-8 border-b border-red-50 flex items-center justify-between bg-red-50/10">
+                        <h2 class="text-xl font-black text-slate-900 uppercase tracking-tighter">Security Alerts <span id="alerts-count" class="ml-2 text-red-600 bg-red-100 px-3 py-1 rounded-full text-xs">0</span></h2>
+                        <button onclick="loadAlerts()" class="text-[10px] font-black uppercase text-red-600 hover:underline tracking-widest">Refresh Alerts</button>
+                    </div>
+                    <div id="alerts-list" class="divide-y divide-slate-50 max-h-[500px] overflow-y-auto no-scrollbar">
+                        <div class="p-12 text-center text-slate-400 text-sm font-medium italic">Scanning security telemetry...</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Blocking Modal -->
+        <div id="blocking-modal" class="fixed inset-0 z-[4000] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+            <div class="luxury-card max-w-md w-full p-10 rounded-[3rem] shadow-3xl">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="p-4 bg-red-100 rounded-2xl text-red-600">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">Block Identity</h3>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Temporary Lattice Suspension</p>
+                    </div>
+                </div>
+
+                <input type="hidden" id="block-user-id">
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Duration Value</label>
+                        <input type="number" id="block-duration" value="1" min="1" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-lg font-black outline-none focus:border-red-400 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Time Scale</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="setBlockUnit('hours')" id="unit-hours" class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 transition-all border-red-600 bg-red-600 text-white shadow-lg">Hours</button>
+                            <button onclick="setBlockUnit('days')" id="unit-days" class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 transition-all border-slate-100 bg-white text-slate-400 hover:border-red-200">Days</button>
+                        </div>
+                        <input type="hidden" id="block-unit" value="hours">
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mt-12">
+                    <button onclick="closeBlockingModal()" class="flex-1 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 hover:bg-slate-100 transition-all">Abort</button>
+                    <button onclick="submitBlock()" class="flex-1 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white bg-red-600 hover:bg-red-700 shadow-xl shadow-red-200 transition-all">Confirm Block</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+document.getElementById('toggle-website-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('toggle-website-btn');
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerHTML = `<svg class="animate-spin h-4 w-4 mr-2 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg> Processing...`;
+
+    try {
+        const resp = await fetch('/admin/toggle-website', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+        });
+        const data = await resp.json();
+        if (data.success) {
+            const badge = document.getElementById('website-status-badge');
+            badge.innerText = data.new_status;
+            badge.className = `px-3 py-1 rounded-full text-[10px] font-black uppercase ${data.new_status === 'on' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+            showToast(`Portal access reconfigured to ${data.new_status.toUpperCase()}`, 'info');
+        }
+    } catch (e) { showToast('Transmission failed', 'error'); }
+    finally {
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }
+});
+
+document.getElementById('toggle-security-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('toggle-security-btn');
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerHTML = `<svg class="animate-spin h-4 w-4 mr-2 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg> Processing...`;
+
+    try {
+        const resp = await fetch('/admin/toggle-security', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+        });
+        const data = await resp.json();
+        if (data.success) {
+            const badge = document.getElementById('security-status-badge');
+            badge.innerText = data.new_status === 'on' ? 'THREAT_MODE' : 'STABLE';
+            badge.className = `px-3 py-1 rounded-full text-[10px] font-black uppercase ${data.new_status === 'on' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}`;
+            btn.className = `w-full py-4 ${data.new_status === 'on' ? 'bg-red-600' : 'bg-slate-600'} text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg`;
+            showToast(`Shielding status: ${data.new_status.toUpperCase()}`, data.new_status === 'on' ? 'warning' : 'success');
+        }
+    } catch (e) { showToast('Transmission failed', 'error'); }
+    finally {
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }
+});
+
+let currentBlockUnit = 'hours';
+
+document.getElementById('toggle-integrity-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('toggle-integrity-btn');
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerHTML = `<svg class="animate-spin h-4 w-4 mr-2 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg> Processing...`;
+
+    try {
+        const resp = await fetch('/admin/toggle-integrity', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+        });
+        const data = await resp.json();
+        if (data.success) {
+            const badge = document.getElementById('integrity-status-badge');
+            badge.innerText = data.new_status === 'on' ? 'STRICT' : 'FLEXIBLE';
+            badge.className = `px-3 py-1 rounded-full text-[10px] font-black uppercase ${data.new_status === 'on' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700'}`;
+            btn.className = `w-full py-4 ${data.new_status === 'on' ? 'bg-indigo-600' : 'bg-slate-800'} text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg`;
+            showToast(`Integrity Protocol: ${data.new_status.toUpperCase()}`, 'info');
+        }
+    } catch (e) { showToast('Transmission failed', 'error'); }
+    finally {
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }
+});
+
+async function loadActions() {
+    try {
+        const resp = await fetch('/api/admin/recent-actions');
+        const actions = await resp.json();
+        const container = document.getElementById('actions-list');
+
+        if (!actions || actions.length === 0) {
+            container.innerHTML = '<div class="p-12 text-center text-slate-400 text-sm">No recent lattice interactions detected.</div>';
+            return;
+        }
+
+        container.innerHTML = actions.map(a => `
+            <div class="px-10 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 transition-colors ${a.reverted ? 'bg-slate-50/50' : ''}">
+                <div class="flex flex-col min-w-0">
+                    <div class="text-sm font-bold text-slate-800 flex items-center gap-2 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-lg bg-white border border-slate-100 text-[9px] text-slate-500 uppercase font-black tracking-tighter">${a.action_type}</span>
+                        <span class="truncate uppercase text-xs font-black">${a.target_table.replace('_', ' ')}</span>
+                        ${a.reverted ? '<span class="text-[9px] font-black text-amber-500 uppercase tracking-widest bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">REVERSED</span>' : ''}
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1.5 flex items-center gap-2">
+                        <span class="text-secondary">${a.first_name || 'System'} ${a.last_name || ''}</span>
+                        <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                        <span>${a.timestamp}</span>
+                    </div>
+                </div>
+                <div class="flex gap-3 flex-shrink-0">
+                    ${!a.reverted ?
+                        \`<button onclick="undoAction(${a.id})" class="text-[9px] font-black uppercase text-secondary hover:scale-105 bg-white px-4 py-2 rounded-xl border border-purple-50 shadow-sm transition-all">Revert</button>\` :
+                        \`<button onclick="redoAction(${a.id})" class="text-[9px] font-black uppercase text-emerald-600 hover:scale-105 bg-white px-4 py-2 rounded-xl border border-emerald-50 shadow-sm transition-all">Reapply</button>\`
+                    }
+                </div>
+            </div>
+        `).join('');
+    } catch (err) { console.error("History sync error", err); }
+}
+
+async function loadAlerts() {
+    try {
+        const resp = await fetch('/api/admin/security-alerts');
+        const alerts = await resp.json();
+        const container = document.getElementById('alerts-list');
+        const countBadge = document.getElementById('alerts-count');
+
+        if (!alerts || alerts.length === 0) {
+            container.innerHTML = '<div class="p-12 text-center text-slate-400 text-sm">No active threats detected in telemetry.</div>';
+            countBadge.innerText = '0';
+            return;
+        }
+
+        countBadge.innerText = alerts.length;
+        container.innerHTML = alerts.map(a => `
+            <div class="px-10 py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:bg-red-50/30 transition-colors">
+                <div class="flex gap-6 items-start">
+                    <div class="p-4 bg-white rounded-2xl border border-red-100 shadow-sm text-red-600">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <div class="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">${a.type.replace('_', ' ')}</div>
+                        <p class="text-xs font-medium text-slate-500 mb-2">${a.details}</p>
+                        <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            <span class="text-red-600">User: ${a.first_name || 'Unknown'} (${a.ub_id || 'No ID'})</span>
+                            <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                            <span>IP: ${a.ip}</span>
+                            <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                            <span>${a.created_at}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    ${a.status === 'open' ?
+                        \`<button onclick="openBlockingModal(\${a.user_id})" class="px-6 py-3 bg-red-600 text-white text-[10px] font-black uppercase rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-100">Block User</button>\` :
+                        \`<span class="px-6 py-3 bg-slate-100 text-slate-400 text-[10px] font-black uppercase rounded-xl border border-slate-200">RESOLVED (\${a.status})</span>\`
+                    }
+                </div>
+            </div>
+        `).join('');
+    } catch (e) { console.error("Alert sync failed", e); }
+}
+
+function openBlockingModal(userId) {
+    document.getElementById('block-user-id').value = userId;
+    document.getElementById('blocking-modal').classList.remove('hidden');
+}
+
+function closeBlockingModal() {
+    document.getElementById('blocking-modal').classList.add('hidden');
+}
+
+function setBlockUnit(unit) {
+    currentBlockUnit = unit;
+    document.getElementById('block-unit').value = unit;
+    const hBtn = document.getElementById('unit-hours');
+    const dBtn = document.getElementById('unit-days');
+
+    if (unit === 'hours') {
+        hBtn.className = "py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 border-red-600 bg-red-600 text-white shadow-lg";
+        dBtn.className = "py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 border-slate-100 bg-white text-slate-400 hover:border-red-200";
+    } else {
+        dBtn.className = "py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 border-red-600 bg-red-600 text-white shadow-lg";
+        hBtn.className = "py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 border-slate-100 bg-white text-slate-400 hover:border-red-200";
+    }
+}
+
+async function submitBlock() {
+    const userId = document.getElementById('block-user-id').value;
+    const duration = document.getElementById('block-duration').value;
+    const unit = document.getElementById('block-unit').value;
+
+    try {
+        const resp = await fetch('/api/admin/block-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+            body: JSON.stringify({ user_id: userId, duration: duration, unit: unit })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            showToast(data.message, 'success');
+            closeBlockingModal();
+            loadAlerts();
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (e) { showToast('Block operation failed', 'error'); }
+}
+
+// Initialize on load
+window.addEventListener('load', () => {
+    loadActions();
+    loadAlerts();
+});
+
+async function undoAction(actionId) {
+    const confirmed = await showConfirm('System Rollback', 'Are you sure you want to revert this system state?');
+    if (!confirmed) return;
+    const resp = await fetch('/admin/undo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+        body: JSON.stringify({ action_id: actionId })
+    });
+    if ((await resp.json()).success) { showToast('Rollback successful', 'success'); loadActions(); }
+}
+
+async function redoAction(actionId) {
+    const confirmed = await showConfirm('State Restoration', 'Re-apply this administrative change?');
+    if (!confirmed) return;
+    const resp = await fetch('/admin/redo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+        body: JSON.stringify({ action_id: actionId })
+    });
+    if ((await resp.json()).success) { showToast('State restored', 'success'); loadActions(); }
+}
+
+async function handleRoleShutdown(role, action) {
+    const verb = action === 'shutdown' ? 'DEACTIVATE' : 'ACTIVATE';
+    const confirmed = await showConfirm('Cluster Management', `Proceed with bulk ${verb.toLowerCase()} of all ${role} entities?`);
+    if (!confirmed) return;
+
+    const resp = await fetch('/admin/shutdown-role', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+        body: JSON.stringify({ role: role, action: action })
+    });
+    if ((await resp.json()).success) { showToast('Cluster status updated', 'success'); loadActions(); }
+}
+
+document.addEventListener('DOMContentLoaded', loadActions);
+</script>
+{% endblock %}

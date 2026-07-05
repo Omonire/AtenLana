@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        --luxury-shadow: 0 25px 50px -12px rgba(91, 33, 182, 0.15);
+    }
+
+    .landing-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background:
+            radial-gradient(circle at 20% 30%, rgba(91, 33, 182, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 80% 70%, rgba(124, 58, 237, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 1) 100%);
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .hero-title {
+        font-size: clamp(3rem, 10vw, 6rem);
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        background: linear-gradient(135deg, #0f172a 0%, var(--primary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-button {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 1.25rem 3rem;
+        border-radius: 100px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: var(--luxury-shadow);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 30px 60px -12px rgba(91, 33, 182, 0.4);
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2.5rem;
+        margin-top: 6rem;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        border-radius: 32px;
+        padding: 3rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        border-color: var(--primary);
+        box-shadow:
+            0 30px 60px -12px rgba(91, 33, 182, 0.1),
+            0 18px 36px -18px rgba(0, 0, 0, 0.1);
+        background: white;
+    }
+
+    .card-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(124, 58, 237, 0.05);
+        color: var(--primary);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+        transition: all 0.4s ease;
+    }
+
+    .feature-card:hover .card-icon {
+        background: var(--primary);
+        color: white;
+        transform: rotate(-10deg) scale(1.1);
+    }
+
+    .role-badge {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--secondary);
+        background: rgba(124, 58, 237, 0.05);
+        padding: 6px 16px;
+        border-radius: 50px;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+    .stagger-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .stagger-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .innovation-gradient {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--primary-gradient);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.6s ease;
+    }
+
+    .feature-card:hover .innovation-gradient {
+        transform: scaleX(1);
+    }
+
+</style>
+
+<div class="hero-bg"></div>
+
+<div class="landing-container">
+    <!-- Hero Section -->
+    <header class="text-center py-20 md:py-32 stagger-in">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full mb-8">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-xs font-black uppercase tracking-widest text-slate-500">System Genesis v4.0 Active</span>
+        </div>
+
+        <h1 class="hero-title">
+            AtendeX Portal<br>
+            <span class="text-slate-400 font-light">Innovation in Presence.</span>
+        </h1>
+
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-slate-500 font-medium leading-relaxed mb-12">
+            AtendeX Technology delivers a high-performance digital ecosystem designed to transform the traditional attendance experience into a sleek, high-integrity workflow.
+        </p>
+
+        <a href="{{ url_for('portal_hub') }}" class="cta-button">
+            Enter Portal
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+    </header>
+
+    <!-- Role-Based Innovation Sections -->
+    <!-- Trust & Integrity Section -->
+    <section class="mt-24 md:mt-40 stagger-in">
+        <div class="text-center mb-12 md:mb-20">
+            <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6">Built on Absolute Integrity.</h2>
+            <p class="text-slate-500 font-medium max-w-2xl mx-auto">
+                The AtendeX-Grid Ecosystem employs advanced security protocols to ensure every presence event is a verified reflection of reality.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="p-10 bg-slate-50 rounded-[2.5rem] border border-slate-100 flex flex-col justify-center">
+                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm mb-6">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900 mb-4">Spatial Tethering</h3>
+                <p class="text-slate-500 leading-relaxed mb-6">
+                    Our high-fidelity GPS kernel creates a sub-meter virtual classroom lattice. Presence is only authorized within the precise geofence of the lecture node.
+                </p>
+                <div class="flex items-center gap-2 text-xs font-black text-primary uppercase tracking-widest">
+                    <span class="w-2 h-2 bg-primary rounded-full"></span>
+                    Haversine Validated
+                </div>
+            </div>
+
+            <div class="p-10 bg-slate-900 rounded-[2.5rem] text-white flex flex-col justify-center">
+                <div class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-purple-400 shadow-sm mb-6">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Zero-Proxy Guard</h3>
+                <p class="text-slate-400 leading-relaxed mb-6">
+                    Integrated VPN detection and session freshness protocols neutralize proxy attendance. System refreshes automatically upon tab-switching or inactivity.
+                </p>
+                <div class="flex items-center gap-2 text-xs font-black text-purple-400 uppercase tracking-widest">
+                    <span class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
+                    Threat Mode Active
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="feature-grid">
+        <!-- Lecturer -->
+        <div class="feature-card stagger-in" style="transition-delay: 0.1s;">
+            <div class="card-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            </div>
+            <div class="role-badge">Lecturer Kernel</div>
+            <h3 class="text-2xl font-black text-slate-900 mb-4">Session Genesis Engine</h3>
+            <p class="text-slate-500 font-medium leading-relaxed">
+                Initiate smart attendance sessions in seconds. Choose between GPS-verified location checks or Token-Sync protocols with a "Live Analytics Pulse" to monitor student arrivals in real-time.
+            </p>
+            <div class="innovation-gradient"></div>
+        </div>
+
+        <!-- Student -->
+        <div class="feature-card stagger-in" style="transition-delay: 0.2s;">
+            <div class="card-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div class="role-badge">Student Lattice</div>
+            <h3 class="text-2xl font-black text-slate-900 mb-4">Spatial Handshake</h3>
+            <p class="text-slate-500 font-medium leading-relaxed">
+                Experience frictionless verification through a single tap. Access your personal Temporal History Retrieval hub to track lecture hours and verify your institutional digital twin.
+            </p>
+            <div class="innovation-gradient"></div>
+        </div>
+
+        <!-- Admin -->
+        <div class="feature-card stagger-in" style="transition-delay: 0.3s;">
+            <div class="card-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </div>
+            <div class="role-badge">Root Command</div>
+            <h3 class="text-2xl font-black text-slate-900 mb-4">Institutional Oversight</h3>
+            <p class="text-slate-500 font-medium leading-relaxed">
+                Dynamic management of faculties and departments via Bulk Matrix Injection. Synchronize academic structures with the "Auto-Update" engine for absolute alignment.
+            </p>
+            <div class="innovation-gradient"></div>
+        </div>
+    </div>
+
+    <!-- Final Call to Action -->
+    <section class="mt-24 md:mt-40 mb-20 text-center stagger-in">
+        <h2 class="text-4xl md:text-6xl font-black text-slate-900 mb-8">Ready to synchronize?</h2>
+        <a href="{{ url_for('portal_hub') }}" class="cta-button">
+            Launch Portal Hub
+        </a>
+        <p class="mt-8 text-slate-400 font-bold uppercase tracking-[0.2em] text-xs">
+            AtendeX Technology &copy; 2026 // Designing Integrity Based Solutions
+        </p>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.stagger-in').forEach(el => observer.observe(el));
+    });
+</script>
+{% endblock %}

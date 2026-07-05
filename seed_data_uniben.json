@@ -1,0 +1,847 @@
+{
+  "faculties": [
+    {
+      "code": "AGR",
+      "name": "Faculty of Agriculture",
+      "departments": [
+        {
+          "code": "AGR",
+          "name": "Department of Agriculture",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "AIML",
+      "name": "African Institute of Management and Leadership",
+      "departments": []
+    },
+    {
+      "code": "ART",
+      "name": "Faculty of Arts",
+      "departments": [
+        {
+          "code": "ENL",
+          "name": "Department of English and Literature",
+          "courses": []
+        },
+        {
+          "code": "FAA",
+          "name": "Department of Fine and Applied Art",
+          "courses": []
+        },
+        {
+          "code": "FOL",
+          "name": "Department of Foreign Languages",
+          "courses": []
+        },
+        {
+          "code": "HIS",
+          "name": "Department of History and International Studies",
+          "courses": []
+        },
+        {
+          "code": "LST",
+          "name": "Department of Linguistics Studies",
+          "courses": []
+        },
+        {
+          "code": "MAC",
+          "name": "Department of Mass Communication",
+          "courses": []
+        },
+        {
+          "code": "PHL",
+          "name": "Department of Philosophy",
+          "courses": []
+        },
+        {
+          "code": "REL",
+          "name": "Department of Religions",
+          "courses": []
+        },
+        {
+          "code": "THR",
+          "name": "Department of Theatre Arts",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "BCS",
+      "name": "School of Basic Clinical Sciences",
+      "departments": [
+        {
+          "code": "BCS",
+          "name": "Basic Clinical Sciences",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "BMS",
+      "name": "School of Basic Medical Sciences",
+      "departments": [
+        {
+          "code": "BMS",
+          "name": "Basic Medical Sciences",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "CBT",
+      "name": "CBT Practice Categories",
+      "departments": []
+    },
+    {
+      "code": "CEAFT",
+      "name": "Centre of Excellence in Aquaculture and Food Technology",
+      "departments": []
+    },
+    {
+      "code": "CED",
+      "name": "Centre for Entrepreneurship Development",
+      "departments": []
+    },
+    {
+      "code": "CERHI",
+      "name": "Centre of Excellence in Reproductive Health Innovation",
+      "departments": []
+    },
+    {
+      "code": "CFPDS",
+      "name": "Centre for Forensic Programmes and DNA Studies",
+      "departments": []
+    },
+    {
+      "code": "CGS",
+      "name": "Centre for Gender Studies",
+      "departments": []
+    },
+    {
+      "code": "CIS",
+      "name": "Faculty of Computing",
+      "departments": [
+        {
+          "code": "CBS",
+          "name": "Department of Cyber Security",
+          "courses": []
+        },
+        {
+          "code": "CSC",
+          "name": "Department of Computer Science",
+          "courses": [
+            {"code": "CSC101", "title": "Introduction to Computing"}
+          ]
+        },
+        {
+          "code": "DSC",
+          "name": "Department of Data Science",
+          "courses": []
+        },
+        {
+          "code": "ICT",
+          "name": "Department of Information and Communication Technology",
+          "courses": []
+        },
+        {
+          "code": "INT",
+          "name": "Department of Information Technology",
+          "courses": []
+        },
+        {
+          "code": "SEN",
+          "name": "Department of Software Engineering",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "CLE",
+      "name": "Centre for Continuous Legal Education",
+      "departments": []
+    },
+    {
+      "code": "COEGPE",
+      "name": "Centre for Excellence in Geosciences and Petroleum Engineering",
+      "departments": []
+    },
+    {
+      "code": "COEW",
+      "name": "College of Education Warri",
+      "departments": []
+    },
+    {
+      "code": "CPGE",
+      "name": "College of Petroleum and Gas Engineering, PTI Campus",
+      "departments": []
+    },
+    {
+      "code": "DCOEM",
+      "name": "College of Education Mosogar (Delta State)",
+      "departments": []
+    },
+    {
+      "code": "DEN",
+      "name": "Faculty of Dentistry",
+      "departments": [
+        {
+          "code": "DEN",
+          "name": "Department of Dentistry",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "EDU",
+      "name": "Faculty of Education",
+      "departments": [
+        {
+          "code": "EDA",
+          "name": "Department of Educational Administration",
+          "courses": []
+        },
+        {
+          "code": "EDC",
+          "name": "Department of Curriculum and Instruction",
+          "courses": []
+        },
+        {
+          "code": "EDF",
+          "name": "Department of Educational Foundations",
+          "courses": []
+        },
+        {
+          "code": "EDL",
+          "name": "Department of Educational Leadership",
+          "courses": []
+        },
+        {
+          "code": "EDP",
+          "name": "Department of Educational Psychology",
+          "courses": []
+        },
+        {
+          "code": "EDS",
+          "name": "Department of Special Education",
+          "courses": []
+        },
+        {
+          "code": "EME",
+          "name": "Department of Educational Measurement and Evaluation",
+          "courses": []
+        },
+        {
+          "code": "GST",
+          "name": "Department of Guidance and School Counselling",
+          "courses": []
+        },
+        {
+          "code": "HEE",
+          "name": "Department of Health and Environmental Education",
+          "courses": []
+        },
+        {
+          "code": "PHE",
+          "name": "Department of Physical and Health Education",
+          "courses": []
+        },
+        {
+          "code": "VTE",
+          "name": "Department of Vocational and Technical Education",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "ENG",
+      "name": "Faculty of Engineering",
+      "departments": [
+        {
+          "code": "AGE",
+          "name": "Department of Agricultural Engineering",
+          "courses": [
+            {"code": "AGE101", "title": ""},
+            {"code": "AGE102", "title": ""},
+            {"code": "AGE202", "title": "Agricultural Engineering Concept"},
+            {"code": "AGE301", "title": "Rural Sociology and Agricultural Extension"},
+            {"code": "AGE303", "title": "Land Surveying"},
+            {"code": "AGE321", "title": ""},
+            {"code": "AGE351", "title": ""},
+            {"code": "AGE361", "title": "Fluid Mechanics"},
+            {"code": "AGE401", "title": "Advanced Agricultural Engineering Lab"},
+            {"code": "AGE403", "title": "Experimental Design"},
+            {"code": "AGE411", "title": "Irrigation and Drainage"},
+            {"code": "AGE413", "title": ""},
+            {"code": "AGE421", "title": ""},
+            {"code": "AGE431", "title": "Processing and Storage"},
+            {"code": "AGE502", "title": "Environmental Engineering"},
+            {"code": "AGE505", "title": ""},
+            {"code": "AGE506", "title": "Professional Engineering Practice"},
+            {"code": "AGE507", "title": "Agricultural Wastes Management Systems"},
+            {"code": "AGE550", "title": "Environmental Impact Assessment"},
+            {"code": "AGE597", "title": "Project I"},
+            {"code": "AGE598", "title": "Project II"}
+          ]
+        },
+        {
+          "code": "CHE",
+          "name": "Department of Chemical Engineering",
+          "courses": [
+            {"code": "CHE222", "title": "Material Science"}
+          ]
+        },
+        {
+          "code": "CPE",
+          "name": "Department of Computer Engineering",
+          "courses": []
+        },
+        {
+          "code": "CVE",
+          "name": "Department of Civil Engineering",
+          "courses": [
+            {"code": "CVE344", "title": "Soil Mechanics"},
+            {"code": "CVE415", "title": ""},
+            {"code": "CVE441", "title": "Metallurgy"}
+          ]
+        },
+        {
+          "code": "EEE",
+          "name": "Department of Electrical/Electronics Engineering",
+          "courses": [
+            {"code": "EEE212", "title": "Electrical Engineering"}
+          ]
+        },
+        {
+          "code": "GME",
+          "name": "Department of Surveying and Geoinformatics",
+          "courses": []
+        },
+        {
+          "code": "IDE",
+          "name": "Department of Industrial Engineering",
+          "courses": []
+        },
+        {
+          "code": "MAR",
+          "name": "Department of Marine Engineering",
+          "courses": []
+        },
+        {
+          "code": "MAT",
+          "name": "Department of Materials and Metallurgical Engineering",
+          "courses": []
+        },
+        {
+          "code": "MCH",
+          "name": "Department of Mechanical Engineering",
+          "courses": []
+        },
+        {
+          "code": "MEE",
+          "name": "Department of Mechanical Engineering",
+          "courses": [
+            {"code": "MEE212", "title": "Engineering Mechanics II"},
+            {"code": "MEE222", "title": "Engineering Drawing II"},
+            {"code": "MEE312", "title": "Mechanics of Machine II"}
+          ]
+        },
+        {
+          "code": "MME",
+          "name": "Department of Materials and Metallurgical Engineering",
+          "courses": []
+        },
+        {
+          "code": "MRE",
+          "name": "Department of Marine Engineering",
+          "courses": []
+        },
+        {
+          "code": "MTE",
+          "name": "Department of Mechatronics Engineering",
+          "courses": []
+        },
+        {
+          "code": "PEE",
+          "name": "Department of Petroleum Engineering",
+          "courses": []
+        },
+        {
+          "code": "PRE",
+          "name": "Department of Production Engineering",
+          "courses": [
+            {"code": "PRE212", "title": "Manufacturing Technology II"}
+          ]
+        },
+        {
+          "code": "STE",
+          "name": "Department of Structural Engineering",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "ENV",
+      "name": "Faculty of Environmental Sciences",
+      "departments": [
+        {
+          "code": "ARC",
+          "name": "Department of Architecture",
+          "courses": []
+        },
+        {
+          "code": "BLD",
+          "name": "Department of Building",
+          "courses": []
+        },
+        {
+          "code": "ESV",
+          "name": "Department of Estate Management",
+          "courses": []
+        },
+        {
+          "code": "GEO",
+          "name": "Department of Geomatics",
+          "courses": []
+        },
+        {
+          "code": "QSV",
+          "name": "Department of Quantity Surveying",
+          "courses": []
+        },
+        {
+          "code": "URP",
+          "name": "Department of Urban and Regional Planning",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "FCETA",
+      "name": "Federal College of Education (Technical) Asaba",
+      "departments": []
+    },
+    {
+      "code": "FCETAL",
+      "name": "Federal College of Education (Technical) Akoka",
+      "departments": []
+    },
+    {
+      "code": "FLC",
+      "name": "French Language Centre",
+      "departments": []
+    },
+    {
+      "code": "GST",
+      "name": "Office for General Studies",
+      "departments": [
+        {
+          "code": "GST",
+          "name": "General Studies",
+          "courses": [
+            {"code": "GST111", "title": "Communication in English"},
+            {"code": "GST112", "title": "Nigerian Peoples and Culture"},
+            {"code": "GST212", "title": "History and Philosophy of Science and Technology"}
+          ]
+        }
+      ]
+    },
+    {
+      "code": "ICH",
+      "name": "Institute of Child Health",
+      "departments": []
+    },
+    {
+      "code": "ICSAN",
+      "name": "Institute of Chartered Secretaries and Administrators of Nigeria",
+      "departments": []
+    },
+    {
+      "code": "INE",
+      "name": "Institute of Education",
+      "departments": []
+    },
+    {
+      "code": "INP",
+      "name": "Institute of Public Administration and Health Services Management",
+      "departments": []
+    },
+    {
+      "code": "JUPEB",
+      "name": "Joint Universities Preliminary Examinations Board",
+      "departments": []
+    },
+    {
+      "code": "JUPEB_AK",
+      "name": "Joint Universities Preliminary Examinations Board (FCET AKOKA)",
+      "departments": []
+    },
+    {
+      "code": "LAW",
+      "name": "Faculty of Law",
+      "departments": [
+        {
+          "code": "LAW",
+          "name": "Department of Law",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "LSC",
+      "name": "Faculty of Life Sciences",
+      "departments": [
+        {
+          "code": "AEB",
+          "name": "Department of Animal and Environmental Biology",
+          "courses": [
+            {"code": "BIO101", "title": "General Biology"}
+          ]
+        },
+        {
+          "code": "BCH",
+          "name": "Department of Biochemistry",
+          "courses": []
+        },
+        {
+          "code": "BOT",
+          "name": "Department of Botany",
+          "courses": []
+        },
+        {
+          "code": "EMT",
+          "name": "Department of Environmental Management and Toxicology",
+          "courses": []
+        },
+        {
+          "code": "MCB",
+          "name": "Department of Microbiology",
+          "courses": []
+        },
+        {
+          "code": "OPT",
+          "name": "Department of Optometry",
+          "courses": []
+        },
+        {
+          "code": "PBB",
+          "name": "Department of Plant Biology and Biotechnology",
+          "courses": []
+        },
+        {
+          "code": "SLT",
+          "name": "Department of Science Laboratory Technology",
+          "courses": []
+        },
+        {
+          "code": "ZOO",
+          "name": "Department of Zoology",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "MCS",
+      "name": "Faculty of Media and Communication Studies",
+      "departments": []
+    },
+    {
+      "code": "MED",
+      "name": "Faculty of Medicine",
+      "departments": [
+        {
+          "code": "ANT",
+          "name": "Department of Anatomy",
+          "courses": []
+        },
+        {
+          "code": "ANY",
+          "name": "Department of Anaesthesiology",
+          "courses": []
+        },
+        {
+          "code": "CHH",
+          "name": "Department of Child Health",
+          "courses": []
+        },
+        {
+          "code": "COH",
+          "name": "Department of Public Health and Community Medicine",
+          "courses": []
+        },
+        {
+          "code": "HAE",
+          "name": "Department of Haematology",
+          "courses": []
+        },
+        {
+          "code": "MED",
+          "name": "Department of Medicine",
+          "courses": []
+        },
+        {
+          "code": "MEH",
+          "name": "Department of Mental Health",
+          "courses": []
+        },
+        {
+          "code": "PHS",
+          "name": "Department of Physiology",
+          "courses": []
+        },
+        {
+          "code": "SUR",
+          "name": "Department of Surgery",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "MGS",
+      "name": "Faculty of Management Sciences",
+      "departments": [
+        {
+          "code": "ACT",
+          "name": "Department of Actuarial Science",
+          "courses": []
+        },
+        {
+          "code": "BFN",
+          "name": "Department of Banking and Finance",
+          "courses": [
+            {"code": "BFN121", "title": "Quantitative Methods II"}
+          ]
+        },
+        {
+          "code": "BUS",
+          "name": "Department of Business Administration",
+          "courses": [
+            {"code": "BUS211", "title": "Principles of Management"},
+            {"code": "BUS212", "title": "Business Statistics I"}
+          ]
+        },
+        {
+          "code": "ECO",
+          "name": "Department of Economics",
+          "courses": [
+            {"code": "ECO121", "title": "Introduction to Economics I"},
+            {"code": "ECO211", "title": "Micro Economics"}
+          ]
+        },
+        {
+          "code": "HRM",
+          "name": "Department of Human Resource Management",
+          "courses": []
+        },
+        {
+          "code": "INS",
+          "name": "Department of Insurance",
+          "courses": []
+        },
+        {
+          "code": "MKT",
+          "name": "Department of Marketing",
+          "courses": []
+        },
+        {
+          "code": "TAX",
+          "name": "Department of Taxation",
+          "courses": []
+        },
+        {
+          "code": "ENT",
+          "name": "Department of Entrepreneurship",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "NILS",
+      "name": "National Institute for Legislative and Democratic Studies",
+      "departments": []
+    },
+    {
+      "code": "NSC",
+      "name": "Faculty of Nursing Sciences",
+      "departments": [
+        {
+          "code": "NSC",
+          "name": "Department of Nursing Science",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "PESRC",
+      "name": "Petroleum and Energy System Research Centre",
+      "departments": []
+    },
+    {
+      "code": "PHA",
+      "name": "Faculty of Pharmacy",
+      "departments": [
+        {
+          "code": "PHA",
+          "name": "Department of Pharmacy",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "PSC",
+      "name": "Faculty of Physical Sciences",
+      "departments": [
+        {
+          "code": "CHM",
+          "name": "Department of Chemistry",
+          "courses": [
+            {"code": "CHM101", "title": "General Chemistry I"},
+            {"code": "CHM102", "title": "General Chemistry II"},
+            {"code": "CHM107", "title": "General Practical Chemistry I"},
+            {"code": "CHM108", "title": "General Practical Chemistry II"},
+            {"code": "CHM111", "title": "General Chemistry I"},
+            {"code": "CHM113", "title": "Organic Chemistry I"},
+            {"code": "CHM122", "title": "General Chemistry II"},
+            {"code": "CHM124", "title": "Organic Chemistry II"}
+          ]
+        },
+        {
+          "code": "CSC",
+          "name": "Department of Computer Science",
+          "courses": [
+            {"code": "CSC101", "title": "Introduction to Computing"}
+          ]
+        },
+        {
+          "code": "GLY",
+          "name": "Department of Geology",
+          "courses": []
+        },
+        {
+          "code": "MTH",
+          "name": "Department of Mathematics",
+          "courses": [
+            {"code": "MTH101", "title": "Elementary Mathematics I"},
+            {"code": "MTH110", "title": "Algebra and Trigonometry"},
+            {"code": "MTH112", "title": ""}
+          ]
+        },
+        {
+          "code": "PHY",
+          "name": "Department of Physics",
+          "courses": [
+            {"code": "PHY101", "title": "General Physics I"},
+            {"code": "PHY109", "title": "Practical Physics"}
+          ]
+        },
+        {
+          "code": "STA",
+          "name": "Department of Statistics",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "SAGMS",
+      "name": "St. Albert The Great Major Seminary",
+      "departments": []
+    },
+    {
+      "code": "SAS",
+      "name": "All Saints Ekpoma",
+      "departments": []
+    },
+    {
+      "code": "SCN",
+      "name": "School of Science, PTI Campus",
+      "departments": []
+    },
+    {
+      "code": "SLT",
+      "name": "Faculty of Science Laboratory Technology",
+      "departments": [
+        {
+          "code": "SLT",
+          "name": "Department of Science Laboratory Technology",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "SPESSE",
+      "name": "Centre for Sustainable Procurement, Environmental and Social Standards Enhancement",
+      "departments": []
+    },
+    {
+      "code": "SSC",
+      "name": "Faculty of Social Sciences",
+      "departments": [
+        {
+          "code": "ECO",
+          "name": "Department of Economics",
+          "courses": [
+            {"code": "ECO121", "title": "Introduction to Economics I"},
+            {"code": "ECO211", "title": "Micro Economics"}
+          ]
+        },
+        {
+          "code": "GEO",
+          "name": "Department of Geography and Disaster Risk Management",
+          "courses": []
+        },
+        {
+          "code": "LIS",
+          "name": "Department of Library and Information Science",
+          "courses": []
+        },
+        {
+          "code": "PCR",
+          "name": "Department of Peace Studies and Conflict Resolution",
+          "courses": []
+        },
+        {
+          "code": "POL",
+          "name": "Department of Political Science",
+          "courses": []
+        },
+        {
+          "code": "PUB",
+          "name": "Department of Public Administration",
+          "courses": []
+        },
+        {
+          "code": "SAA",
+          "name": "Department of Sociology and Anthropology",
+          "courses": []
+        },
+        {
+          "code": "SWK",
+          "name": "Department of Social Work",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "UBITS",
+      "name": "Office for University of Benin Industrial Training and Graded Reports Scheme",
+      "departments": []
+    },
+    {
+      "code": "VNM",
+      "name": "Faculty of Veterinary Medicine",
+      "departments": [
+        {
+          "code": "VNM",
+          "name": "Department of Veterinary Medicine",
+          "courses": []
+        }
+      ]
+    },
+    {
+      "code": "VTE",
+      "name": "Faculty of Vocational and Technical Education",
+      "departments": []
+    }
+  ]
+}

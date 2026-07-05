@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="min-h-screen bg-slate-50 p-6 lg:p-10 max-w-6xl mx-auto">
+    <header class="flex items-center justify-between mb-12">
+        <div class="flex items-center gap-6">
+            <a href="{{ url_for('superadmin_dashboard') }}" class="p-4 bg-white rounded-2xl shadow-lg border border-slate-100 text-slate-400 hover:text-secondary transition-all">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </a>
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 uppercase tracking-tight">Deployment Master Console</h1>
+                <p class="text-slate-500 font-medium">Control Vercel environment variables and project state.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="px-4 py-2 bg-red-50 text-red-700 rounded-xl text-[10px] font-black uppercase tracking-widest border border-red-100">Superadmin Only</span>
+        </div>
+    </header>
+
+    <div class="p-6 bg-amber-50 rounded-[2rem] border border-amber-100 mb-8 flex items-center gap-4">
+        <div class="p-3 bg-white rounded-xl text-amber-600 shadow-sm">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        <div>
+            <h4 class="text-sm font-black text-amber-900 uppercase tracking-tight">Optional Feature</h4>
+            <p class="text-xs text-amber-700 font-medium">Vercel API integration is optional. It is only required if you want to manage deployment variables directly from this portal.</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Token & Project Configuration -->
+        <div class="lg:col-span-1 space-y-8">
+            <section class="luxury-card p-8 rounded-[2.5rem] bg-white shadow-2xl border border-slate-100">
+                <h3 class="text-lg font-bold mb-6">Connection Config</h3>
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Ensure your <strong>Vercel API Token</strong> and <strong>Project ID</strong> are set in <a href="{{ url_for('superadmin_dashboard') }}" class="text-secondary font-bold underline">Developer Settings</a>.
+                    </p>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <span class="text-[9px] font-black text-slate-400 uppercase">Current Project ID</span>
+                        <div class="font-mono text-sm font-bold text-slate-800 mt-1 truncate">{{ g.user.vercel_project_id or 'NOT_SET' }}</div>
+                    </div>
+                    <button onclick="fetchVercelEnv()" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg">
+                        Fetch Current Envs
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Environment Variable Management -->
+        <div class="lg:col-span-2 space-y-8">
+            <section class="luxury-card p-8 rounded-[2.5rem] bg-white shadow-2xl border border-slate-100 min-h-[500px]">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-xl font-bold">Project Environment Variables</h3>
+                    <button onclick="showAddEnvModal()" class="px-4 py-2 bg-secondary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">
+                        Add New Variable
+                    </button>
+                </div>
+
+                <div id="env-list-container" class="space-y-3">
+                    <div class="p-12 text-center text-slate-400 italic">Fetch variables to begin management.</div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Env Modal -->
+<div id="env-modal" class="fixed inset-0 z-[1100] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm">
+    <div class="luxury-card max-w-md w-full p-10 rounded-[3rem]">
+        <h3 class="text-2xl font-extrabold text-slate-900 mb-8" id="env-modal-title">Add Environment Variable</h3>
+        <div class="space-y-6">
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Key (Variable Name)</label>
+                <input type="text" id="env-key" placeholder="e.g. DATABASE_URL" class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm">
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Value</label>
+                <textarea id="env-value" rows="3" placeholder="Paste value here..." class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm"></textarea>
+            </div>
+            <div class="flex gap-4 pt-4">
+                <button onclick="closeEnvModal()" class="flex-1 px-8 py-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-sm">Cancel</button>
+                <button onclick="saveEnv()" class="flex-1 btn-primary px-8 py-4 rounded-xl font-bold text-sm shadow-xl">Apply to Vercel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function fetchVercelEnv() {
+    const container = document.getElementById('env-list-container');
+    container.innerHTML = '<div class="p-12 text-center text-slate-400 animate-pulse">Communicating with Vercel API Hub...</div>';
+
+    try {
+        const resp = await fetch('/superadmin/vercel/envs');
+        const data = await resp.json();
+
+        if (!data.success) {
+            container.innerHTML = `<div class="p-12 text-center text-red-500 font-bold uppercase tracking-widest text-xs">Error: ${data.message}</div>`;
+            return;
+        }
+
+        if (data.envs.length === 0) {
+            container.innerHTML = '<div class="p-12 text-center text-slate-400 italic">No environment variables found for this project.</div>';
+            return;
+        }
+
+        container.innerHTML = data.envs.map(env => `
+            <div class="group flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-200 hover:border-secondary transition-all">
+                <div class="min-w-0 pr-4">
+                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-tighter mb-1">${env.type || 'SECRET'}</div>
+                    <div class="font-mono text-sm font-bold text-slate-800 truncate">${env.key}</div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="deleteEnv('${env.id}', '${env.key}')" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        showToast('Network error fetching environments', 'error');
+    }
+}
+
+function showAddEnvModal() {
+    document.getElementById('env-key').value = '';
+    document.getElementById('env-value').value = '';
+    document.getElementById('env-modal').classList.remove('hidden');
+}
+
+function closeEnvModal() {
+    document.getElementById('env-modal').classList.add('hidden');
+}
+
+async function saveEnv() {
+    const key = document.getElementById('env-key').value;
+    const value = document.getElementById('env-value').value;
+
+    if (!key || !value) {
+        showToast('Key and Value are required', 'warning');
+        return;
+    }
+
+    try {
+        const resp = await fetch('/superadmin/vercel/envs', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ key, value })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            showToast('Variable applied. Vercel deployment update triggered.', 'success');
+            closeEnvModal();
+            fetchVercelEnv();
+        } else {
+            showToast(data.message || 'Update failed', 'error');
+        }
+    } catch (err) {
+        showToast('Network error during save', 'error');
+    }
+}
+
+async function deleteEnv(envId, key) {
+    const confirmed = await showConfirm('Remove Deployment Variable', `Are you sure you want to delete ${key}? This will affect your next Vercel deployment.`);
+    if (!confirmed) return;
+
+    try {
+        const resp = await fetch(`/superadmin/vercel/envs/${envId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+        const data = await resp.json();
+        if (data.success) {
+            showToast('Variable deleted successfully', 'success');
+            fetchVercelEnv();
+        } else {
+            showToast(data.message || 'Deletion failed', 'error');
+        }
+    } catch (err) {
+        showToast('Network error during deletion', 'error');
+    }
+}
+</script>
+{% endblock %}

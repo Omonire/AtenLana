@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% block body %}
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .filters {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+  }
+
+  .filter-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    align-items: end;
+  }
+
+  @media (min-width: 768px) {
+    .filter-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .filter-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .filter-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .btn-apply {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .btn-export {
+    background: var(--accent-gold);
+    color: var(--text);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 1rem;
+  }
+
+  .students-table {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .table-header {
+    background: var(--primary);
+    color: white;
+    padding: 1rem;
+    font-weight: 600;
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (min-width: 640px) {
+    .table-row {
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+  }
+
+  .table-row:last-child {
+    border-bottom: none;
+  }
+
+  .table-row:hover {
+    background: #f8fafc;
+  }
+
+  .student-details {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: none;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .detail-label {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .detail-value {
+    color: var(--text-muted);
+  }
+</style>
+
+<div class="card">
+  <h2>Attendance Statistics</h2>
+
+  <div class="filters">
+    <form method="get" class="filter-row">
+      <div class="filter-group" style="position: relative;">
+        <label class="filter-label">Search Student</label>
+        <input type="text" name="search" id="search-input" value="{{ search }}" placeholder="Name or University ID" class="filter-input" autocomplete="off">
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Filter Type</label>
+        <select name="filter" class="filter-input">
+          <option value="daily" {% if filter_type == 'daily' %}selected{% endif %}>Daily</option>
+          <option value="monthly" {% if filter_type == 'monthly' %}selected{% endif %}>Monthly</option>
+          <option value="yearly" {% if filter_type == 'yearly' %}selected{% endif %}>Yearly</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Start Date</label>
+        <input type="date" name="start" value="{{ start_date }}" class="filter-input">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">End Date</label>
+        <input type="date" name="end" value="{{ end_date }}" class="filter-input">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Sort By</label>
+        <select name="sort" class="filter-input">
+          <option value="attendance" {% if sort_by == 'attendance' %}selected{% endif %}>Attendance (High to Low)</option>
+          <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name (A-Z)</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-apply">Apply Filters</button>
+      <a href="{{ url_for('export_statistics', filter=filter_type, start=start_date, end=end_date, sort=sort_by, search=search) }}" class="btn-export">Export to Excel</a>
+    </form>
+  </div>
+
+  <div class="stats-grid">
+    {% for stat in stats %}
+      <div class="stat-card">
+        <div class="stat-number">{{ stat['count'] }}</div>
+        <div class="stat-label">
+          {% if filter_type == 'daily' %}
+            {{ stat['date'] }}
+          {% elif filter_type == 'monthly' %}
+            {{ stat['month'] }}
+          {% else %}
+            {{ stat['year'] }}
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="students-table overflow-x-auto">
+    <div class="table-header font-black uppercase tracking-widest text-xs flex justify-between">
+      <span>Student Analytics</span>
+      <span class="opacity-50 hidden sm:inline">Tap row for details</span>
+    </div>
+    {% for student in students %}
+      <div class="table-row hover:bg-slate-50 transition-colors" onclick="showStudentDetails({{ student['id'] }}, '{{ student['first_name'] }}', '{{ student['last_name'] }}', '{{ student['ub_id'] or '' }}', '{{ student['matric'] or '' }}', {{ student['present'] }})" style="cursor: pointer;">
+        <div class="font-bold text-slate-800">{{ student['first_name'] }} {{ student['last_name'] }}</div>
+        <div class="text-xs font-mono text-secondary sm:text-sm">{{ student['ub_id'] or 'N/A' }}</div>
+        <div class="col-span-2 sm:col-span-1 text-right sm:text-left"><span class="sm:hidden text-[10px] text-slate-400 uppercase mr-2">Attended:</span><strong>{{ student['present'] }}</strong></div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div id="student-details" class="student-details">
+    <h3 id="student-name">Student Details</h3>
+    <div id="details-content">
+      <!-- Details will be populated by JavaScript -->
+    </div>
+  </div>
+</div>
+
+<script>
+function showStudentDetails(id, firstName, lastName, ubId, matric, attendance) {
+  const detailsDiv = document.getElementById('student-details');
+  const nameDiv = document.getElementById('student-name');
+  const contentDiv = document.getElementById('details-content');
+
+  nameDiv.textContent = `${firstName} ${lastName}`;
+  contentDiv.innerHTML = `
+    <div class="detail-row">
+      <span class="detail-label">University ID:</span>
+      <span class="detail-value">${ubId || 'N/A'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Matric Number:</span>
+      <span class="detail-value">${matric || 'N/A'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Total Attendance:</span>
+      <span class="detail-value">${attendance}</span>
+    </div>
+  `;
+
+  detailsDiv.style.display = 'block';
+  detailsDiv.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+{% endblock %}

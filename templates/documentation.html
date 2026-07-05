@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="min-h-screen bg-slate-50 p-6 lg:p-10 max-w-5xl mx-auto">
+    <header class="flex items-center justify-between mb-12">
+        <div class="flex items-center gap-6">
+            <a href="{{ url_for('superadmin_dashboard') }}" class="p-4 bg-white rounded-2xl shadow-lg border border-slate-100 text-slate-400 hover:text-secondary transition-all">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </a>
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 uppercase tracking-tight">Documentation Workspace</h1>
+                <p class="text-slate-500 font-medium">Compose and synchronize technical docs to GitHub.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button onclick="syncToGitHub()" id="sync-btn" class="px-6 py-3 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-4.51-2-7-2"/></svg>
+                Sync to GitHub
+            </button>
+        </div>
+    </header>
+
+    <div class="luxury-card p-8 rounded-[2.5rem] space-y-8 bg-white shadow-2xl border border-slate-100">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Repository Name</label>
+                <input type="text" id="repo-name" value="atendex-documentation" placeholder="e.g. atendex-portal-docs" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-bold outline-none">
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">File Path</label>
+                <input type="text" id="file-path" value="DOCS.md" placeholder="e.g. docs/README.md" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-bold outline-none">
+            </div>
+        </div>
+
+        <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Markdown Content</label>
+            <textarea id="doc-content" rows="15" class="w-full px-6 py-5 rounded-[2rem] bg-slate-50 border border-slate-200 text-sm font-mono leading-relaxed outline-none resize-none" placeholder="# Project Documentation..."></textarea>
+        </div>
+
+        <div id="sync-log" class="hidden p-6 bg-slate-900 rounded-2xl border border-slate-800 space-y-2">
+            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Sync Operation Log</h4>
+            <div id="log-entries" class="text-xs font-mono text-emerald-400 space-y-1"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function syncToGitHub() {
+    const btn = document.getElementById('sync-btn');
+    const log = document.getElementById('sync-log');
+    const entries = document.getElementById('log-entries');
+
+    const repo = document.getElementById('repo-name').value;
+    const path = document.getElementById('file-path').value;
+    const content = document.getElementById('doc-content').value;
+
+    if (!repo || !content) {
+        showToast('Repository name and content are required', 'warning');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = 'Syncing...';
+    log.classList.remove('hidden');
+    entries.innerHTML = '<div class="text-slate-400 animate-pulse">Initializing connection to GitHub API...</div>';
+
+    try {
+        const resp = await fetch('/admin/github/sync', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ repo, path, content })
+        });
+
+        const data = await resp.json();
+
+        entries.innerHTML = '';
+        if (data.logs) {
+            data.logs.forEach(l => {
+                const div = document.createElement('div');
+                div.className = l.type === 'error' ? 'text-red-400' : 'text-emerald-400';
+                div.textContent = '> ' + l.msg;
+                entries.appendChild(div);
+            });
+        }
+
+        if (data.success) {
+            showToast('Documentation synced successfully', 'success');
+        } else {
+            showToast(data.message || 'Sync failed', 'error');
+        }
+    } catch (err) {
+        showToast('Network error during sync', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Sync to GitHub';
+    }
+}
+</script>
+{% endblock %}
