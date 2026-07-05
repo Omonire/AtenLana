@@ -1,4 +1,4 @@
-# TODO - Atendex-Grid fixes
+# TODO - AtenLana-Grid fixes
 
 - [ ] Implement Vercel routing exclusions for `/_vercel/insights/*` and `/_vercel/speed-insights/*` in `vercel.json`
 - [x] Implement Vercel routing exclusions for `/_vercel/insights/*` and `/_vercel/speed-insights/*` in `vercel.json`

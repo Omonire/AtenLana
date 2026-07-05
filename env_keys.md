@@ -1,4 +1,4 @@
-# AtendeX Grid - Environment Variables (Keys)
+# AtenLana Grid - Environment Variables (Keys)
 
 ## Compulsory / must-have (for the app to function correctly)
 1. **`DATABASE_URL`**
@@ -35,7 +35,7 @@
 
 - **`UPLOAD_FOLDER`**
   - Overrides where runtime uploads are stored.
-  - If empty, code defaults to `/tmp/atendex_uploads` in production and `static/img` otherwise.
+  - If empty, code defaults to `/tmp/atenlana_uploads` in production and `static/img` otherwise.
 
 - **`SUPERADMIN_SEED_USER`** / **`SUPERADMIN_SEED_PASS`** / **`SUPERADMIN_SEED_NAME`**
   - Optional bootstrap for creating an extra admin/super-admin from env variables when the DB has no admin yet.

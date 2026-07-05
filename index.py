@@ -1,5 +1,5 @@
 """
-AtendeXportal - Proof of Concept
+AtenLanaportal - Proof of Concept
 Single-file Flask app implementing Lecturer/Student/SuperAdmin roles, token-based attendance with
 location checks, grace period logic, device/IP verification, exports (Excel/PDF fallback), and inline HTML/CSS/JS.
 
@@ -89,7 +89,7 @@ IS_PROD = os.environ.get('FLASK_ENV') == 'production'
 
 DATABASE_URL = get_database_url()
 # Vercel Protocol: Map ephemeral storage to /tmp for runtime operations
-UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/tmp/atendex_uploads' if IS_PROD else 'static/img')
+UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/tmp/atenlana_uploads' if IS_PROD else 'static/img')
 if not os.path.exists(UPLOAD_FOLDER):
     try:
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -104,13 +104,13 @@ DEFAULT_GRACE_MIN = 5
 DEFAULT_RADIUS_M = 10  # meters
 
 # System Config Lattice: Built-in defaults with environment overriding
-SECRET_KEY = os.environ.get('SECRET_KEY', "atendex-protocol-key-9988776655")
+SECRET_KEY = os.environ.get('SECRET_KEY', "atenlana-protocol-key-9988776655")
 SUPERADMIN_PASS = os.environ.get('SUPERADMIN_PASS', '1234')
 ADMIN_PASS = os.environ.get('ADMIN_PASS', 'admin123')
 DEFAULT_PASS = "password"
 
-FOUNDER_BIO = os.environ.get('FOUNDER_BIO', "CEO & Founder of Atendex Grid Systems. Visionary Architect committed to high-fidelity presence validation.")
-FOUNDER_EMAIL = os.environ.get('FOUNDER_EMAIL', 'omonire@atendex.com')
+FOUNDER_BIO = os.environ.get('FOUNDER_BIO', "CEO & Founder of AtenLana Grid Systems. Visionary Architect committed to high-fidelity presence validation.")
+FOUNDER_EMAIL = os.environ.get('FOUNDER_EMAIL', 'omonire@atenlana.com')
 FOUNDER_WHATSAPP = os.environ.get('FOUNDER_WHATSAPP', '+2348000000000')
 
 OMONIRE_BIO = FOUNDER_BIO
@@ -121,7 +121,7 @@ app = Flask(__name__,
             static_folder=os.path.join(BASE_DIR, 'static'),
             template_folder=os.path.join(BASE_DIR, 'templates'))
 
-print(f"Initializing AtendeX Portal (Base Dir: {BASE_DIR})")
+print(f"Initializing AtenLana Portal (Base Dir: {BASE_DIR})")
 
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
@@ -209,7 +209,7 @@ Your attendance has been confirmed for {course_name}.
 
 Keep attending to earn rewards and maintain your streak!
 
-- AtendeX Portal""")
+- AtenLana Portal""")
         msg['Subject'] = f"Attendance Confirmed - {course_name}"
         msg['From'] = smtp_user
         msg['To'] = student_email
@@ -239,9 +239,9 @@ A new attendance session has been created by {lecturer_name}.
 • Session Code: {token}
 • Status: Active
 
-Open your AtendeX Portal dashboard and enter this code to mark your presence.
+Open your AtenLana Portal dashboard and enter this code to mark your presence.
 
-- AtendeX Portal""")
+- AtenLana Portal""")
         msg['Subject'] = f"New Session: {course_name} - Code: {token}"
         msg['From'] = smtp_user
         msg['To'] = student_email
@@ -679,6 +679,7 @@ def generate_token(length=8):
 
 # Use helpers for location and device fingerprinting
 from location import haversine, geocode
+from solana_client import mint_token, mint_badge, record_attendance, get_assets
 from auth_helpers import device_fp
 
 
@@ -2204,6 +2205,15 @@ def export_session(session_id):
             return 'PDF export requires "fpdf" python package. Install it or export Excel/CSV instead.'
     return 'Unsupported export type', 400
 
+@app.route('/api/wallet/assets')
+def api_wallet_assets():
+    if not g.user:
+        return jsonify({'tokens': [], 'nfts': []})
+    wallet = g.user.get('wallet_address')
+    if not wallet:
+        return jsonify({'tokens': [], 'nfts': []})
+    return jsonify(get_assets(wallet))
+
 # Student dashboard - shows current sessions and ability to mark attendance
 @app.route('/student')
 def student_dashboard():
@@ -2439,6 +2449,21 @@ def mark_attendance():
         send_attendance_receipt(g.user.get('email'), f"{g.user['first_name']} {g.user['last_name']}", s.get('course_name', 'Class'), timestamp, s['id'])
     except Exception:
         pass
+
+    # Solana on-chain integration
+    wallet = g.user.get('wallet_address')
+    if wallet:
+        try:
+            mint_token(wallet, 10)
+            record_attendance(g.user['id'], s['id'], timestamp, wallet)
+            total_att = query_db("SELECT COUNT(*) as c FROM attendance WHERE student_id = ?", (g.user['id'],), one=True)['c']
+            milestone = None
+            if total_att in [10, 25, 50, 100]:
+                tiers = {10: 'bronze', 25: 'silver', 50: 'gold', 100: 'diamond'}
+                mint_badge(wallet, tiers[total_att])
+                milestone = tiers[total_att]
+        except Exception:
+            app.logger.exception("Solana integration error")
 
     payload = {'success': True, 'message': message, 'status': status, 'grace_seconds': grace_seconds, 'distance_m': info.get('distance_m'), 'points_earned': points_earned, 'streak': new_streak}
     return jsonify(payload)
@@ -2934,22 +2959,6 @@ def api_students_search():
                         ('%' + q + '%', '%' + q + '%', '%' + q + '%', '%' + q + '%'))
     results = [{'id': s['id'], 'name': f"{s['first_name']} {s['last_name']}", 'ub_id': s['ub_id']} for s in students]
     return jsonify(results)
-
-
-# Simple dashboard landing routes
-@app.route('/dashboard/lecturer')
-def dash_lecturer():
-    return render_template('dash_lecturer.html')
-
-
-@app.route('/dashboard/student')
-def dash_student():
-    return render_template('dash_student.html')
-
-
-@app.route('/dashboard/admin')
-def dash_admin():
-    return render_template('dash_admin.html')
 
 
 @app.route('/superadmin')
@@ -3577,7 +3586,7 @@ def github_sync_doc():
         f_url = f"https://api.github.com/repos/{f_repo}/contents/{path}"
         f_resp = requests.get(f_url, headers=headers)
         sha = f_resp.json()['sha'] if f_resp.status_code == 200 else None
-        c_data = {"message": "Update docs via AtendeX", "content": base64.b64encode(content.encode()).decode(), "branch": "main"}
+        c_data = {"message": "Update docs via AtenLana", "content": base64.b64encode(content.encode()).decode(), "branch": "main"}
         if sha: c_data["sha"] = sha
         p_resp = requests.put(f_url, headers=headers, json=c_data)
         return jsonify({'success': True}) if p_resp.status_code in [200, 201] else jsonify({'success': False, 'message': 'Push failed'})

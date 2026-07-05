@@ -1,4 +1,4 @@
-"""Smoke test script for AtendeXportal PoC.
+"""Smoke test script for AtenLanaportal PoC.
 - Logs in as lecturer, creates a session, logs in as student, marks attendance.
 - Uses requests.Session to preserve cookies.
 """

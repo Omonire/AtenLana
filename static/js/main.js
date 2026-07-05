@@ -1,4 +1,4 @@
-// Main JS for AtendeXportal PoC
+// Main JS for AtenLanaportal PoC
 function showToast(msg, t='info'){
   const c = document.getElementById('toast-container');
   const d = document.createElement('div'); d.className='toast'; d.textContent = msg; c.appendChild(d);

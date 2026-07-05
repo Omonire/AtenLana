@@ -47,10 +47,6 @@
                 <button id="toggle-security-btn" class="px-4 py-2 {{ 'bg-red-600' if security_mode == 'on' else 'bg-slate-600' }} text-white rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
                     <span id="security-btn-text">Toggle Security</span>
                 </button>
-                <div class="hidden sm:flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-xl border border-green-100">
-                    <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="text-[10px] font-black uppercase tracking-widest">Live</span>
-                </div>
             </div>
         </header>
 
@@ -309,6 +305,7 @@
                 <button class="w-full btn-admin text-sm py-2.5 rounded-xl">Upload & Set Background</button>
             </form>
         </section>
+    </div>
 
     </main>
 </div>
@@ -363,14 +360,11 @@
 // Role Management
 const roleModal = document.getElementById('role-modal');
 const roleSelect = document.getElementById('role-select');
-const facWrap = document.getElementById('faculty-link-wrap');
-const deptWrap = document.getElementById('dept-link-wrap');
 
 function handleEditRole(userId, name, currentRole) {
     document.getElementById('role-target-user-id').value = userId;
     document.getElementById('role-user-display').textContent = `Updating role for ${name}`;
     roleSelect.value = currentRole;
-    updateModalFields();
     roleModal.classList.remove('hidden');
 }
 
@@ -576,8 +570,6 @@ document.getElementById('toggle-security-btn').addEventListener('click', async (
 
 async function saveDevSettings() {
     const ghToken = document.getElementById('github-token').value;
-    const vToken = document.getElementById('vercel-token')?.value || null;
-    const vProjectId = document.getElementById('vercel-project-id')?.value || null;
 
     const resp = await fetch('/admin/developer-settings', {
         method: 'POST',
@@ -586,9 +578,7 @@ async function saveDevSettings() {
             'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
         },
         body: JSON.stringify({
-            github_token: ghToken,
-            vercel_token: vToken,
-            vercel_project_id: vProjectId
+            github_token: ghToken
         })
     });
     const data = await resp.json();

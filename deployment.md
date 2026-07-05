@@ -1,9 +1,9 @@
-# AtendeX-Grid Deployment Guide // Vercel Protocol
+# AtenLana-Grid Deployment Guide // Vercel Protocol
 > **"Leave No One Behind" Strategy**
 > *Ensuring absolute modular integrity across the Vercel serverless lattice.*
 
 ## [0x01] Introduction
-This guide outlines the mandatory steps to deploy the **AtendeX-Grid** ecosystem to Vercel. To maintain the "Zero-Proxy" integrity of the grid, the deployment must ensure that every functional module—from spatial kernels to identity helpers—is correctly bundled and accessible to the serverless entry point.
+This guide outlines the mandatory steps to deploy the **AtenLana-Grid** ecosystem to Vercel. To maintain the "Zero-Proxy" integrity of the grid, the deployment must ensure that every functional module—from spatial kernels to identity helpers—is correctly bundled and accessible to the serverless entry point.
 
 ## [0x02] The "Zero-Loss" File Architecture
 Vercel's Python runtime requires that all local modules imported by the application are part of the deployment bundle. To prevent `ModuleNotFoundError`, the project has been structured to ensure "no one is left behind."
@@ -55,4 +55,4 @@ Once the grid is active, verify the following nodes:
 3. **Identity Check**: Ensure the default identity clusters (Admin, Founder) are seeded in the Identity Vault.
 
 ---
-© 2026 AtendeX Technology. *Where Integrity Meets Attendance.*
+© 2026 AtenLana Technology. *Where Integrity Meets Attendance.*

@@ -1,13 +1,13 @@
-# AtendeX-Grid Ecosystem | The Knowledge Lattice
+# AtenLana-Grid Ecosystem | The Knowledge Lattice
 > **Designing Integrity based Solutions**
 > *Where Integrity Meets Attendance*
 
-Welcome to the definitive knowledge repository for the **AtendeX-Grid**. This document serves as a high-fidelity guide to the architectural genesis, core validation mechanics, and administrative protocols of the world’s most advanced presence validation ecosystem.
+Welcome to the definitive knowledge repository for the **AtenLana-Grid**. This document serves as a high-fidelity guide to the architectural genesis, core validation mechanics, and administrative protocols of the world’s most advanced presence validation ecosystem.
 
 ---
 
 ## [0x00] Architectural Genesis
-The AtendeX-Grid was engineered to solve the "Identity Paradox" in academic and corporate environments—the gap between physical presence and digital confirmation. Designed by **AtendeX Technology**, the system functions as a decentralized lattice of nodes that synchronize spatial telemetry with institutional identity markers.
+The AtenLana-Grid was engineered to solve the "Identity Paradox" in academic and corporate environments—the gap between physical presence and digital confirmation. Designed by **AtenLana Technology**, the system functions as a decentralized lattice of nodes that synchronize spatial telemetry with institutional identity markers.
 
 ### Core Philosophy
 - **Precision Validation**: Moving beyond "check-ins" to high-fidelity spatial telemetry.
@@ -73,7 +73,7 @@ The **Auto-Update from UNIBEN** engine is a granular scraper designed for server
 ---
 
 ## [0x06] Operational Mottos
-- **AtendeX Technology**: *Designing Integrity based Solutions*
-- **AtendeX-Grid**: *Where Integrity Meets Attendance*
+- **AtenLana Technology**: *Designing Integrity based Solutions*
+- **AtenLana-Grid**: *Where Integrity Meets Attendance*
 
-© 2026 AtendeX Technology. All Rights Reserved. Engineered for the future of institutional attendance.
+© 2026 AtenLana Technology. All Rights Reserved. Engineered for the future of institutional attendance.
