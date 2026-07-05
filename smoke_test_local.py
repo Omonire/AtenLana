@@ -16,7 +16,7 @@ print('Lecturer login:', r.status_code)
 
 
 # Read latest session (token and id)
-con = sqlite3.connect('atendex.db')
+con = sqlite3.connect('atenlana.db')
 con.row_factory = sqlite3.Row
 cur = con.cursor()
 cur.execute('SELECT id, token FROM sessions ORDER BY id DESC LIMIT 1')

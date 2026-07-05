@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to seed sample data into the AtendeX database.
+Script to seed sample data into the AtenLana database.
 Run this script to populate the database with sample users, courses, etc.
 """
 

@@ -323,7 +323,7 @@ async function handleAttendance(token, sessionId = null, sourceBtn = null) {
                   lat: userLat,
                   lon: userLon,
                   accuracy: accuracy,
-                  device_id: window.atendexDeviceId || null
+                  device_id: window.atenlanaDeviceId || null
                 })
             });
 
@@ -423,7 +423,7 @@ async function showCountdownForToken(token, sessionId = null){
         'Content-Type':'application/json',
         'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
       },
-      body: JSON.stringify({token: token ? token.trim() : null, session_id: sessionId, device_id: window.atendexDeviceId || null})
+      body: JSON.stringify({token: token ? token.trim() : null, session_id: sessionId, device_id: window.atenlanaDeviceId || null})
     });
     if(!resp.ok) return;
     const info = await resp.json();
@@ -452,7 +452,7 @@ async function showCountdownForToken(token, sessionId = null){
           'Content-Type':'application/json',
           'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({token: token ? token.trim() : null, session_id: sessionId, device_id: window.atendexDeviceId || null})
+        body: JSON.stringify({token: token ? token.trim() : null, session_id: sessionId, device_id: window.atenlanaDeviceId || null})
       });
       if(!r.ok){ clearInterval(iv); return; }
       const ii = await r.json();

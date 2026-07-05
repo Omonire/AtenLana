@@ -7,7 +7,7 @@
    {% if site_settings.favicon %}
    <link rel="icon" type="image/png" href="{{ site_settings.favicon }}">
    {% endif %}
-  <title>AtendeX Portal | Luxury Attendance Management</title>
+  <title>AtenLana Portal | Luxury Attendance Management</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -319,7 +319,7 @@
             </div>
         </div>
         <div>
-          <span class="text-lg md:text-2xl font-extrabold tracking-tighter text-slate-900 uppercase block leading-none">AtendeX<span class="gradient-text ml-1">Portal</span></span>
+          <span class="text-lg md:text-2xl font-extrabold tracking-tighter text-slate-900 uppercase block leading-none">AtenLana<span class="gradient-text ml-1">Portal</span></span>
           <div class="progress-bar mt-1 rounded-full" style="width: 40px;"></div>
         </div>
       </a>
@@ -550,7 +550,7 @@
             </div>
             <div>
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Designing Integrity based Solutions</span>
-                <span class="text-sm font-extrabold text-slate-600">© 2026 AtendeX Technology</span>
+                <span class="text-sm font-extrabold text-slate-600">© 2026 AtenLana Technology</span>
             </div>
         </div>
 
@@ -576,12 +576,12 @@
 
     // Persistent Device Identifier
     (function() {
-      let deviceId = localStorage.getItem('atendex_device_id');
+      let deviceId = localStorage.getItem('atenlana_device_id');
       if (!deviceId) {
         deviceId = 'dev-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        localStorage.setItem('atendex_device_id', deviceId);
+        localStorage.setItem('atenlana_device_id', deviceId);
       }
-      window.atendexDeviceId = deviceId;
+      window.atenlanaDeviceId = deviceId;
     })();
 
     // Mobile Sidebar Logic
@@ -768,7 +768,7 @@
                 <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold">AT</div>
                 <div class="text-left">
                     <span class="text-[10px] font-extrabold text-slate-600 uppercase tracking-tighter block">The Visionaries</span>
-                    <span class="text-sm font-bold text-slate-900">ATENDEX TEAM</span>
+                    <span class="text-sm font-bold text-slate-900">ATENLANA TEAM</span>
                     <span class="text-[9px] font-medium text-slate-500 block uppercase">MEET THE COLLECTIVE</span>
                 </div>
               </a>`;

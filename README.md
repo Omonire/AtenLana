@@ -1,6 +1,6 @@
-# ░▒▓ ATENDEX GRID SYSTEMS ▓▒░
+# ░▒▓ ATENLANA GRID SYSTEMS ▓▒░
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=24&pause=1000&color=7C3AED&center=true&vCenter=true&width=500&lines=NODE_ID:+ATENDEX-PORTAL;IDENTITY+VALIDATION+KERNEL;ESTABLISHING+SPATIAL+LATTICE;GRID+STATUS:+ACTIVE" alt="System Status" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=24&pause=1000&color=7C3AED&center=true&vCenter=true&width=500&lines=NODE_ID:+ATENLANA-PORTAL;IDENTITY+VALIDATION+KERNEL;ESTABLISHING+SPATIAL+LATTICE;GRID+STATUS:+ACTIVE" alt="System Status" />
 </p>
 
 [![Security Status](https://img.shields.io/badge/SECURITY-LEVEL--4-red?style=for-the-badge&logo=shippable)](https://github.com/omoniregreat)
@@ -11,7 +11,7 @@
 
 ### [!] SYSTEM BOOT SEQUENCE
 ```diff
-+ [0.001] Initializing AtendeX node...
++ [0.001] Initializing AtenLana node...
 + [0.042] Loading spatial validation kernels...
 + [0.128] Authenticating Haversine proximity modules...
 + [0.450] Establishing encrypted PostgreSQL lattice connection...
@@ -23,7 +23,7 @@
 ---
 
 ### [0x01] CORE ARCHITECTURE
-AtendeX is a high-fidelity **Presence Validation Ecosystem** engineered for sub-meter accuracy in institutional attendance tracking. It functions as a secure grid node that synchronizes identity telemetry with physical classroom lattices.
+AtenLana is a high-fidelity **Presence Validation Ecosystem** engineered for sub-meter accuracy in institutional attendance tracking. It functions as a secure grid node that synchronizes identity telemetry with physical classroom lattices.
 
 *   **Spatial Telemetry**: Utilizes hyper-precise GPS telemetry and Haversine-calculated proximity algorithms to define Classroom Event Horizons.
 *   **Temporal Tokens**: Proprietary Token-Sync Protocol generates transient, time-locked authentication keys. Attendance is only authorized within the physical lattice of the designated learning node.
@@ -54,7 +54,7 @@ The system implements a multi-layered defense matrix to neutralize identity spoo
 ### [0x04] INFRASTRUCTURE DIAGRAM
 ```mermaid
 graph TD
-    A[End User] -->|Encrypted Handshake| B[AtendeX Gateway]
+    A[End User] -->|Encrypted Handshake| B[AtenLana Gateway]
     B -->|WAF Scan| C{Auth Layer}
     C -->|Student Clearance| D[Geofence Validation]
     C -->|Lecturer Clearance| E[Session Genesis Engine]
@@ -98,7 +98,7 @@ The **Integrity Layer** ensures zero data loss through continuous state monitori
 ---
 
 ### [0x07] VISIONARIES & ENGINEERING LEADERSHIP
-AtendeX Portal is the brainchild of a dedicated taskforce committed to academic modernization.
+AtenLana Portal is the brainchild of a dedicated taskforce committed to academic modernization.
 
 **Omonire O. Great — CEO & Founder | Visionary Architect**
 *   **Engineering Focus**: Python, Flask, Cybersecurity, Ethical Hacking, Linux Operations.
@@ -108,12 +108,12 @@ AtendeX Portal is the brainchild of a dedicated taskforce committed to academic 
 ---
 
 ### [0x08] SYSTEM FOOTER
-**NODE**: ATENDEX-UNIVERSITY-2026
+**NODE**: ATENLANA-UNIVERSITY-2026
 **STATUS**: ACTIVE // GRID STABLE
 **LICENSE**: PROPRIETARY INSTITUTIONAL LICENSE
 
 ```text
 █║▌║█║║█║▌║█║║█║▌║█║║█║▌║█║║█║▌║█
-    ATENDEX PORTAL // 2026 UNIT
+    ATENLANA PORTAL // 2026 UNIT
       PRECISION IDENTITY OPS
 ```
