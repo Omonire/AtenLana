@@ -221,6 +221,37 @@ Keep attending to earn rewards and maintain your streak!
     except Exception as e:
         app.logger.error(f"Failed to send attendance receipt: {e}")
 
+def send_session_notification(student_email, student_name, course_name, token, lecturer_name):
+    if not student_email:
+        return
+    try:
+        smtp_server = os.environ.get('MAIL_SERVER', '')
+        smtp_port = int(os.environ.get('MAIL_PORT', '587'))
+        smtp_user = os.environ.get('MAIL_USERNAME', '')
+        smtp_pass = os.environ.get('MAIL_PASSWORD', '')
+        if not smtp_server or not smtp_user:
+            return
+        msg = MIMEText(f"""Hello {student_name},
+
+A new attendance session has been created by {lecturer_name}.
+
+• Course: {course_name}
+• Session Code: {token}
+• Status: Active
+
+Open your AtendeX Portal dashboard and enter this code to mark your presence.
+
+- AtendeX Portal""")
+        msg['Subject'] = f"New Session: {course_name} - Code: {token}"
+        msg['From'] = smtp_user
+        msg['To'] = student_email
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
+    except Exception as e:
+        app.logger.error(f"Failed to send session notification: {e}")
+
 _db_local = threading.local()
 
 def connect_to_db():
@@ -1917,6 +1948,14 @@ def create_session():
     start_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     commit_db('INSERT INTO sessions (token, lecturer_id, course_id, course_name, host, start_time, duration_min, grace_min, latitude, longitude, radius_m, attendance_mode, strict_mode) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
               (token, g.user['id'], course_id_val, course_name, host, start_time, duration, grace, lat, lon, radius, mode, strict))
+    # Notify all students with registered emails about the new session
+    try:
+        students = query_db("SELECT email, first_name, last_name FROM users WHERE role='student' AND email IS NOT NULL AND email != ''")
+        lecturer_name = f"{g.user.get('first_name','')} {g.user.get('last_name','')}".strip() or 'Your lecturer'
+        for st in students:
+            send_session_notification(st['email'], f"{st['first_name']} {st['last_name']}", course_name, token, lecturer_name)
+    except Exception as e:
+        app.logger.error(f"Session notification error: {e}")
     flash(f"Session created with token: {token}")
     return redirect(url_for('lecturer_dashboard'))
 
