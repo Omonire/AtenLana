@@ -412,7 +412,8 @@
     }
 
     // Update current location
-    document.getElementById('update_location_btn').addEventListener('click', function(){
+    document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('update_location_btn')?.addEventListener('click', function(){
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
           const lat = position.coords.latitude;
@@ -440,6 +441,7 @@
       } else {
         showToast('Geolocation is not supported by this browser', 'error');
       }
+    });
     });
   </script>
 </div>

@@ -2936,22 +2936,6 @@ def api_students_search():
     return jsonify(results)
 
 
-# Simple dashboard landing routes
-@app.route('/dashboard/lecturer')
-def dash_lecturer():
-    return render_template('dash_lecturer.html')
-
-
-@app.route('/dashboard/student')
-def dash_student():
-    return render_template('dash_student.html')
-
-
-@app.route('/dashboard/admin')
-def dash_admin():
-    return render_template('dash_admin.html')
-
-
 @app.route('/superadmin')
 def superadmin_dashboard():
     if not g.user or g.user['role'] != 'superadmin':

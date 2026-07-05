@@ -278,7 +278,7 @@
  */
 async function handleAttendance(token, sessionId = null, sourceBtn = null) {
     const resultDiv = document.getElementById('markResult');
-    const activeBtn = sourceBtn || document.getElementById('markBtn') || document.getElementById('manualMarkBtn');
+    const activeBtn = sourceBtn || document.getElementById('manualMarkBtn');
 
     if (!sessionId && (!token || token.trim().length === 0)) {
         showResult("Please enter a valid session code.", false);
@@ -397,12 +397,6 @@ function showResult(msg, isSuccess) {
     resultDiv.innerText = msg;
     resultDiv.className = isSuccess ? 'success-bg' : 'error-bg';
 }
-
-// Event Listeners
-document.getElementById('markBtn')?.addEventListener('click', function() {
-    const container = document.getElementById('session-container');
-    handleAttendance(container.dataset.token);
-});
 
 // Allow "Enter" key on the input field
 document.getElementById('manualCode')?.addEventListener('keypress', function(e) {

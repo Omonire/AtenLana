@@ -24,17 +24,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{{ url_for('static', filename='js/sync.js') }}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-
-  <!-- Vercel Speed Insights & Web Analytics Integration -->
-  <script>
-    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
 
   <style>
     :root {
@@ -106,18 +95,6 @@
 
     .morphing-blob {
       animation: morph 8s ease-in-out infinite;
-    }
-
-    /* Animation Classes */
-    .stagger-in {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-
-    .stagger-in.visible {
-      opacity: 1;
-      transform: translateY(0);
     }
 
     .luxury-card {
@@ -263,16 +240,6 @@
     }
     ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
 
-    /* 3D card effect */
-    .card-3d {
-      transform-style: preserve-3d;
-      transition: transform 0.6s;
-    }
-
-    .card-3d:hover {
-      transform: perspective(1000px) rotateY(5deg) rotateX(2deg);
-    }
-
     /* Custom Popup Animations */
     @keyframes modalShow {
       0% { opacity: 0; transform: translateY(-100vh) scale(0.9); }
@@ -294,13 +261,6 @@
       animation: modalHide 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
     }
 
-    @keyframes bellBounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2) rotate(15deg); }
-    }
-    .bell-animate {
-      animation: bellBounce 0.5s ease-in-out;
-    }
   </style>
 </head>
 <body class="min-h-screen selection:bg-secondary/10 selection:text-purple-900">
