@@ -78,9 +78,9 @@
     text-align: center;
     position: relative;
     overflow: hidden;
-    box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(240, 253, 244, 1);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(30, 41, 59, 1);
     transform-style: preserve-3d;
   }
 
@@ -106,9 +106,9 @@
   /* Hover State */
   .portal-card:hover {
     transform: translateY(-16px) scale(1.02);
-    box-shadow:
-      0 30px 80px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(240, 253, 244, 1);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(30, 41, 59, 1);
     border-color: var(--primary);
   }
 
@@ -122,7 +122,7 @@
     background: var(--secondary);
     transform: scaleX(0);
     transition: transform 0.5s ease;
-    box-shadow: 0 0 20px rgba(4, 120, 87, 0.3);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
   }
 
   .portal-card:hover .accent-line {
@@ -144,8 +144,8 @@
     z-index: 1;
     border: 2px solid rgba(245, 158, 11, 0.3);
     box-shadow:
-      0 10px 30px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(240, 253, 244, 1);
+      0 10px 30px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(30, 41, 59, 1);
   }
 
   @media (min-width: 768px) {
@@ -283,7 +283,7 @@
                   {% if member.image %}
                   <img src="{{ member.image }}" class="w-full h-full object-cover">
                   {% else %}
-                  <div class="w-full h-full flex items-center justify-center text-white text-3xl md:text-5xl font-black">
+                   <div class="w-full h-full flex items-center justify-center text-slate-900 text-3xl md:text-5xl font-black">
                       {{ member.name[:2] | upper }}
                   </div>
                   {% endif %}

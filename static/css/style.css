@@ -1,5 +1,5 @@
 /* Emerald theme - clean responsive styles */
-:root{--primary:#047857; --accent-gold:#f59e0b; --bg:#ecfdf5; --text:#064e3b}
+:root{--primary:#2563eb; --accent-gold:#f59e0b; --bg:#020617; --text:#f1f5f9}
 *{box-sizing:border-box}
 body{font-family:Inter, system-ui, Arial, Helvetica, sans-serif;background:var(--bg);color:var(--text);margin:0}
 .top{background:linear-gradient(90deg,var(--primary),var(--accent-gold));color:white;padding:12px}

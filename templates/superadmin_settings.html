@@ -29,12 +29,12 @@
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-6">Primary Spectrum</label>
                             <div class="flex items-center gap-4">
                                 <div class="relative">
-                                    <input type="color" id="primary-color-picker" value="{{ site_settings.get('primary_color', '#047857') }}" class="w-16 h-16 rounded-2xl cursor-pointer border-none p-0 bg-transparent">
+                                    <input type="color" id="primary-color-picker" value="{{ site_settings.get('primary_color', '#2563eb') }}" class="w-16 h-16 rounded-2xl cursor-pointer border-none p-0 bg-transparent">
                                 </div>
                                 <div class="flex-1">
-                                    <input type="text" id="primary-color-text" value="{{ site_settings.get('primary_color', '#047857') }}" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-mono uppercase focus:border-secondary outline-none">
+                                    <input type="text" id="primary-color-text" value="{{ site_settings.get('primary_color', '#2563eb') }}" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-mono uppercase focus:border-secondary outline-none">
                                 </div>
-                                <button onclick="updateColor('primary_color')" class="p-4 bg-slate-900 text-white rounded-2xl hover:scale-105 transition-all shadow-lg">
+                                <button onclick="updateColor('primary_color')" class="p-4 bg-[#020617] text-slate-900 rounded-2xl hover:scale-105 transition-all shadow-lg">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                                 </button>
                             </div>
@@ -45,12 +45,12 @@
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-6">Secondary Spectrum</label>
                             <div class="flex items-center gap-4">
                                 <div class="relative">
-                                    <input type="color" id="secondary-color-picker" value="{{ site_settings.get('secondary_color', '#0d9488') }}" class="w-16 h-16 rounded-2xl cursor-pointer border-none p-0 bg-transparent">
+                                    <input type="color" id="secondary-color-picker" value="{{ site_settings.get('secondary_color', '#3b82f6') }}" class="w-16 h-16 rounded-2xl cursor-pointer border-none p-0 bg-transparent">
                                 </div>
                                 <div class="flex-1">
-                                    <input type="text" id="secondary-color-text" value="{{ site_settings.get('secondary_color', '#0d9488') }}" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-mono uppercase focus:border-secondary outline-none">
+                                    <input type="text" id="secondary-color-text" value="{{ site_settings.get('secondary_color', '#3b82f6') }}" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-mono uppercase focus:border-secondary outline-none">
                                 </div>
-                                <button onclick="updateColor('secondary_color')" class="p-4 bg-secondary text-white rounded-2xl hover:scale-105 transition-all shadow-lg">
+                                <button onclick="updateColor('secondary_color')" class="p-4 bg-secondary text-slate-900 rounded-2xl hover:scale-105 transition-all shadow-lg">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                                 </button>
                             </div>
@@ -76,7 +76,7 @@
                             </div>
                             <div class="flex items-center gap-4">
                                 <input type="file" name="image" class="text-xs font-bold text-slate-400">
-                                <button class="px-8 py-3 bg-secondary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all">Update Seal</button>
+                                <button class="px-8 py-3 bg-secondary text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all">Update Seal</button>
                             </div>
                         </form>
                     </div>
@@ -87,11 +87,11 @@
                     <form method="post" action="{{ url_for('update_settings') }}" enctype="multipart/form-data" class="space-y-8">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="key" value="background">
-                        <div class="p-8 bg-indigo-50/50 rounded-[2.5rem] border border-indigo-100">
+                        <div class="p-8 bg-blue-950/50 rounded-[2.5rem] border border-blue-900/50">
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">Login Infrastructure Background</label>
                             <div class="flex flex-col md:flex-row items-center gap-8">
                                 <input type="file" name="logo" class="flex-1 text-xs font-bold text-slate-600">
-                                <button class="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-black transition-all">Upload & Initialize</button>
+                                <button class="px-8 py-4 bg-[#020617] text-slate-900 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-black transition-all">Upload & Initialize</button>
                             </div>
                             <p class="text-[9px] text-slate-400 mt-4 italic">Note: High-resolution landscapes or abstract textures recommended for optimal UI contrast.</p>
                         </div>
@@ -116,13 +116,13 @@
                             <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Vercel Project ID</label>
                             <input type="text" id="vercel-project-id" value="{{ g.user.vercel_project_id or '' }}" placeholder="prj_..." class="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-secondary font-mono">
                         </div>
-                        <button onclick="saveDevSettings()" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg mt-4">
+                        <button onclick="saveDevSettings()" class="w-full py-4 bg-[#020617] text-slate-900 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg mt-4">
                             Apply Tokens
                         </button>
                     </div>
                 </section>
 
-                <div class="p-10 bg-slate-900 rounded-[3rem] text-white">
+                <div class="p-10 bg-[#020617] rounded-[3rem] text-slate-900">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>

@@ -11,7 +11,7 @@
 
   .stat-item {
     padding: 1rem md:1.5rem;
-    background: #f8fafc;
+    background: var(--card-bg);
     border-radius: 16px;
     border: 1px solid var(--border);
     text-align: center;
@@ -159,8 +159,8 @@
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-12 mb-6">
     <h4 class="text-sm font-black uppercase tracking-widest text-slate-400">Temporal Synchronization Stats</h4>
     <div class="flex gap-2">
-      <a href="{{ url_for('student_history') }}" class="btn-mini btn-outline bg-white !text-secondary border-red-200">History Log</a>
-      <a href="{{ url_for('leaderboard') }}" class="btn-mini btn-outline bg-white !text-secondary border-red-200">Leaderboard</a>
+      <a href="{{ url_for('student_history') }}" class="btn-mini btn-outline bg-white !text-secondary border-red-800/50">History Log</a>
+      <a href="{{ url_for('leaderboard') }}" class="btn-mini btn-outline bg-white !text-secondary border-red-800/50">Leaderboard</a>
     </div>
   </div>
   <div class="stats-grid">
@@ -232,12 +232,12 @@
 
     {% set wallet = g.user.get('wallet_address') %}
     {% if wallet and wallet != '' %}
-      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px;">
-        <div style="font-size: 0.75rem; color: #166534; font-weight: 700;">WALLET LINKED</div>
-        <div style="font-family: monospace; font-size: 0.85rem; color: #15803d; word-break: break-all;">{{ wallet }}</div>
+      <div style="background: #022c22; border: 1px solid #065f46; border-radius: 8px; padding: 10px;">
+        <div style="font-size: 0.75rem; color: #6ee7b7; font-weight: 700;">WALLET LINKED</div>
+        <div style="font-family: monospace; font-size: 0.85rem; color: #34d399; word-break: break-all;">{{ wallet }}</div>
       </div>
       <div id="walletAssets" style="margin-top: 8px;">
-        <div style="display:flex; align-items:center; gap:8px; padding:8px; background:#f8fafc; border-radius:8px;">
+          <div style="display:flex; align-items:center; gap:8px; padding:8px; background:var(--card-bg); border-radius:8px;">
           <span style="font-size:0.85rem; font-weight:700; color:var(--primary);">$ATND Balance:</span>
           <span id="atndBalance" style="font-size:0.85rem; font-weight:900; color:#14b8a6;">Loading...</span>
         </div>
@@ -349,7 +349,7 @@ async function handleAttendance(token, sessionId = null, sourceBtn = null) {
                 activeBtn.style.display = 'none';
                 if(document.getElementById('manualCode')) {
                   document.getElementById('manualCode').disabled = true;
-                  document.getElementById('manualCode').style.background = '#f1f5f9';
+                  document.getElementById('manualCode').style.background = '#1e293b';
                 }
 
                 // Show detailed success popup with location usage info
@@ -545,8 +545,8 @@ function showUploadStatus(msg, type) {
         uploadStatus.style.background = '#dcfce7';
         uploadStatus.style.color = '#166534';
     } else {
-        uploadStatus.style.background = '#f1f5f9';
-        uploadStatus.style.color = 'var(--text-muted)';
+                uploadStatus.style.background = '#1e293b';
+                uploadStatus.style.color = 'var(--text-muted)';
     }
 }
 
@@ -558,7 +558,7 @@ function showWalletStatus(msg, isSuccess) {
     walletStatus.textContent = msg;
     walletStatus.style.display = 'block';
     walletStatus.style.background = isSuccess ? '#dcfce7' : '#fee2e2';
-    walletStatus.style.color = isSuccess ? '#047857' : '#dc2626';
+    walletStatus.style.color = isSuccess ? '#2563eb' : '#dc2626';
 }
 
 document.getElementById('connectWalletBtn')?.addEventListener('click', async function() {

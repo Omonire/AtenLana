@@ -173,7 +173,7 @@
         const ctx = document.getElementById('studentChart').getContext('2d');
         const type = document.getElementById('chartType').value || 'bar';
         if(studentChart) studentChart.destroy();
-        studentChart = new Chart(ctx, { type: type, data: { labels: labels, datasets:[{label:'Attendance', data:counts, backgroundColor:'#0d9488'}] }, options:{responsive:true} });
+        studentChart = new Chart(ctx, { type: type, data: { labels: labels, datasets:[{label:'Attendance', data:counts, backgroundColor:'#3b82f6'}] }, options:{responsive:true} });
         document.getElementById('chartTitle').textContent = name + ' — Attendance';
         document.getElementById('chartModal').style.display = 'flex';
       });

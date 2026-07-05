@@ -44,7 +44,7 @@
                         {{ 'THREAT_MODE' if security_mode == 'on' else 'OFF' }}
                     </span>
                 </div>
-                <button id="toggle-security-btn" class="px-4 py-2 {{ 'bg-red-600' if security_mode == 'on' else 'bg-slate-600' }} text-white rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
+                <button id="toggle-security-btn" class="px-4 py-2 {{ 'bg-red-600' if security_mode == 'on' else 'bg-slate-600' }} text-slate-900 rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg flex items-center gap-2">
                     <span id="security-btn-text">Toggle Security</span>
                 </button>
             </div>
@@ -58,7 +58,7 @@
                 </div>
                 <h2 class="text-lg font-bold">Identity Generation (Bulk)</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-blue-50/30 rounded-2xl border border-blue-100">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-blue-950/30 rounded-2xl border border-blue-900/50">
                 <div>
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Count</label>
                     <input type="number" id="gen-count" value="10" min="1" max="500" class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold outline-none">
@@ -87,7 +87,7 @@
                     </select>
                 </div>
                 <div class="flex items-end">
-                    <button onclick="handleBulkGenerate(event)" class="w-full py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-lg shadow-red-100">
+                    <button onclick="handleBulkGenerate(event)" class="w-full py-2 bg-primary text-slate-900 rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-lg shadow-red-100">
                         Generate Users
                     </button>
                 </div>
@@ -118,7 +118,7 @@
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-indigo-50 rounded-lg text-black">
+                    <div class="p-2 bg-blue-950/50 rounded-lg text-black">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
                     </div>
                     <h2 class="text-lg font-semibold">Identity Management</h2>
@@ -144,7 +144,7 @@
                         {% endif %}
                     </select>
 
-                    <button type="submit" class="p-2 bg-secondary text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-red-200">
+                    <button type="submit" class="p-2 bg-secondary text-slate-900 rounded-xl hover:opacity-90 transition-all shadow-lg shadow-red-200">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     </button>
                 </form>
@@ -172,7 +172,7 @@
                                 </a>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ 'bg-green-100 text-green-700' if u['active'] else 'bg-amber-100 text-amber-700' }}">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ 'bg-green-100 text-green-700' if u['active'] else 'bg-amber-950/40 text-amber-400' }}">
                                     {{ 'Active' if u['active'] else 'Pending' }}
                                 </span>
                             </td>
@@ -180,9 +180,9 @@
                                 <div class="flex items-center justify-end gap-2">
                                     <button onclick="handleEditRole({{ u['id'] }}, '{{ u['first_name'] }} {{ u['last_name'] }}', '{{ u['role'] }}')" class="text-[10px] font-bold text-secondary hover:text-red-700 px-2 py-1 rounded border border-secondary hover:bg-red-50 transition-all">Role</button>
                                     {% if u['active'] %}
-                                        <a href="{{url_for('toggle_user', user_id=u['id'])}}" class="text-[10px] font-bold text-amber-600 hover:text-amber-700 px-2 py-1 rounded border border-amber-200 hover:bg-amber-50 transition-all">Deactivate</a>
+                                        <a href="{{url_for('toggle_user', user_id=u['id'])}}" class="text-[10px] font-bold text-amber-400 hover:text-amber-300 px-2 py-1 rounded border border-amber-700/50 hover:bg-amber-950/30 transition-all">Deactivate</a>
                                     {% else %}
-                                        <a href="{{url_for('toggle_user', user_id=u['id'])}}" class="text-[10px] font-bold text-white bg-black hover:bg-gray-900 px-2 py-1 rounded shadow-sm transition-all">Validate</a>
+                                        <a href="{{url_for('toggle_user', user_id=u['id'])}}" class="text-[10px] font-bold text-slate-900 bg-black hover:bg-gray-900 px-2 py-1 rounded shadow-sm transition-all">Validate</a>
                                     {% endif %}
                                     <button onclick="handleDeleteUser({{ u['id'] }}, '{{ u['first_name'] }} {{ u['last_name'] }}')" class="text-[10px] font-bold text-red-600 hover:text-red-700 px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-all">Delete</button>
                                 </div>
@@ -222,7 +222,7 @@
                 </div>
                 <form method="get" class="flex gap-2">
                     <input type="text" name="l_q" value="{{ request.args.get('l_q', '') }}" placeholder="Search lecturers..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none">
-                    <button type="submit" class="p-2 bg-secondary text-white rounded-xl">
+                    <button type="submit" class="p-2 bg-secondary text-slate-900 rounded-xl">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     </button>
                 </form>
@@ -244,14 +244,14 @@
                             <td class="px-6 py-4 font-mono font-semibold text-secondary text-sm">{{l['username']}}</td>
                             <td class="px-6 py-4 text-sm font-medium text-slate-700">{{l['first_name']}} {{l['last_name']}}</td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ 'bg-green-100 text-green-700' if l['active'] else 'bg-amber-100 text-amber-700' }}">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ 'bg-green-100 text-green-700' if l['active'] else 'bg-amber-950/40 text-amber-400' }}">
                                     {{ 'Active' if l['active'] else 'Disabled' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <button onclick="handleEditRole({{ l['id'] }}, '{{ l['first_name'] }} {{ l['last_name'] }}', '{{ l['role'] }}')" class="text-[10px] font-bold text-secondary hover:text-red-700 px-2 py-1 rounded border border-secondary hover:bg-red-50 transition-all">Role</button>
-                                    <a href="{{url_for('toggle_user', user_id=l['id'])}}" class="text-[10px] font-bold {{ 'text-amber-600 border-amber-200' if l['active'] else 'text-green-600 border-green-200' }} px-2 py-1 rounded border hover:bg-slate-50 transition-all">
+                                    <a href="{{url_for('toggle_user', user_id=l['id'])}}" class="text-[10px] font-bold {{ 'text-amber-400 border-amber-700/50' if l['active'] else 'text-green-600 border-green-200' }} px-2 py-1 rounded border hover:bg-slate-50 transition-all">
                                         {{ 'Disable' if l['active'] else 'Enable' }}
                                     </a>
                                     <button onclick="handleDeleteUser({{ l['id'] }}, '{{ l['first_name'] }} {{ l['last_name'] }}')" class="text-[10px] font-bold text-red-600 hover:text-red-700 px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-all">Delete</button>
@@ -269,7 +269,7 @@
             <!-- Developer Settings -->
             <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-8">
                 <div class="flex items-center gap-3 mb-8">
-                    <div class="p-2 bg-slate-900 rounded-lg text-white">
+                    <div class="p-2 bg-[#020617] rounded-lg text-slate-900">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
                     </div>
                     <h2 class="text-lg font-semibold">Developer Integration</h2>
@@ -277,7 +277,7 @@
 
                 <div class="space-y-4">
                     {% if g.user['role'] == 'admin' and site_settings.get('github_access_for_admin') == 'off' %}
-                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-[10px] font-bold text-amber-700 uppercase tracking-tight">
+                    <div class="p-4 bg-amber-950/40 rounded-2xl border border-amber-700/50 text-[10px] font-bold text-amber-400 uppercase tracking-tight">
                         GitHub Documentation Sync is currently disabled for Admins by the Superadmin.
                     </div>
                     {% endif %}
@@ -286,7 +286,7 @@
                         <input type="password" id="github-token" value="{{ g.user.github_token or '' }}" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-500/20 outline-none text-sm" {{ 'disabled' if g.user['role'] == 'admin' and site_settings.get('github_access_for_admin') == 'off' }}>
                         <p class="text-[9px] text-slate-400 mt-1">Optional. Required for documentation auto-sync.</p>
                     </div>
-                    <button onclick="saveDevSettings()" class="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-black transition-all">Save Developer Settings</button>
+                    <button onclick="saveDevSettings()" class="w-full py-2.5 bg-[#020617] text-slate-900 rounded-xl text-xs font-bold hover:bg-black transition-all">Save Developer Settings</button>
                 </div>
             </section>
 
@@ -311,7 +311,7 @@
 </div>
 
 <!-- Role Assignment Modal -->
-<div id="role-modal" class="fixed inset-0 z-[1100] hidden flex items-center justify-center p-6 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300">
+<div id="role-modal" class="fixed inset-0 z-[1100] hidden flex items-center justify-center p-6 bg-[#020617]/80 backdrop-blur-sm transition-opacity duration-300">
     <div class="luxury-card max-w-md w-full p-8 rounded-[2rem]" id="role-modal-content">
         <h3 class="text-xl font-extrabold text-slate-900 mb-6">Manage User Role</h3>
         <p class="text-slate-500 text-sm mb-6" id="role-user-display"></p>
@@ -351,7 +351,7 @@
 
         <div class="flex gap-4 mt-8">
             <button onclick="closeRoleModal()" class="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 border border-slate-200">Cancel</button>
-            <button onclick="submitRoleUpdate()" class="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-secondary hover:scale-105 transition-all shadow-lg">Save Changes</button>
+            <button onclick="submitRoleUpdate()" class="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-900 bg-secondary hover:scale-105 transition-all shadow-lg">Save Changes</button>
         </div>
     </div>
 </div>
@@ -502,8 +502,8 @@ async function loadAnalytics() {
                     datasets: [{
                         label: 'Attendance',
                         data: trend.map(d => d.count),
-                        borderColor: '#0d9488',
-                        backgroundColor: 'rgba(4, 120, 87, 0.1)',
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         fill: true,
                         tension: 0.3
                     }]
@@ -556,7 +556,7 @@ document.getElementById('toggle-security-btn').addEventListener('click', async (
             const badge = document.getElementById('security-status-badge');
             badge.innerText = data.new_status === 'on' ? 'THREAT_MODE' : 'OFF';
             badge.className = `px-3 py-1 rounded-full text-xs font-black uppercase ${data.new_status === 'on' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}`;
-            btn.className = `px-4 py-2 ${data.new_status === 'on' ? 'bg-red-600' : 'bg-slate-600'} text-white rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg flex items-center gap-2`;
+            btn.className = `px-4 py-2 ${data.new_status === 'on' ? 'bg-red-600' : 'bg-slate-600'} text-slate-900 rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg flex items-center gap-2`;
             showToast(`Security Mode: ${data.new_status.toUpperCase()}`, data.new_status === 'on' ? 'warning' : 'success');
         }
     } catch (e) {
