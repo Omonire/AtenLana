@@ -9,14 +9,14 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
                 Back to Dashboard
             </a>
-            <div class="px-4 py-1.5 bg-secondary/10 text-purple-700 rounded-full text-xs font-bold uppercase tracking-wider">
+            <div class="px-4 py-1.5 bg-secondary/10 text-red-700 rounded-full text-xs font-bold uppercase tracking-wider">
                 Student Profile
             </div>
         </div>
 
         <!-- Student Card -->
-        <div class="bg-white rounded-[2.5rem] shadow-2xl border border-purple-100 overflow-hidden">
-            <div class="h-32 bg-gradient-to-r from-purple-600 to-indigo-600"></div>
+        <div class="bg-white rounded-[2.5rem] shadow-2xl border border-red-100 overflow-hidden">
+            <div class="h-32 bg-gradient-to-r from-red-600 to-indigo-600"></div>
             <div class="px-8 pb-10 -mt-16 relative">
                 <div class="flex flex-col md:flex-row items-end gap-6 mb-8">
                     <div class="w-32 h-32 rounded-3xl bg-white p-2 shadow-xl">
@@ -40,9 +40,9 @@
                         <span class="block text-4xl font-black text-slate-900 mb-1">{{ total_sessions }}</span>
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Available</span>
                     </div>
-                    <div class="p-6 bg-secondary rounded-3xl shadow-xl shadow-purple-100 text-center">
+                    <div class="p-6 bg-secondary rounded-3xl shadow-xl shadow-red-100 text-center">
                         <span class="block text-4xl font-black text-white mb-1">{{ attendance_percent }}%</span>
-                        <span class="text-[10px] font-bold text-purple-200 uppercase tracking-widest">Attendance Rate</span>
+                        <span class="text-[10px] font-bold text-red-200 uppercase tracking-widest">Attendance Rate</span>
                     </div>
                 </div>
 
@@ -89,7 +89,7 @@
                                     </div>
                                     <p class="text-[10px] text-slate-400 mt-2 italic text-center font-medium">Click image to view full resolution</p>
                                 {% endif %}
-                                <div class="mt-4 p-3 bg-purple-50 rounded-xl border border-purple-100">
+                                <div class="mt-4 p-3 bg-red-50 rounded-xl border border-red-100">
                                     <span class="text-[9px] font-bold text-secondary uppercase block">Submission Log</span>
                                     <span class="text-[10px] font-mono text-secondary">{{ card.created_at }}</span>
                                 </div>
@@ -108,7 +108,7 @@
                         </h3>
                         <div class="space-y-3">
                             {% for h in history %}
-                            <div class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-purple-200 transition-colors">
+                            <div class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-red-200 transition-colors">
                                 <div>
                                     <span class="text-xs font-bold text-slate-800 block">{{ h['course_name'] }}</span>
                                     <span class="text-[10px] text-slate-400">{{ h['timestamp'] }}</span>

@@ -126,7 +126,7 @@
                     <h2 class="text-2xl font-black text-slate-900 tracking-tight">Course Catalog</h2>
                     <p class="text-sm text-slate-500 font-medium">Managed course codes, titles, and global registry entries.</p>
                 </div>
-                <div class="px-4 py-1.5 bg-purple-50 rounded-full text-[10px] font-black text-purple-600 uppercase tracking-widest border border-purple-100">
+                <div class="px-4 py-1.5 bg-red-50 rounded-full text-[10px] font-black text-red-600 uppercase tracking-widest border border-red-100">
                     {{ courses|length }} Courses
                 </div>
             </div>
@@ -143,12 +143,12 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {% for c in courses %}
-                    <div class="group relative bg-white p-4 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-lg transition-all">
+                    <div class="group relative bg-white p-4 rounded-2xl border border-slate-200 hover:border-red-300 hover:shadow-lg transition-all">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1">
-                                    <span class="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0"></span>
-                                    <span class="text-xs font-black text-purple-600 uppercase tracking-widest">{{ c.code or 'N/A' }}</span>
+                                    <span class="w-2 h-2 rounded-full bg-red-500 flex-shrink-0"></span>
+                                    <span class="text-xs font-black text-red-600 uppercase tracking-widest">{{ c.code or 'N/A' }}</span>
                                 </div>
                                 <h3 class="text-sm font-black text-slate-800 truncate">{{ c.title or c.name }}</h3>
                                 {% if c.name and c.name != c.title and c.name != c.code %}
