@@ -23,12 +23,12 @@
         </div>
         {% if g.user and g.user['role'] == 'superadmin' %}
         <div class="flex gap-4">
-            <button onclick="document.getElementById('role-modal').classList.remove('hidden')" class="btn-primary px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest">
+            <a href="{{ url_for('team_roles') }}" class="btn-primary px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest inline-flex items-center">
                 Manage Roles
-            </button>
-            <button onclick="document.getElementById('add-member-modal').classList.remove('hidden')" class="btn-primary px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest">
+            </a>
+            <a href="{{ url_for('team_member_add') }}" class="btn-primary px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest inline-flex items-center">
                 Add Member
-            </button>
+            </a>
         </div>
         {% endif %}
     </div>
@@ -49,9 +49,9 @@
 
             {% if g.user and g.user['role'] == 'superadmin' %}
             <div class="absolute top-2 right-2 md:top-6 md:right-6 flex gap-1.5 md:gap-2 z-20" onclick="event.stopPropagation()">
-                <button onclick="handleEditClick(this)" data-member="{{ member | tojson | forceescape }}" class="p-1.5 md:p-2 bg-white/90 backdrop-blur shadow-md rounded-lg text-secondary hover:bg-secondary hover:text-slate-900 transition-all">
+                <a href="{{ url_for('team_member_edit', mid=member.id) }}" class="p-1.5 md:p-2 bg-white/90 backdrop-blur shadow-md rounded-lg text-secondary hover:bg-secondary hover:text-slate-900 transition-all inline-flex">
                     <svg width="14" height="14" md-width="16" md-height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </button>
+                </a>
                 <form action="{{ url_for('admin_manage_team') }}" method="POST" onsubmit="return confirm('Delete this team member?')">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="action" value="delete_member">
@@ -105,221 +105,5 @@
     {% endif %}
 </div>
 
-{% if g.user and g.user['role'] == 'superadmin' %}
-<!-- Management Modals -->
-<div id="role-modal" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm">
-    <div class="luxury-card max-w-md w-full p-10 rounded-[2.5rem]">
-        <h3 class="text-2xl font-extrabold text-slate-900 mb-8">Manage Roles</h3>
-        <form action="{{ url_for('admin_manage_team') }}" method="POST" class="space-y-6">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="action" value="add_role">
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Role Name</label>
-                <input type="text" name="role_name" placeholder="e.g. Lead Engineer" class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm" required>
-            </div>
-            <div class="flex gap-4">
-                <button type="button" onclick="document.getElementById('role-modal').classList.add('hidden')" class="flex-1 px-8 py-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-sm">Close</button>
-                <button type="submit" class="flex-1 btn-primary px-8 py-4 rounded-xl font-bold text-sm">Add Role</button>
-            </div>
-        </form>
-        <div class="mt-8 pt-8 border-t border-slate-100">
-            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Current Roles</h4>
-            <div class="flex flex-col gap-2" id="role-list">
-                {% for role in roles %}
-                <div class="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-xl">
-                    <span class="text-sm font-bold text-slate-700">{{ role.name }}</span>
-                    <div class="flex gap-2">
-                        <button type="button" onclick="openEditRoleModal({{ role.id }}, '{{ role.name }}')" class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <form action="{{ url_for('admin_manage_team') }}" method="POST" onsubmit="return confirm('Delete role &quot;{{ role.name }}&quot;? Members with this role will be unassigned.')">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="action" value="delete_role">
-                            <input type="hidden" name="role_id" value="{{ role.id }}">
-                            <button type="submit" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Role Modal -->
-<div id="edit-role-modal" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm">
-    <div class="luxury-card max-w-md w-full p-10 rounded-[2.5rem]">
-        <h3 class="text-2xl font-extrabold text-slate-900 mb-8">Edit Role</h3>
-        <form action="{{ url_for('admin_manage_team') }}" method="POST" class="space-y-6">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="action" value="edit_role">
-            <input type="hidden" name="role_id" id="edit-role-id">
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Role Name</label>
-                <input type="text" name="role_name" id="edit-role-name" class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm" required>
-            </div>
-            <div class="flex gap-4">
-                <button type="button" onclick="document.getElementById('edit-role-modal').classList.add('hidden')" class="flex-1 px-8 py-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-sm">Cancel</button>
-                <button type="submit" class="flex-1 btn-primary px-8 py-4 rounded-xl font-bold text-sm">Save Role</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div id="add-member-modal" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm">
-    <div class="luxury-card max-w-xl w-full p-10 rounded-[3rem]">
-        <h3 class="text-3xl font-extrabold text-slate-900 mb-8" id="member-modal-title">Add Team Member</h3>
-        <form action="{{ url_for('admin_manage_team') }}" method="POST" enctype="multipart/form-data" class="space-y-6" id="member-form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="action" value="add_member" id="member-action">
-            <input type="hidden" name="member_id" id="edit-member-id">
-
-            <div class="grid grid-cols-2 gap-6">
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Full Name</label>
-                    <input type="text" name="name" id="edit-name" class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm" required>
-                </div>
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Role</label>
-                    <select name="role_id" id="edit-role" class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm" required>
-                        {% for role in roles %}
-                        <option value="{{ role.id }}">{{ role.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Biography</label>
-                <textarea name="bio" id="edit-bio" rows="4" class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm"></textarea>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Email Address</label>
-                    <input type="email" name="email" id="edit-email" placeholder="e.g. name@university.edu" class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm">
-                </div>
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">WhatsApp Number</label>
-                    <input type="text" name="whatsapp" id="edit-whatsapp" placeholder="e.g. +234..." class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm">
-                </div>
-            </div>
-
-            <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Profile Image</label>
-                <input type="file" name="image" class="w-full px-6 py-4 rounded-xl border border-slate-200 focus:border-secondary outline-none font-bold text-sm">
-                <p class="text-[9px] text-slate-400 mt-2">Images are stored securely in the database.</p>
-            </div>
-
-            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
-                <div class="flex items-center gap-3">
-                    <input type="checkbox" name="create_admin" id="create-admin" class="w-5 h-5 accent-secondary" onchange="toggleAdminFields(this.checked)">
-                    <label for="create-admin" class="text-xs font-bold text-slate-700">Create/Link Admin Portal Account?</label>
-                </div>
-
-                <div id="admin-account-fields" class="hidden grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div>
-                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Admin Username</label>
-                        <input type="text" name="admin_username" id="admin-username" placeholder="j.doe" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-secondary outline-none font-bold text-xs">
-                    </div>
-                    <div>
-                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Admin Password</label>
-                        <input type="password" name="admin_password" id="admin-password" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-secondary outline-none font-bold text-xs">
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3" id="visibility-container">
-                <input type="checkbox" name="visible" id="edit-visible" checked class="w-5 h-5 accent-red-600">
-                <label for="edit-visible" class="text-sm font-bold text-slate-600">Publicly visible on website</label>
-            </div>
-
-            <div class="flex gap-4 pt-4">
-                <button type="button" onclick="closeMemberModal()" class="flex-1 px-8 py-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-sm">Cancel</button>
-                <button type="submit" class="flex-1 btn-primary px-8 py-4 rounded-xl font-bold text-sm">Save Member</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-    function handleEditClick(btn) {
-        try {
-            const member = JSON.parse(btn.getAttribute('data-member'));
-            editMember(member);
-        } catch (e) {
-            console.error("Error parsing member data:", e);
-            showToast("Failed to load member data for editing", "error");
-        }
-    }
-
-    function editMember(member) {
-        document.getElementById('member-modal-title').innerText = 'Edit Team Member';
-        document.getElementById('member-action').value = 'edit_member';
-        document.getElementById('edit-member-id').value = member.id;
-        document.getElementById('edit-name').value = member.name;
-        document.getElementById('edit-role').value = member.role_id;
-        document.getElementById('edit-bio').value = member.bio || '';
-        document.getElementById('edit-email').value = member.email || '';
-        document.getElementById('edit-whatsapp').value = member.whatsapp || '';
-        document.getElementById('edit-visible').checked = !!member.visible;
-
-        document.getElementById('add-member-modal').classList.remove('hidden');
-    }
-
-    function closeMemberModal() {
-        document.getElementById('add-member-modal').classList.add('hidden');
-        document.getElementById('member-modal-title').innerText = 'Add Team Member';
-        document.getElementById('member-action').value = 'add_member';
-        document.getElementById('member-form').reset();
-        toggleAdminFields(false);
-    }
-
-    function openEditRoleModal(roleId, roleName) {
-        document.getElementById('edit-role-id').value = roleId;
-        document.getElementById('edit-role-name').value = roleName;
-        document.getElementById('edit-role-modal').classList.remove('hidden');
-    }
-
-    function toggleAdminFields(show) {
-        const fields = document.getElementById('admin-account-fields');
-        if (show) {
-            fields.classList.remove('hidden');
-        } else {
-            fields.classList.add('hidden');
-        }
-    }
-
-    // Draggable Scroll Implementation
-    (function() {
-        const slider = document.getElementById('team-cards-container');
-        if (!slider) return;
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-
-        slider.addEventListener('mousedown', (e) => {
-            isDown = true;
-            slider.classList.add('active');
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-        });
-        slider.addEventListener('mouseleave', () => {
-            isDown = false;
-        });
-        slider.addEventListener('mouseup', () => {
-            isDown = false;
-        });
-        slider.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2;
-            slider.scrollLeft = scrollLeft - walk;
-        });
-    })();
-</script>
 {% endif %}
 {% endblock %}

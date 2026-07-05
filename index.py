@@ -1714,7 +1714,43 @@ def admin_manage_team():
         commit_db('DELETE FROM team_members WHERE id = ?', (mid,))
         flash('Team member removed')
 
-    return redirect(request.referrer or url_for('meet_the_team'))
+    return redirect(url_for('superadmin_team'))
+
+@app.route('/admin/team/members/add')
+def team_member_add():
+    if not g.user or g.user['role'] != 'superadmin':
+        return redirect(url_for('login', role='superadmin'))
+    roles = query_db('SELECT * FROM team_roles')
+    return render_template('team_member_form.html', member=None, roles=roles)
+
+@app.route('/admin/team/members/edit/<int:mid>')
+def team_member_edit(mid):
+    if not g.user or g.user['role'] != 'superadmin':
+        return redirect(url_for('login', role='superadmin'))
+    member = query_db('SELECT * FROM team_members WHERE id = ?', (mid,), one=True)
+    if not member:
+        flash('Team member not found')
+        return redirect(url_for('superadmin_team'))
+    roles = query_db('SELECT * FROM team_roles')
+    return render_template('team_member_form.html', member=member, roles=roles)
+
+@app.route('/admin/team/roles')
+def team_roles():
+    if not g.user or g.user['role'] != 'superadmin':
+        return redirect(url_for('login', role='superadmin'))
+    roles = query_db('SELECT * FROM team_roles')
+    return render_template('team_role_form.html', roles=roles)
+
+@app.route('/admin/team/roles/edit/<int:rid>')
+def team_role_edit(rid):
+    if not g.user or g.user['role'] != 'superadmin':
+        return redirect(url_for('login', role='superadmin'))
+    role = query_db('SELECT * FROM team_roles WHERE id = ?', (rid,), one=True)
+    if not role:
+        flash('Role not found')
+        return redirect(url_for('team_roles'))
+    roles = query_db('SELECT * FROM team_roles')
+    return render_template('team_role_form.html', edit_role=role, roles=roles)
 
 @app.route('/meet-the-team/<role>/<name>')
 def team_member_profile(role, name):
