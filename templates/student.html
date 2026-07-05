@@ -205,6 +205,17 @@
     <div id="uploadStatus" style="margin-top: 10px; font-size: 0.85rem; text-align: center; display: none; padding: 8px; border-radius: 8px;"></div>
   </div>
 
+  <!-- Email Settings -->
+  <div class="manual-entry-box" style="margin-top: 2rem; border-color: #3b82f6;">
+    <h4 style="margin-bottom: 0.5rem;">Email for Attendance Receipts</h4>
+    <p class="muted" style="font-size: 0.85rem;">Set your email to receive a confirmation receipt each time you mark attendance.</p>
+    <form id="emailForm" class="input-group">
+      <input type="email" id="emailInput" class="session-input" placeholder="you@example.com" value="{{ g.user.get('email', '') }}" style="letter-spacing:0;">
+      <button type="submit" class="btn-auth" style="border:none; cursor:pointer; background: #3b82f6; color: white;">Save Email</button>
+    </form>
+    <div id="emailStatus" style="margin-top: 8px; font-size: 0.85rem; display: none; padding: 8px; border-radius: 8px;"></div>
+  </div>
+
   <!-- Phantom Wallet Linking -->
   <div class="manual-entry-box" style="margin-top: 2rem; border-color: #9945FF;">
     <h4 style="margin-bottom: 0.5rem;">Solana Wallet (Phantom)</h4>
@@ -595,6 +606,40 @@ document.getElementById('unlinkWalletForm')?.addEventListener('submit', async fu
         }
     } catch (err) {
         showWalletStatus('Error unlinking wallet.', false);
+    }
+});
+
+// --- Email Settings ---
+const emailForm = document.getElementById('emailForm');
+const emailStatus = document.getElementById('emailStatus');
+emailForm?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value.trim();
+    try {
+        const resp = await fetch('/student/update-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ email })
+        });
+        const data = await resp.json();
+        emailStatus.style.display = 'block';
+        if (data.success) {
+            emailStatus.textContent = 'Email saved! Receipts will be sent here.';
+            emailStatus.style.background = '#dcfce7';
+            emailStatus.style.color = '#166534';
+        } else {
+            emailStatus.textContent = data.message || 'Failed to save email.';
+            emailStatus.style.background = '#fee2e2';
+            emailStatus.style.color = '#991b1b';
+        }
+    } catch (err) {
+        emailStatus.style.display = 'block';
+        emailStatus.textContent = 'Network error.';
+        emailStatus.style.background = '#fee2e2';
+        emailStatus.style.color = '#991b1b';
     }
 });
 

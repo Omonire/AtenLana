@@ -98,6 +98,26 @@
             </div>
         </section>
 
+        <!-- Section 0.5: Analytics Dashboard -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-green-50 rounded-lg text-green-600">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 4-6"/></svg>
+                </div>
+                <h2 class="text-lg font-bold">Analytics</h2>
+            </div>
+            <div id="analytics-overview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="p-4 bg-slate-50 rounded-xl text-center"><div class="text-2xl font-black text-primary" id="stat-students">-</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Students</div></div>
+                <div class="p-4 bg-slate-50 rounded-xl text-center"><div class="text-2xl font-black text-secondary" id="stat-sessions">-</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sessions</div></div>
+                <div class="p-4 bg-slate-50 rounded-xl text-center"><div class="text-2xl font-black text-green-600" id="stat-today">-</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Today</div></div>
+                <div class="p-4 bg-slate-50 rounded-xl text-center"><div class="text-2xl font-black text-amber-600" id="stat-rate">-</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rate</div></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div><canvas id="chart-trend" height="200"></canvas></div>
+                <div><canvas id="chart-top" height="200"></canvas></div>
+            </div>
+        </section>
+
         <!-- Section 1: Identity Management -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
@@ -466,6 +486,63 @@ async function handleDeleteUser(userId, name) {
         }
     }
 }
+
+// --- Analytics ---
+async function loadAnalytics() {
+    try {
+        const [overview, trend, top] = await Promise.all([
+            fetch('/api/admin/analytics/overview').then(r => r.json()),
+            fetch('/api/admin/analytics/attendance-trend').then(r => r.json()),
+            fetch('/api/admin/analytics/top-students').then(r => r.json())
+        ]);
+        document.getElementById('stat-students').textContent = overview.total_students || 0;
+        document.getElementById('stat-sessions').textContent = overview.total_sessions || 0;
+        document.getElementById('stat-today').textContent = overview.today_attendance || 0;
+        document.getElementById('stat-rate').textContent = (overview.attendance_rate || 0) + '%';
+
+        if (window.Chart && trend.length) {
+            new Chart(document.getElementById('chart-trend'), {
+                type: 'line',
+                data: {
+                    labels: trend.map(d => d.day?.slice(5) || ''),
+                    datasets: [{
+                        label: 'Attendance',
+                        data: trend.map(d => d.count),
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124,58,237,0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+        if (window.Chart && top.length) {
+            new Chart(document.getElementById('chart-top'), {
+                type: 'bar',
+                data: {
+                    labels: top.map(s => s.first_name?.slice(0,8) || ''),
+                    datasets: [{
+                        label: 'Attendance',
+                        data: top.map(s => s.attendance_count),
+                        backgroundColor: '#14b8a6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+    } catch(e) { console.error('Analytics error:', e); }
+}
+loadAnalytics();
 
 document.getElementById('toggle-security-btn').addEventListener('click', async () => {
     const btn = document.getElementById('toggle-security-btn');

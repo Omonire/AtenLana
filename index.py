@@ -185,6 +185,42 @@ def log_action(user_id, action_type, target_table, target_id, old_data=None, new
     except Exception as e:
         app.logger.error(f"Failed to log action: {e}")
 
+import smtplib
+from email.mime.text import MIMEText
+
+def send_attendance_receipt(student_email, student_name, course_name, timestamp, session_id):
+    if not student_email:
+        return
+    try:
+        smtp_server = os.environ.get('MAIL_SERVER', '')
+        smtp_port = int(os.environ.get('MAIL_PORT', '587'))
+        smtp_user = os.environ.get('MAIL_USERNAME', '')
+        smtp_pass = os.environ.get('MAIL_PASSWORD', '')
+        if not smtp_server or not smtp_user:
+            app.logger.info(f"Email receipt skipped for {student_email}: mail not configured")
+            return
+        msg = MIMEText(f"""Hello {student_name},
+
+Your attendance has been confirmed for {course_name}.
+
+• Session ID: {session_id}
+• Time: {timestamp}
+• Status: Present
+
+Keep attending to earn rewards and maintain your streak!
+
+- AtendeX Portal""")
+        msg['Subject'] = f"Attendance Confirmed - {course_name}"
+        msg['From'] = smtp_user
+        msg['To'] = student_email
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
+        app.logger.info(f"Attendance receipt sent to {student_email}")
+    except Exception as e:
+        app.logger.error(f"Failed to send attendance receipt: {e}")
+
 _db_local = threading.local()
 
 def connect_to_db():
@@ -377,7 +413,8 @@ def init_db():
                         ('reward_points', 'INTEGER DEFAULT 0'),
                         ('streak', 'INTEGER DEFAULT 0'),
                         ('last_attendance_date', 'DATE'),
-                        ('wallet_address', 'TEXT')]:
+                        ('wallet_address', 'TEXT'),
+                        ('email', 'TEXT')]:
         safe_execute(f"ALTER TABLE users ADD COLUMN IF NOT EXISTS {col} {ctype}")
 
     # Sessions
@@ -1104,6 +1141,55 @@ def api_unblock_user():
     log_action(g.user['id'], 'unblock', 'users', user_id, None, None)
 
     return jsonify({'success': True, 'message': 'User unblocked successfully'})
+
+@app.route('/api/admin/analytics/overview')
+def api_analytics_overview():
+    if not g.user or g.user['role'] not in ['admin', 'superadmin']:
+        return jsonify({})
+    total_students = query_db("SELECT COUNT(*) as c FROM users WHERE role='student'", one=True)['c']
+    total_lecturers = query_db("SELECT COUNT(*) as c FROM users WHERE role='lecturer'", one=True)['c']
+    total_sessions = query_db("SELECT COUNT(*) as c FROM sessions", one=True)['c']
+    total_attendance = query_db("SELECT COUNT(*) as c FROM attendance", one=True)['c']
+    today_attendance = query_db("SELECT COUNT(*) as c FROM attendance WHERE timestamp::date = CURRENT_DATE", one=True)['c']
+    active_sessions = query_db("SELECT COUNT(*) as c FROM sessions WHERE active=1", one=True)['c']
+    attendance_rate = round((total_attendance / (total_sessions * total_students) * 100), 1) if total_sessions and total_students else 0
+    return jsonify({
+        'total_students': total_students,
+        'total_lecturers': total_lecturers,
+        'total_sessions': total_sessions,
+        'total_attendance': total_attendance,
+        'today_attendance': today_attendance,
+        'active_sessions': active_sessions,
+        'attendance_rate': attendance_rate
+    })
+
+@app.route('/api/admin/analytics/attendance-trend')
+def api_analytics_trend():
+    if not g.user or g.user['role'] not in ['admin', 'superadmin']:
+        return jsonify([])
+    trend = query_db("""
+        SELECT DATE(timestamp) as day, COUNT(*) as count
+        FROM attendance
+        WHERE timestamp >= NOW() - INTERVAL '30 days'
+        GROUP BY DATE(timestamp)
+        ORDER BY day ASC
+    """)
+    return jsonify([{'day': str(r['day']), 'count': r['count']} for r in trend])
+
+@app.route('/api/admin/analytics/top-students')
+def api_analytics_top_students():
+    if not g.user or g.user['role'] not in ['admin', 'superadmin']:
+        return jsonify([])
+    top = query_db("""
+        SELECT u.id, u.first_name, u.last_name, u.ub_id, COUNT(a.id) as attendance_count, COALESCE(u.reward_points,0) as reward_points
+        FROM users u
+        LEFT JOIN attendance a ON a.student_id = u.id
+        WHERE u.role = 'student'
+        GROUP BY u.id
+        ORDER BY attendance_count DESC
+        LIMIT 10
+    """)
+    return jsonify([dict(r) for r in top])
 
 @app.route('/admin/undo', methods=['POST'])
 def admin_undo():
@@ -2173,6 +2259,16 @@ def student_history():
 
     return render_template('student_history.html', history=history)
 
+@app.route('/student/update-email', methods=['POST'])
+def update_email():
+    if not g.user or g.user['role'] != 'student':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    email = request.get_json().get('email', '').strip()
+    if email and ('@' not in email or '.' not in email):
+        return jsonify({'success': False, 'message': 'Invalid email address'}), 400
+    commit_db("UPDATE users SET email = ? WHERE id = ?", (email or None, g.user['id']))
+    return jsonify({'success': True, 'message': 'Email saved'})
+
 # Mark attendance endpoint (POST: JSON)
 @app.route('/session/mark', methods=['POST'])
 @limiter.limit("5 per minute")
@@ -2298,6 +2394,12 @@ def mark_attendance():
     points_earned = 5 + streak_bonus
     commit_db('UPDATE users SET reward_points = COALESCE(reward_points,0) + ?, streak = ?, last_attendance_date = ? WHERE id = ?',
               (points_earned, new_streak, today.isoformat(), g.user['id']))
+
+    # Send email receipt
+    try:
+        send_attendance_receipt(g.user.get('email'), f"{g.user['first_name']} {g.user['last_name']}", s.get('course_name', 'Class'), timestamp, s['id'])
+    except Exception:
+        pass
 
     payload = {'success': True, 'message': message, 'status': status, 'grace_seconds': grace_seconds, 'distance_m': info.get('distance_m'), 'points_earned': points_earned, 'streak': new_streak}
     return jsonify(payload)
