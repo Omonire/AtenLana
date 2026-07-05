@@ -22,7 +22,7 @@
             <div id="sync-status-box" class="hidden mt-4 lg:mt-0 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm min-w-[280px] animate-in fade-in slide-in-from-right-4 duration-500">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-secondary">
+                        <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-secondary">
                             <svg class="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
                         </div>
                         <div>
@@ -87,7 +87,7 @@
                     </select>
                 </div>
                 <div class="flex items-end">
-                    <button onclick="handleBulkGenerate(event)" class="w-full py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-lg shadow-purple-100">
+                    <button onclick="handleBulkGenerate(event)" class="w-full py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-lg shadow-red-100">
                         Generate Users
                     </button>
                 </div>
@@ -124,7 +124,7 @@
                     <h2 class="text-lg font-semibold">Identity Management</h2>
                 </div>
                 <form method="get" class="flex flex-wrap gap-2 items-center">
-                    <input type="text" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search name or ID..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all flex-1 min-w-[150px]">
+                    <input type="text" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search name or ID..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all flex-1 min-w-[150px]">
 
                     <select name="faculty_id" id="search-faculty" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none min-w-[150px]">
                         <option value="">All Faculties</option>
@@ -144,7 +144,7 @@
                         {% endif %}
                     </select>
 
-                    <button type="submit" class="p-2 bg-secondary text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-purple-200">
+                    <button type="submit" class="p-2 bg-secondary text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-red-200">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     </button>
                 </form>
@@ -178,7 +178,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button onclick="handleEditRole({{ u['id'] }}, '{{ u['first_name'] }} {{ u['last_name'] }}', '{{ u['role'] }}')" class="text-[10px] font-bold text-secondary hover:text-purple-700 px-2 py-1 rounded border border-secondary hover:bg-purple-50 transition-all">Role</button>
+                                    <button onclick="handleEditRole({{ u['id'] }}, '{{ u['first_name'] }} {{ u['last_name'] }}', '{{ u['role'] }}')" class="text-[10px] font-bold text-secondary hover:text-red-700 px-2 py-1 rounded border border-secondary hover:bg-red-50 transition-all">Role</button>
                                     {% if u['active'] %}
                                         <a href="{{url_for('toggle_user', user_id=u['id'])}}" class="text-[10px] font-bold text-amber-600 hover:text-amber-700 px-2 py-1 rounded border border-amber-200 hover:bg-amber-50 transition-all">Deactivate</a>
                                     {% else %}
@@ -215,7 +215,7 @@
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-purple-50 rounded-lg text-secondary">
+                    <div class="p-2 bg-red-50 rounded-lg text-secondary">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
                     <h2 class="text-lg font-semibold">Lecturer Management</h2>
@@ -250,7 +250,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button onclick="handleEditRole({{ l['id'] }}, '{{ l['first_name'] }} {{ l['last_name'] }}', '{{ l['role'] }}')" class="text-[10px] font-bold text-secondary hover:text-purple-700 px-2 py-1 rounded border border-secondary hover:bg-purple-50 transition-all">Role</button>
+                                    <button onclick="handleEditRole({{ l['id'] }}, '{{ l['first_name'] }} {{ l['last_name'] }}', '{{ l['role'] }}')" class="text-[10px] font-bold text-secondary hover:text-red-700 px-2 py-1 rounded border border-secondary hover:bg-red-50 transition-all">Role</button>
                                     <a href="{{url_for('toggle_user', user_id=l['id'])}}" class="text-[10px] font-bold {{ 'text-amber-600 border-amber-200' if l['active'] else 'text-green-600 border-green-200' }} px-2 py-1 rounded border hover:bg-slate-50 transition-all">
                                         {{ 'Disable' if l['active'] else 'Enable' }}
                                     </a>
@@ -292,7 +292,7 @@
 
             <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-8">
                 <div class="flex items-center gap-3 mb-8">
-                    <div class="p-2 bg-purple-50 rounded-lg text-secondary">
+                    <div class="p-2 bg-red-50 rounded-lg text-secondary">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
                     </div>
                     <h2 class="text-lg font-semibold">System Branding</h2>
@@ -300,7 +300,7 @@
 
             <form method="post" action="{{ url_for('upload_logo') }}" enctype="multipart/form-data" class="space-y-4">
                 <label class="block text-sm font-bold text-slate-700 uppercase tracking-tight">Upload Login Background Image</label>
-                <input type="file" name="logo" accept="image/*" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all" required>
+                <input type="file" name="logo" accept="image/*" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all" required>
                 <p class="text-xs text-slate-500">Upload a JPG, PNG, or other image file to set as the login page background.</p>
                 <button class="w-full btn-admin text-sm py-2.5 rounded-xl">Upload & Set Background</button>
             </form>
@@ -502,8 +502,8 @@ async function loadAnalytics() {
                     datasets: [{
                         label: 'Attendance',
                         data: trend.map(d => d.count),
-                        borderColor: '#7c3aed',
-                        backgroundColor: 'rgba(124,58,237,0.1)',
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38,0.1)',
                         fill: true,
                         tension: 0.3
                     }]

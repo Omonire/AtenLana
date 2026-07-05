@@ -264,7 +264,7 @@ async function loadActions() {
                 </div>
                 <div class="flex gap-3 flex-shrink-0">
                     ${!a.reverted ?
-                        \`<button onclick="undoAction(${a.id})" class="text-[9px] font-black uppercase text-secondary hover:scale-105 bg-white px-4 py-2 rounded-xl border border-purple-50 shadow-sm transition-all">Revert</button>\` :
+                        \`<button onclick="undoAction(${a.id})" class="text-[9px] font-black uppercase text-secondary hover:scale-105 bg-white px-4 py-2 rounded-xl border border-red-50 shadow-sm transition-all">Revert</button>\` :
                         \`<button onclick="redoAction(${a.id})" class="text-[9px] font-black uppercase text-emerald-600 hover:scale-105 bg-white px-4 py-2 rounded-xl border border-emerald-50 shadow-sm transition-all">Reapply</button>\`
                     }
                 </div>

@@ -192,9 +192,9 @@
 <script>
   // Initialize Chart
   const ctx = document.getElementById('attendanceChart').getContext('2d');
-  const purpleGradient = ctx.createLinearGradient(0, 0, 0, 200);
-  purpleGradient.addColorStop(0, 'rgba(124, 58, 237, 0.4)');
-  purpleGradient.addColorStop(1, 'rgba(124, 58, 237, 0)');
+  const redGradient = ctx.createLinearGradient(0, 0, 0, 200);
+  redGradient.addColorStop(0, 'rgba(220, 38, 38, 0.4)');
+  redGradient.addColorStop(1, 'rgba(220, 38, 38, 0)');
 
   const chart = new Chart(ctx, {
     type: 'line',
@@ -203,8 +203,8 @@
       datasets: [{
         label: 'Signed-in Students',
         data: [],
-        borderColor: '#7c3aed',
-        backgroundColor: purpleGradient,
+        borderColor: '#dc2626',
+        backgroundColor: redGradient,
         fill: true,
         tension: 0.4,
         borderWidth: 3,

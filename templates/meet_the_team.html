@@ -35,10 +35,10 @@
 
     <div class="relative">
         <!-- Navigation Buttons (Desktop Only) -->
-        <button onclick="document.getElementById('team-cards-container').scrollBy({left: -400, behavior: 'smooth'})" class="absolute left-0 top-1/2 -translate-y-1/2 -ml-6 z-30 p-4 bg-white shadow-2xl rounded-full text-secondary hover:scale-110 transition-all hidden lg:block border border-purple-50">
+        <button onclick="document.getElementById('team-cards-container').scrollBy({left: -400, behavior: 'smooth'})" class="absolute left-0 top-1/2 -translate-y-1/2 -ml-6 z-30 p-4 bg-white shadow-2xl rounded-full text-secondary hover:scale-110 transition-all hidden lg:block border border-red-50">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         </button>
-        <button onclick="document.getElementById('team-cards-container').scrollBy({left: 400, behavior: 'smooth'})" class="absolute right-0 top-1/2 -translate-y-1/2 -mr-6 z-30 p-4 bg-white shadow-2xl rounded-full text-secondary hover:scale-110 transition-all hidden lg:block border border-purple-50">
+        <button onclick="document.getElementById('team-cards-container').scrollBy({left: 400, behavior: 'smooth'})" class="absolute right-0 top-1/2 -translate-y-1/2 -mr-6 z-30 p-4 bg-white shadow-2xl rounded-full text-secondary hover:scale-110 transition-all hidden lg:block border border-red-50">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
 
@@ -64,16 +64,16 @@
             {% endif %}
 
             <div class="relative flex-shrink-0 w-16 h-16 md:w-full md:h-auto md:aspect-square md:mb-8">
-                <div class="w-full h-full rounded-xl md:rounded-[2rem] bg-purple-50 flex items-center justify-center overflow-hidden border border-purple-100">
+                <div class="w-full h-full rounded-xl md:rounded-[2rem] bg-red-50 flex items-center justify-center overflow-hidden border border-red-100">
                     {% if member.image %}
                     <img src="{{ member.image }}" alt="{{ member.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     {% else %}
-                    <svg class="text-purple-200 w-8 h-8 md:w-20 md:h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <svg class="text-red-200 w-8 h-8 md:w-20 md:h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                     </svg>
                     {% endif %}
                 </div>
-                <div class="absolute -bottom-2 -right-2 md:-bottom-4 md:right-4 px-2 py-1 md:px-4 md:py-2 bg-white rounded-lg md:rounded-xl shadow-lg border border-purple-50">
+                <div class="absolute -bottom-2 -right-2 md:-bottom-4 md:right-4 px-2 py-1 md:px-4 md:py-2 bg-white rounded-lg md:rounded-xl shadow-lg border border-red-50">
                     <span class="text-[8px] md:text-[10px] font-black text-secondary uppercase tracking-widest">{{ member.role_name }}</span>
                 </div>
             </div>
@@ -232,7 +232,7 @@
             </div>
 
             <div class="flex items-center gap-3" id="visibility-container">
-                <input type="checkbox" name="visible" id="edit-visible" checked class="w-5 h-5 accent-purple-600">
+                <input type="checkbox" name="visible" id="edit-visible" checked class="w-5 h-5 accent-red-600">
                 <label for="edit-visible" class="text-sm font-bold text-slate-600">Publicly visible on website</label>
             </div>
 
