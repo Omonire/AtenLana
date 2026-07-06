@@ -182,7 +182,7 @@
     <h4>Join & Mark Attendance</h4>
     <p class="muted">Enter the session token provided by your lecturer and allow location access to mark attendance.</p>
     <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
-      <input id="joinToken" placeholder="Enter session token" style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#1e293b; color:var(--text); font-weight:700;">
+      <input id="joinToken" placeholder="Enter session token" style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border); background:#16181d; color:var(--text); font-weight:700;">
       <button id="joinMarkBtn" class="btn-mini btn-outline">Mark Attendance</button>
     </div>
     <div id="joinResult" style="margin-top:10px; font-weight:700;"></div>
@@ -203,7 +203,7 @@
       datasets: [{
         label: 'Signed-in Students',
         data: [],
-        borderColor: '#3b82f6',
+        borderColor: '#ffba08',
         backgroundColor: redGradient,
         fill: true,
         tension: 0.4,
@@ -215,7 +215,7 @@
       responsive: true,
       plugins: { legend: { display: false } },
       scales: {
-        y: { beginAtZero: true, grid: { color: '#1e293b' } },
+        y: { beginAtZero: true, grid: { color: '#22252d' } },
         x: { grid: { display: false } }
       }
     }

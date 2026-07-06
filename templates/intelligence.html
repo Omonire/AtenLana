@@ -2,7 +2,7 @@
 {% block body %}
 
 <div class="min-h-screen bg-slate-950 text-slate-200 p-6 md:p-10 font-mono">
-    <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#1e293b] pb-8">
+    <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#1a1d23] pb-8">
         <div>
             <div class="flex items-center gap-3 mb-2">
                 <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_#ef4444]"></div>
@@ -11,21 +11,21 @@
             <p class="text-slate-500 text-xs">Real-time visitor telemetry and spatial synchronization.</p>
         </div>
         <div class="flex items-center gap-4">
-            <div class="bg-[#0f172a] border border-[#1e293b] px-4 py-2 rounded-lg text-xs">
+            <div class="bg-[#111318] border border-slate-200 px-4 py-2 rounded-lg text-xs">
                 <span class="text-slate-500">Uptime:</span> <span class="text-emerald-400 font-bold">100.0%</span>
             </div>
-            <button onclick="location.reload()" class="bg-primary hover:bg-indigo-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all">
+            <button onclick="location.reload()" class="bg-[#ffba08] hover:opacity-90 text-[#0b0c0f] px-4 py-2 rounded-lg text-xs font-bold transition-all">
                 REFRESH FEED
             </button>
         </div>
     </header>
 
     <div class="grid grid-cols-1 gap-6">
-        <div class="bg-[#020617]/80 border border-[#1e293b] rounded-2xl overflow-hidden shadow-2xl backdrop-blur-xl">
+        <div class="bg-[#0b0c0f]/80 border border-slate-200 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-xl">
             <div class="overflow-x-auto no-scrollbar">
                 <table class="w-full text-left text-[11px] leading-tight">
                     <thead>
-                        <tr class="bg-[#0f172a] border-b border-[#1e293b] text-slate-400 uppercase font-black tracking-widest">
+                        <tr class="bg-[#111318] border-b border-slate-200 text-slate-400 uppercase font-black tracking-widest">
                             <th class="px-6 py-4">Timestamp</th>
                             <th class="px-6 py-4">Identity</th>
                             <th class="px-6 py-4">Network Info</th>
@@ -34,9 +34,9 @@
                             <th class="px-6 py-4">Path</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-[#1e293b]">
+                    <tbody class="divide-y divide-slate-200">
                         {% for log in logs %}
-                        <tr class="hover:bg-indigo-500/5 transition-colors group">
+                        <tr class="hover:bg-slate-100 transition-colors group">
                             <td class="px-6 py-4 whitespace-nowrap text-slate-500">
                                 {{ log.timestamp }}
                             </td>
@@ -56,7 +56,7 @@
                                 {% if log.lat and log.lon %}
                                     <div class="flex flex-col gap-1">
                                         <div class="text-emerald-400 font-bold">{{ log.lat }}, {{ log.lon }}</div>
-                                        <a href="https://www.google.com/maps?q={{ log.lat }},{{ log.lon }}" target="_blank" class="text-indigo-500 hover:text-primary underline decoration-indigo-500/30">View on Satellite</a>
+                                        <a href="https://www.google.com/maps?q={{ log.lat }},{{ log.lon }}" target="_blank" class="text-[#ffba08] hover:text-primary underline decoration-[#ffba08]/30">View on Satellite</a>
                                     </div>
                                 {% else %}
                                     <span class="text-slate-600">Location Shielded</span>
@@ -87,8 +87,8 @@
 
 <style>
     /* Custom style overrides for intelligence page */
-    body { background-color: #020617 !important; }
-    .luxury-card { border-color: #1e293b !important; background: #0f172a !important; }
+    body { background-color: #0b0c0f !important; }
+    .luxury-card { border-color: rgba(255,255,255,0.07) !important; background: #111318 !important; }
 </style>
 
 {% endblock %}

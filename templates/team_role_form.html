@@ -19,11 +19,11 @@
 
         <div>
             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Role Name</label>
-            <input type="text" name="role_name" value="{{ edit_role.name if edit_role else '' }}" class="w-full px-6 py-4 rounded-xl border border-slate-200 outline-none font-bold text-sm" required>
+            <input type="text" name="role_name" value="{{ edit_role.name if edit_role else '' }}" class="w-full px-6 py-4 rounded-xl border border-slate-200 bg-[#ffffff] text-[#0b0c0f] outline-none font-bold text-sm" required>
         </div>
 
         <div class="flex gap-4 pt-4">
-            <a href="{{ url_for('superadmin_team') }}" class="flex-1 px-8 py-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-sm text-center">Cancel</a>
+            <a href="{{ url_for('superadmin_team') }}" class="flex-1 px-8 py-4 rounded-xl border border-slate-600 text-slate-400 font-bold text-sm text-center hover:bg-slate-800/50 transition-all">Cancel</a>
             <button type="submit" class="flex-1 btn-primary px-8 py-4 rounded-xl font-bold text-sm">{{ 'Save Role' if edit_role else 'Add Role' }}</button>
         </div>
     </form>
@@ -32,8 +32,8 @@
         <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Current Roles</h3>
         <div class="flex flex-col gap-2">
             {% for role in roles %}
-            <div class="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-xl">
-                <span class="text-sm font-bold text-slate-700">{{ role.name }}</span>
+            <div class="flex items-center justify-between px-4 py-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                <span class="text-sm font-bold text-slate-300">{{ role.name }}</span>
                 {% if not edit_role or edit_role.id != role.id %}
                 <div class="flex gap-2">
                     <a href="{{ url_for('team_role_edit', rid=role.id) }}" class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all">
