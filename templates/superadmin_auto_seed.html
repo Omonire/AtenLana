@@ -6,12 +6,12 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <div class="flex items-center gap-4">
-                    <div class="p-3 bg-violet-500 rounded-2xl shadow-lg shadow-violet-200">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 2v6h-6M3 22v-6h6M21 13A9 9 0 1 1 3 13"/></svg>
+                    <div class="p-3 bg-[#ffba08] rounded-2xl shadow-lg shadow-[#ffba08]/30">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0b0c0f" stroke-width="2.5"><path d="M21 2v6h-6M3 22v-6h6M21 13A9 9 0 1 1 3 13"/></svg>
                     </div>
                     <div>
                         <h1 class="text-xl font-black text-slate-900 tracking-tight">Auto Seed Curriculum</h1>
-                        <p class="text-[10px] font-black text-violet-600 uppercase tracking-[0.2em]">UNIBEN Academic Registry Sync</p>
+                        <p class="text-[10px] font-black text-[#ffba08] uppercase tracking-[0.2em]">UNIBEN Academic Registry Sync</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -36,13 +36,13 @@
                 <div id="seed-status-box" class="hidden mb-12 p-8 bg-slate-50 rounded-3xl border border-slate-100">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-3">
-                            <div id="seed-indicator" class="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></div>
+                            <div id="seed-indicator" class="w-2 h-2 rounded-full bg-[#ffba08] animate-pulse"></div>
                             <span id="seed-msg" class="text-sm font-bold text-slate-700">Initializing...</span>
                         </div>
-                        <span id="seed-pct" class="text-xs font-black text-violet-600">0%</span>
+                        <span id="seed-pct" class="text-xs font-black text-[#ffba08]">0%</span>
                     </div>
                     <div class="w-full h-2 bg-white rounded-full overflow-hidden border border-slate-200">
-                        <div id="seed-progress-bar" class="h-full bg-violet-500 transition-all duration-500" style="width: 0%"></div>
+                        <div id="seed-progress-bar" class="h-full bg-[#ffba08] transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
@@ -76,7 +76,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-6">
-                    <button onclick="triggerAutoSeed()" id="seed-btn" class="flex-1 px-10 py-5 bg-violet-500 text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-violet-600 hover:-translate-y-1 transition-all shadow-xl shadow-violet-500/20 flex items-center justify-center gap-3">
+                    <button onclick="triggerAutoSeed()" id="seed-btn" class="flex-1 px-10 py-5 bg-[#ffba08] text-[#0b0c0f] rounded-2xl text-sm font-black uppercase tracking-widest hover:opacity-90 hover:-translate-y-1 transition-all shadow-xl shadow-[#ffba08]/20 flex items-center justify-center gap-3">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 2v6h-6M3 22v-6h6M21 13A9 9 0 1 1 3 13"/></svg>
                         Start Seed
                     </button>
@@ -90,7 +90,7 @@
                 </div>
             </div>
 
-            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-violet-50 rounded-full blur-3xl opacity-50"></div>
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-[#ffba08]/5 rounded-full blur-3xl opacity-50"></div>
             <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-slate-100 rounded-full blur-3xl opacity-50"></div>
         </div>
 
@@ -99,15 +99,15 @@
                 <h4 class="text-lg font-black text-slate-900 mb-4 tracking-tight">What Gets Seeded</h4>
                 <ul class="space-y-4">
                     <li class="flex items-start gap-3">
-                        <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-violet-500 flex-shrink-0"></div>
+                        <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#ffba08] flex-shrink-0"></div>
                         <p class="text-xs font-medium text-slate-500">All faculties from the UNIBEN academic registry.</p>
                     </li>
                     <li class="flex items-start gap-3">
-                        <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-violet-500 flex-shrink-0"></div>
+                        <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#ffba08] flex-shrink-0"></div>
                         <p class="text-xs font-medium text-slate-500">Every department mapped under its parent faculty.</p>
                     </li>
                     <li class="flex items-start gap-3">
-                        <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-violet-500 flex-shrink-0"></div>
+                        <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#ffba08] flex-shrink-0"></div>
                         <p class="text-xs font-medium text-slate-500">Full course catalog with codes and titles.</p>
                     </li>
                 </ul>
@@ -122,54 +122,4 @@
         </div>
     </main>
 </div>
-
-<script>
-async function triggerAutoSeed() {
-    const btn = document.getElementById('seed-btn');
-    const statusBox = document.getElementById('seed-status-box');
-    const resultsBox = document.getElementById('seed-results');
-    const errorBox = document.getElementById('seed-error');
-    const msgEl = document.getElementById('seed-msg');
-    const pctEl = document.getElementById('seed-pct');
-    const barEl = document.getElementById('seed-progress-bar');
-
-    btn.disabled = true;
-    btn.innerHTML = '<svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Seeding...';
-    statusBox.classList.remove('hidden');
-    resultsBox.classList.add('hidden');
-    errorBox.classList.add('hidden');
-    msgEl.textContent = 'Scraping faculties...';
-    pctEl.textContent = '10%';
-    barEl.style.width = '10%';
-
-    try {
-        const resp = await fetch('/superadmin/auto-seed', { method: 'POST' });
-        const data = await resp.json();
-        if (data.success) {
-            msgEl.textContent = 'Seed complete!';
-            pctEl.textContent = '100%';
-            barEl.style.width = '100%';
-            document.getElementById('seed-indicator').classList.remove('animate-pulse');
-            document.getElementById('seed-indicator').classList.add('bg-emerald-500');
-            document.getElementById('stat-faculties').textContent = data.faculties;
-            document.getElementById('stat-departments').textContent = data.departments;
-            document.getElementById('stat-courses').textContent = data.courses;
-            setTimeout(() => {
-                statusBox.classList.add('hidden');
-                resultsBox.classList.remove('hidden');
-            }, 800);
-        } else {
-            statusBox.classList.add('hidden');
-            errorBox.classList.remove('hidden');
-            document.getElementById('seed-error-msg').textContent = data.message || 'Unknown error';
-        }
-    } catch (e) {
-        statusBox.classList.add('hidden');
-        errorBox.classList.remove('hidden');
-        document.getElementById('seed-error-msg').textContent = e.message;
-    }
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 2v6h-6M3 22v-6h6M21 13A9 9 0 1 1 3 13"/></svg> Start Seed';
-}
-</script>
 {% endblock %}

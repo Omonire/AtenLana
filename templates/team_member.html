@@ -17,7 +17,7 @@
                 {% if member.image %}
                 <img src="{{ member.image }}" alt="{{ member.name }}" class="w-full h-full object-cover">
                 {% else %}
-                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-100 to-indigo-100">
+                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-100 to-[#fef3c7]">
                     <span class="text-7xl font-black text-red-300">{{ member.name[:2] | upper }}</span>
                 </div>
                 {% endif %}
