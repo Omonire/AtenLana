@@ -218,7 +218,7 @@
     <p class="muted" style="font-size: 0.85rem;">Set your email to receive a confirmation receipt each time you mark attendance.</p>
     <form id="emailForm" class="input-group">
       <input type="email" id="emailInput" class="session-input" placeholder="you@example.com" value="{{ g.user.get('email', '') }}" style="letter-spacing:0;">
-      <button type="submit" class="btn-auth" style="border:none; cursor:pointer; background: #3b82f6; color: white;">Save Email</button>
+      <button type="submit" class="btn-auth" style="border:none; cursor:pointer; background: #ffba08; color: white;">Save Email</button>
     </form>
     <div id="emailStatus" style="margin-top: 8px; font-size: 0.85rem; display: none; padding: 8px; border-radius: 8px;"></div>
   </div>
@@ -349,7 +349,7 @@ async function handleAttendance(token, sessionId = null, sourceBtn = null) {
                 activeBtn.style.display = 'none';
                 if(document.getElementById('manualCode')) {
                   document.getElementById('manualCode').disabled = true;
-                  document.getElementById('manualCode').style.background = '#1e293b';
+                  document.getElementById('manualCode').style.background = '#16181d';
                 }
 
                 // Show detailed success popup with location usage info
@@ -545,7 +545,7 @@ function showUploadStatus(msg, type) {
         uploadStatus.style.background = '#dcfce7';
         uploadStatus.style.color = '#166534';
     } else {
-                uploadStatus.style.background = '#1e293b';
+                uploadStatus.style.background = '#16181d';
                 uploadStatus.style.color = 'var(--text-muted)';
     }
 }
@@ -558,7 +558,7 @@ function showWalletStatus(msg, isSuccess) {
     walletStatus.textContent = msg;
     walletStatus.style.display = 'block';
     walletStatus.style.background = isSuccess ? '#dcfce7' : '#fee2e2';
-    walletStatus.style.color = isSuccess ? '#2563eb' : '#dc2626';
+    walletStatus.style.color = isSuccess ? '#ffba08' : '#dc2626';
 }
 
 document.getElementById('connectWalletBtn')?.addEventListener('click', async function() {

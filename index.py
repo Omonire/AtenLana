@@ -588,8 +588,8 @@ def init_db():
     safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('security_mode', 'off'))
         # High-Level Strictness: Global Integrity Protocol enabled by default for all nodes
     safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('strict_integrity_mode', 'on'))
-    safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('primary_color', '#2563eb'))
-    safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('secondary_color', '#3b82f6'))
+    safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('primary_color', '#ffba08'))
+    safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('secondary_color', '#ffba08'))
     safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('github_access_for_admin', 'off'))
     safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('student_cost', '10000'))
     safe_execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO NOTHING", ('billing_period', 'session'))

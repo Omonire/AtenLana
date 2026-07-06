@@ -7,7 +7,7 @@
    {% if site_settings.favicon %}
    <link rel="icon" type="image/png" href="{{ site_settings.favicon }}">
    {% endif %}
-  <title>AtenLana Portal | Luxury Attendance Management</title>
+  <title>AtenLana Portal | Attendance Management</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -16,151 +16,117 @@
           colors: {
             primary: 'var(--primary)',
             secondary: 'var(--secondary)',
-            white: '#0f172a',
+            white: '#111318',
             slate: {
-              50: '#0f172a',
-              100: '#1e293b',
-              200: '#334155',
-              300: '#475569',
-              400: '#64748b',
-              500: '#94a3b8',
-              600: '#cbd5e1',
-              700: '#e2e8f0',
-              800: '#f1f5f9',
-              900: '#f8fafc',
+              50: '#16181d',
+              100: '#1a1d23',
+              200: '#22252d',
+              300: '#666666',
+              400: '#888888',
+              500: '#999999',
+              600: '#aaaaaa',
+              700: '#cccccc',
+              800: '#e0e0e0',
+              900: '#f0f0f0',
             },
           }
         }
       }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{{ url_for('static', filename='js/sync.js') }}"></script>
 
   <style>
     :root {
-      --primary: {{ site_settings.get('primary_color', '#2563eb') }};
-      --secondary: {{ site_settings.get('secondary_color', '#3b82f6') }};
-      --accent-gold: #f59e0b;
-      --primary-light: #1e3a8a;
-      --accent-yellow: #fbbf24;
-      --bg: #020617;
-      --text: #f1f5f9;
-      --text-muted: #64748b;
-      --card-bg: #0f172a;
-      --border: #1e293b;
-      --border-light: rgba(59, 130, 246, 0.15);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-      --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+      --primary: {{ site_settings.get('primary_color', '#ffba08') }};
+      --secondary: {{ site_settings.get('secondary_color', '#ffba08') }};
+      --accent-gold: #ffba08;
+      --primary-light: #dda006;
+      --accent-yellow: #ffba08;
+      --bg: #0b0c0f;
+      --text: #f0f0f0;
+      --text-muted: #888888;
+      --card-bg: #111318;
+      --border: rgba(255,255,255,0.07);
+      --border-light: rgba(255,186,8,0.2);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.6);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.7);
     }
 
     body {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'DM Sans', system-ui, sans-serif;
       background: var(--bg);
-      color: var(--text);
+      background-image: radial-gradient(circle, rgba(255,186,8,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: var(--text-muted);
       position: relative;
       overflow-x: hidden;
       line-height: 1.6;
     }
 
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--text);
+    }
+
     .glass-nav {
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(30px) saturate(180%);
-      -webkit-backdrop-filter: blur(30px) saturate(180%);
-      border-bottom: 1px solid var(--border-light);
+      background: rgba(11, 12, 15, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
       box-shadow: var(--shadow-sm);
     }
 
     .nav-link-hover {
       position: relative;
-      transition: all 0.3s ease;
-      color: #cbd5e1;
-      font-weight: 600;
-    }
-
-    .nav-link-hover::before {
-      content: '';
-      position: absolute;
-      inset: -8px;
-      background: rgba(59, 130, 246, 0.1);
-      border-radius: 12px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: color 0.2s ease;
+      color: #888888;
+      font-weight: 500;
+      font-size: 0.875rem;
     }
 
     .nav-link-hover:hover {
-      color: var(--secondary);
-    }
-
-    .nav-link-hover:hover::before { opacity: 1; }
-
-    .nav-link-hover::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 3px;
-      bottom: -6px;
-      left: 50%;
-      background: var(--secondary);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: translateX(-50%);
-      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
-      border-radius: 2px;
-    }
-
-    .nav-link-hover:hover::after { width: 100%; }
-
-    @keyframes morph {
-      0%, 100% { border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; }
-      50% { border-radius: 60% 40% 40% 60% / 60% 60% 40% 40%; }
-    }
-
-    .morphing-blob {
-      animation: morph 8s ease-in-out infinite;
+      color: var(--text);
     }
 
     .luxury-card {
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(255,255,255,0.02);
       backdrop-filter: blur(20px);
-      border: 1px solid var(--border);
-      box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(30, 41, 59, 1);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
     }
 
     .luxury-card:hover {
-      transform: translateY(-8px);
-      box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(30, 41, 59, 1);
-      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(255,255,255,0.12);
     }
 
     .user-badge {
       background: var(--primary);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
     .glow-text {
-      text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+      text-shadow: 0 0 30px rgba(255, 186, 8, 0.15);
     }
 
     .progress-bar {
-      height: 4px;
+      height: 2px;
       background: var(--accent-gold);
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
     }
 
     .logo-glow {
-      filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.4));
+      filter: drop-shadow(0 0 8px rgba(255, 186, 8, 0.2));
       transition: all 0.3s ease;
     }
 
     .logo-glow:hover {
-      filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6));
+      filter: drop-shadow(0 0 16px rgba(255, 186, 8, 0.4));
       transform: scale(1.05);
     }
 
@@ -175,48 +141,35 @@
     /* Enhanced button styles */
     .btn-primary, .btn-auth, .btn-signup, .btn-submit, .btn-login, button[type="submit"], .btn-student, .btn-staff, .btn-admin, .btn-placeholder {
       background: var(--primary) !important;
-      color: #ffffff !important;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--accent-gold);
-      transition: all 0.3s ease;
-      font-weight: 800 !important;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: #0b0c0f !important;
+      box-shadow: 0 4px 16px rgba(255, 186, 8, 0.2);
+      border: none;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+      font-weight: 600 !important;
       padding: 0.75rem 1.5rem;
-      border-radius: 12px;
+      border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 8px;
     }
 
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transition: left 0.5s;
-    }
-
-    .btn-primary:hover::before {
-      left: 100%;
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
     }
 
     .btn-gold {
       background: var(--accent-gold);
-      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+      color: #0b0c0f;
     }
 
     /* Alert box enhancement */
     .alert-box {
       background: var(--card-bg);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      border: 1px solid rgba(255, 186, 8, 0.3);
       animation: slideInDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -249,18 +202,12 @@
       transform: rotate(360deg);
     }
 
-    /* Gradient text */
-    .gradient-text {
-      color: var(--accent-gold);
-    }
-
     /* Enhanced scrollbar */
-    ::-webkit-scrollbar { width: 12px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0b0c0f; }
     ::-webkit-scrollbar-thumb {
-      background: var(--secondary);
-      border-radius: 6px;
-      border: 2px solid #0f172a;
+      background: #333333;
+      border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
 
@@ -287,39 +234,39 @@
 
   </style>
 </head>
-<body class="min-h-screen selection:bg-secondary/30 selection:text-white">
+<body class="min-h-screen selection:bg-[#ffba08]/30 selection:text-[#0b0c0f]">
 
   <header class="glass-nav sticky top-0 z-[100] transition-all duration-500" id="main-nav">
     <div class="max-w-7xl mx-auto px-4 lg:px-12 h-20 md:h-24 flex items-center justify-between transition-all duration-500" id="nav-container">
       <a href="{{ url_for('index') }}" class="flex items-center gap-2 md:gap-4 group relative z-10">
         <div class="relative logo-glow">
-            <div class="absolute inset-0 bg-secondary blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-            <div class="relative p-3 bg-white rounded-2xl group-hover:rotate-12 transition-all duration-500 border border-slate-600 shadow-lg">
+            <div class="absolute inset-0 bg-[#ffba08] blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <div class="relative p-3 bg-white rounded-2xl group-hover:rotate-12 transition-all duration-500 border border-slate-200 shadow-lg">
                 {% if site_settings.site_logo %}
                 <img src="{{ site_settings.site_logo }}" class="w-8 h-8 object-contain">
                 {% else %}
-                <svg class="text-secondary" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <svg class="text-[#ffba08]" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                 {% endif %}
             </div>
         </div>
         <div>
-          <span class="text-lg md:text-2xl font-extrabold tracking-tighter text-slate-900 uppercase block leading-none">AtenLana<span class="gradient-text ml-1">Portal</span></span>
+          <span class="text-lg md:text-2xl font-extrabold tracking-tighter text-slate-900 uppercase block leading-none">AtenLana<span class="text-[#ffba08] ml-1">Portal</span></span>
           <div class="progress-bar mt-1 rounded-full" style="width: 40px;"></div>
         </div>
       </a>
 
       <!-- Mobile Menu Toggle -->
-      <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-50 rounded-xl transition-all relative z-[110]">
+      <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-400 hover:bg-slate-100 rounded-xl transition-all relative z-[110]">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
 
       <nav class="hidden md:flex items-center gap-8">
         {% if g.user %}
-          <div class="flex items-center gap-4 py-2.5 px-5 bg-white rounded-2xl border border-slate-200 backdrop-blur-xl shadow-lg">
-            <div class="user-badge w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold">
+          <div class="flex items-center gap-3 py-2 px-4 bg-white rounded-xl border border-slate-200 shadow-lg">
+            <div class="user-badge w-8 h-8 rounded-lg flex items-center justify-center text-[#0b0c0f] text-xs font-bold">
     {{ (g.user['first_name'] or g.user['username'])[0] | upper }}
             </div>
-            <span class="text-sm font-semibold text-slate-700">Hi, <span class="text-slate-900 font-bold">{{g.user['first_name'] or g.user['username']}}</span></span>
+            <span class="text-sm font-medium text-slate-300">Hi, <span class="text-slate-900 font-semibold">{{g.user['first_name'] or g.user['username']}}</span></span>
           </div>
           {% if g.user['role'] == 'lecturer' %}
             <a href="{{ url_for('lecturer_dashboard') }}" class="nav-link-hover text-sm font-bold ml-3">Dashboard</a>
@@ -334,35 +281,35 @@
             <a href="{{ url_for('deployment_console') }}" class="nav-link-hover text-sm font-bold ml-3">Deployment</a>
           {% endif %}
 
-          <div class="relative ml-4 group">
-            <button id="notification-bell" class="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all border border-slate-200 hover:border-slate-300 relative">
-                <svg class="text-slate-600 group-hover:text-slate-900" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-secondary border-2 border-white rounded-full hidden"></span>
+          <div class="relative ml-4">
+            <button id="notification-bell" class="p-2 hover:bg-slate-100 rounded-lg transition-all relative">
+                <svg class="text-slate-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span id="notif-badge" class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[#ffba08] border-2 border-[#0b0c0f] rounded-full hidden"></span>
             </button>
-            <div id="notif-dropdown" class="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 hidden z-[200] overflow-hidden">
-                <div class="px-5 py-4 border-b border-slate-50 bg-slate-50/30 flex justify-between items-center">
-                    <span class="text-xs font-black text-slate-900 uppercase tracking-widest">Live Broadcasts</span>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase">Recent</span>
+            <div id="notif-dropdown" class="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-2xl border border-slate-200 hidden z-[200] overflow-hidden">
+                <div class="px-4 py-3 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <span class="text-xs font-bold text-slate-900 uppercase tracking-widest">Live Broadcasts</span>
+                    <span class="text-[10px] text-slate-400 font-medium uppercase">Recent</span>
                 </div>
-                <div id="notif-list" class="max-h-[400px] overflow-y-auto divide-y divide-slate-50">
-                    <div class="p-5 text-center text-slate-400 text-xs font-medium">No active broadcasts.</div>
+                <div id="notif-list" class="max-h-[400px] overflow-y-auto divide-y divide-slate-100">
+                    <div class="p-4 text-center text-slate-400 text-xs">No active broadcasts.</div>
                 </div>
-                <a href="{{ url_for('announcements_page') }}" class="block px-5 py-4 text-center text-[10px] font-black text-slate-600 uppercase tracking-widest bg-slate-50 hover:bg-slate-100 transition-colors border-t border-slate-200">
+                <a href="{{ url_for('announcements_page') }}" class="block px-4 py-3 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 hover:bg-slate-100 transition-colors border-t border-slate-200">
                     View All Announcements
                 </a>
             </div>
           </div>
 
           {% if g.user['role'] != 'student' %}
-          <a href="{{url_for('logout')}}" class="ml-4 px-6 py-2.5 bg-secondary hover:bg-secondary/80 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-secondary/20 hover:scale-105 flex items-center gap-2">
+          <a href="{{url_for('logout')}}" class="ml-4 px-4 py-2 rounded-lg border border-slate-200 text-slate-400 text-sm font-medium hover:bg-slate-100 hover:text-slate-300 transition-all flex items-center gap-2">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Sign Out
           </a>
           {% endif %}
         {% else %}
-          <a href="{{url_for('login', role='student')}}" class="nav-link-hover text-sm font-bold">Student</a>
-          <a href="{{url_for('login', role='lecturer')}}" class="nav-link-hover text-sm font-bold">Lecturer</a>
-          <a href="{{ url_for('meet_the_team') }}" class="nav-link-hover text-sm font-bold">Meet the Team</a>
+          <a href="{{url_for('login', role='student')}}" class="nav-link-hover">Student</a>
+          <a href="{{url_for('login', role='lecturer')}}" class="nav-link-hover">Lecturer</a>
+          <a href="{{ url_for('meet_the_team') }}" class="nav-link-hover">Meet the Team</a>
         {% endif %}
       </nav>
     </div>
@@ -371,52 +318,52 @@
   <!-- Mobile Sidebar Navigation -->
   <div id="mobile-sidebar" class="fixed inset-0 z-[2000] hidden">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="sidebar-overlay"></div>
-    <div class="absolute top-0 right-0 h-full w-4/5 max-w-xs bg-white shadow-2xl flex flex-col p-8 transition-transform duration-500 translate-x-full" id="sidebar-content">
-        <div class="flex justify-between items-center mb-10">
-            <span class="text-xl font-black text-slate-900 uppercase tracking-tighter">Menu</span>
-            <button id="close-sidebar" class="p-2 bg-slate-50 rounded-lg"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="absolute top-0 right-0 h-full w-4/5 max-w-xs bg-white shadow-2xl flex flex-col p-6 transition-transform duration-500 translate-x-full" id="sidebar-content">
+        <div class="flex justify-between items-center mb-8">
+            <span class="text-lg font-bold text-slate-900">Menu</span>
+            <button id="close-sidebar" class="p-1.5 bg-slate-100 rounded-lg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
 
-        <div class="flex flex-col gap-6 flex-1 overflow-y-auto">
+        <div class="flex flex-col gap-4 flex-1 overflow-y-auto">
             {% if g.user %}
-                <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4 mb-4">
-                    <div class="user-badge w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold">
+                <div class="p-4 bg-slate-100 rounded-xl border border-slate-200 flex items-center gap-3 mb-4">
+                    <div class="user-badge w-9 h-9 rounded-lg flex items-center justify-center text-[#0b0c0f] text-sm font-bold">
                         {{ (g.user['first_name'] or g.user['username'])[0] | upper }}
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Authenticated</span>
-                        <span class="text-sm font-bold text-slate-900">{{g.user['first_name'] or g.user['username']}}</span>
+                    <div>
+                        <span class="text-[10px] font-medium text-slate-400 uppercase tracking-widest block mb-0.5">Authenticated</span>
+                        <span class="text-sm font-semibold text-slate-900">{{g.user['first_name'] or g.user['username']}}</span>
                     </div>
                 </div>
 
                 {% if g.user['role'] == 'lecturer' %}
-                    <a href="{{ url_for('lecturer_dashboard') }}" class="text-base font-bold text-slate-700 flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg> Dashboard</a>
+                    <a href="{{ url_for('lecturer_dashboard') }}" class="text-sm font-medium text-slate-700 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg> Dashboard</a>
                 {% elif g.user['role'] == 'student' %}
-                    <a href="{{ url_for('student_dashboard') }}" class="text-base font-bold text-slate-700 flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg> Dashboard</a>
+                    <a href="{{ url_for('student_dashboard') }}" class="text-sm font-medium text-slate-700 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg> Dashboard</a>
                 {% elif g.user['role'] == 'admin' %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="text-base font-bold text-slate-700 flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Admin Console</a>
+                    <a href="{{ url_for('admin_dashboard') }}" class="text-sm font-medium text-slate-700 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Admin Console</a>
                 {% elif g.user['role'] == 'superadmin' %}
-                    <a href="{{ url_for('superadmin_dashboard') }}" class="text-base font-bold text-slate-700 flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Super Control</a>
+                    <a href="{{ url_for('superadmin_dashboard') }}" class="text-sm font-medium text-slate-700 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Super Control</a>
                 {% endif %}
 
 
-                <a href="{{ url_for('announcements_page') }}" class="text-base font-bold text-slate-700 flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Announcements</a>
+                <a href="{{ url_for('announcements_page') }}" class="text-sm font-medium text-slate-700 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Announcements</a>
 
                 {% if g.user['role'] != 'student' %}
-                <a href="{{url_for('logout')}}" class="mt-4 text-base font-bold text-secondary flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</a>
+                <a href="{{url_for('logout')}}" class="mt-2 text-sm font-medium text-slate-400 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</a>
                 {% endif %}
             {% else %}
-                <a href="{{url_for('login', role='student')}}" class="text-base font-bold text-slate-700 flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Student Login</a>
-                <a href="{{url_for('login', role='lecturer')}}" class="text-base font-bold text-slate-700 flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> Lecturer Login</a>
-                <a href="{{ url_for('meet_the_team') }}" class="text-base font-bold text-slate-700 flex items-center gap-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Meet the Team</a>
+                <a href="{{url_for('login', role='student')}}" class="text-sm font-medium text-slate-700 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Student Login</a>
+                <a href="{{url_for('login', role='lecturer')}}" class="text-sm font-medium text-slate-700 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> Lecturer Login</a>
+                <a href="{{ url_for('meet_the_team') }}" class="text-sm font-medium text-slate-700 flex items-center gap-3 py-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Meet the Team</a>
             {% endif %}
         </div>
 
-        <div class="mt-10 pt-10 border-t border-slate-100 flex flex-col gap-2">
-            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Temporal Status</span>
+        <div class="mt-8 pt-8 border-t border-slate-100 flex flex-col gap-2">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Temporal Status</span>
             <div class="flex items-center gap-2">
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <span class="text-xs font-bold text-slate-600 uppercase tracking-tighter">System Synchronized</span>
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-tighter">System Synchronized</span>
             </div>
         </div>
     </div>
@@ -425,9 +372,9 @@
   <main class="max-w-7xl mx-auto px-4 md:px-6 lg:px-12 py-8 md:py-16 relative z-10">
     <!-- Global Navigation Control -->
     {% if request.endpoint not in ['index', 'portal_hub', 'student_dashboard', None] %}
-    <div class="mb-8 animate-in fade-in slide-in-from-left-4 duration-700">
-        <button onclick="window.history.back()" class="group flex items-center gap-2.5 px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-500 uppercase tracking-widest hover:border-primary hover:text-primary hover:shadow-xl hover:shadow-blue-500/10 transition-all">
-            <svg class="group-hover:-translate-x-1 transition-transform" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m15 18-6-6 6-6"/></svg>
+    <div class="mb-6">
+        <button onclick="window.history.back()" class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-100 hover:text-slate-300 transition-all">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
             Go Back
         </button>
     </div>
@@ -437,13 +384,13 @@
       {% if messages %}
         <div class="fixed top-32 left-1/2 -translate-x-1/2 z-[200] w-full max-w-lg space-y-4 px-6">
           {% for m in messages %}
-            <div class="alert-box p-6 rounded-2xl shadow-2xl flex items-center gap-5 transform transition-all duration-500">
-              <div class="p-3 bg-yellow-400 rounded-xl rotate-hover">
-                <svg class="text-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div class="alert-box p-4 rounded-xl shadow-2xl flex items-center gap-4">
+              <div class="p-2 bg-[#ffba08] rounded-lg flex-shrink-0">
+                <svg class="text-[#0b0c0f]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
               </div>
-              <div class="text-sm font-bold text-slate-900 flex-1">{{m}}</div>
-              <button onclick="this.parentElement.remove()" class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                <svg class="text-slate-600" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <div class="text-sm font-medium text-slate-900 flex-1">{{m}}</div>
+              <button onclick="this.parentElement.remove()" class="p-1.5 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
+                <svg class="text-slate-500" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
           {% endfor %}
@@ -453,53 +400,30 @@
 
     <div class="w-full">
       {% block body %}
-        <div class="luxury-card card-3d relative text-center py-32 px-10 rounded-[3rem] overflow-hidden">
-          <!-- Ambient Light Gradients -->
-            <div class="absolute -top-48 -left-48 w-[500px] h-[500px] bg-blue-950 rounded-full blur-[120px]"></div>
-            <div class="absolute -bottom-48 -right-48 w-[500px] h-[500px] bg-amber-950 rounded-full blur-[120px]"></div>
-
+        <div class="luxury-card relative text-center py-24 px-8 rounded-[2rem] overflow-hidden">
           <div class="relative z-10">
-              <div class="morphing-blob mx-auto mb-16 w-64 h-64 bg-gradient-to-br from-slate-800 to-amber-950 flex items-center justify-center shadow-2xl border-2 border-slate-600">
-                <svg class="text-slate-900 drop-shadow-2xl rotate-hover" width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="8.5" cy="7" r="4"/>
-                <polyline points="17 11 19 13 23 9"/>
+            <div class="w-16 h-16 rounded-2xl bg-[#ffba08]/10 flex items-center justify-center mx-auto mb-8">
+              <svg class="text-[#ffba08]" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
               </svg>
             </div>
 
-            <h2 class="text-6xl font-extrabold tracking-tight text-slate-900 mb-8 leading-tight glow-text">
-              Precision Attendance <br/>
-              <span class="text-7xl gradient-text">Executive Management</span>
+            <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-4 leading-tight">
+              Attendance <span class="text-[#ffba08]">Management</span>
             </h2>
 
-            <p class="text-slate-600 text-xl max-w-3xl mx-auto mb-4 leading-relaxed font-black uppercase tracking-tighter">
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-2 leading-relaxed">
               Where Integrity Meets Attendance
             </p>
 
-            <p class="text-slate-500 text-base max-w-2xl mx-auto mb-14 leading-relaxed font-medium">
-              The academic gold standard for identity validation and secure institutional attendance tracking.
+            <p class="text-slate-400 text-sm max-w-xl mx-auto mb-12 leading-relaxed">
+              The academic standard for identity validation and secure institutional attendance tracking.
             </p>
 
-            <div class="flex items-center justify-center gap-4 mb-8">
-               <div class="h-2.5 w-20 bg-primary rounded-full shadow-lg"></div>
-               <div class="h-2.5 w-5 bg-slate-400 rounded-full"></div>
-               <div class="h-2.5 w-5 bg-slate-200 rounded-full"></div>
-            </div>
-
-            <!-- Enhanced Feature Pills -->
-            <div class="flex flex-wrap items-center justify-center gap-4 mt-12">
-              <div class="px-6 py-3 bg-slate-50 rounded-full border border-slate-200 flex items-center gap-3 hover:scale-105 hover:bg-slate-100 transition-all">
-                <div class="w-2 h-2 bg-primary rounded-full"></div>
-                <span class="text-sm font-bold text-slate-700">Real-time Tracking</span>
-              </div>
-              <div class="px-6 py-3 bg-slate-800 rounded-full border border-amber-600/30 flex items-center gap-3 hover:scale-105 hover:bg-slate-700 transition-all">
-                <div class="w-2 h-2 bg-amber-400 rounded-full"></div>
-                <span class="text-sm font-bold text-amber-400">Secure Authentication</span>
-              </div>
-              <div class="px-6 py-3 bg-slate-50 rounded-full border border-slate-200 flex items-center gap-3 hover:scale-105 hover:bg-slate-100 transition-all">
-                <div class="w-2 h-2 bg-primary rounded-full"></div>
-                <span class="text-sm font-bold text-slate-700">Analytics Dashboard</span>
-              </div>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <span class="px-4 py-2 bg-white rounded-lg border border-slate-200 text-xs font-medium text-slate-500">Real-time Tracking</span>
+              <span class="px-4 py-2 bg-white rounded-lg border border-slate-200 text-xs font-medium text-slate-500">Secure Authentication</span>
+              <span class="px-4 py-2 bg-white rounded-lg border border-slate-200 text-xs font-medium text-slate-500">Analytics Dashboard</span>
             </div>
           </div>
         </div>
@@ -509,32 +433,31 @@
 
   <!-- Custom Modal -->
   <div id="custom-modal" class="fixed inset-0 z-[3000] hidden flex items-center justify-center p-4 md:p-6 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-    <div class="luxury-card max-w-md w-full p-6 md:p-8 rounded-[2rem] opacity-0" id="modal-content">
-      <div class="flex items-center gap-4 mb-6">
-        <div class="p-3 bg-secondary/10 rounded-2xl text-secondary" id="modal-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div class="luxury-card max-w-md w-full p-6 rounded-2xl opacity-0" id="modal-content">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="p-2.5 bg-[#ffba08]/10 rounded-xl" id="modal-icon">
+          <svg class="text-[#ffba08]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
-        <h3 class="text-xl font-extrabold text-slate-900" id="modal-title">Confirmation</h3>
+        <h3 class="text-lg font-bold text-slate-900" id="modal-title">Confirmation</h3>
       </div>
-      <p class="text-slate-600 font-medium mb-8" id="modal-message">Are you sure you want to proceed?</p>
-      <div class="flex gap-4">
-        <button id="modal-cancel" class="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-all border border-slate-200">Cancel</button>
-        <button id="modal-confirm" class="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-secondary hover:scale-105 transition-all shadow-lg shadow-secondary/20">Confirm</button>
+      <p class="text-slate-400 text-sm mb-6" id="modal-message">Are you sure you want to proceed?</p>
+      <div class="flex gap-3">
+        <button id="modal-cancel" class="flex-1 px-5 py-3 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-100 transition-all border border-slate-200">Cancel</button>
+        <button id="modal-confirm" class="flex-1 px-5 py-3 rounded-lg text-sm font-semibold text-[#0b0c0f] bg-[#ffba08] hover:opacity-90 transition-all">Confirm</button>
       </div>
     </div>
   </div>
 
   <div id="toast-container" class="fixed bottom-6 right-1/2 translate-x-1/2 md:translate-x-0 md:bottom-10 md:right-10 z-[10000] space-y-4 w-full md:w-auto flex flex-col items-center md:items-end px-5 md:px-0"></div>
 
-  <footer class="max-w-7xl mx-auto px-6 lg:px-12 py-12 border-t border-slate-700 mt-20">
-    <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-        <div class="flex items-center gap-4">
-            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                <svg class="text-slate-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  <footer class="max-w-7xl mx-auto px-6 lg:px-12 py-10 border-t border-slate-100 mt-20">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+            <div class="p-2 bg-white rounded-lg border border-slate-200">
+                <svg class="text-slate-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
             <div>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Designing Integrity based Solutions</span>
-                <span class="text-sm font-extrabold text-slate-600">© 2026 AtenLana Technology</span>
+                <span class="text-xs text-slate-500 block">© 2026 AtenLana Technology</span>
             </div>
         </div>
 
@@ -598,19 +521,10 @@
     // Professional Scroll Interaction with Enhanced Effects
     window.addEventListener('scroll', () => {
       const nav = document.getElementById('main-nav');
-      const navContainer = document.getElementById('nav-container');
       if (window.scrollY > 30) {
-        nav.classList.add('shadow-2xl');
-        nav.style.background = 'rgba(15, 23, 42, 0.98)';
-        if (window.innerWidth > 768) {
-            navContainer.classList.replace('h-24', 'h-20');
-        }
+        nav.style.borderBottomColor = 'rgba(255,255,255,0.1)';
       } else {
-        nav.classList.remove('shadow-2xl');
-        nav.style.background = 'rgba(15, 23, 42, 0.95)';
-        if (window.innerWidth > 768) {
-            navContainer.classList.replace('h-20', 'h-24');
-        }
+        nav.style.borderBottomColor = 'rgba(255,255,255,0.07)';
       }
     });
 
@@ -631,7 +545,7 @@
       if (options.confirmClass) {
           confirmBtn.className = `${confirmBaseClass} ${options.confirmClass}`;
       } else {
-          confirmBtn.className = `${confirmBaseClass} bg-secondary hover:scale-105 shadow-secondary/20`;
+          confirmBtn.className = `${confirmBaseClass} bg-[#ffba08] text-[#0b0c0f] hover:opacity-90`;
       }
 
       modal.classList.remove('hidden');
@@ -679,31 +593,26 @@
       const toast = document.createElement('div');
 
       const colors = {
-        'info': { bg: 'bg-primary', border: 'border-primary' },
-        'warning': { bg: 'bg-yellow-500', border: 'border-yellow-500' },
-        'success': { bg: 'bg-green-600', border: 'border-green-600' },
-        'error': { bg: 'bg-red-600', border: 'border-red-600' }
+        'info': { accent: '#ffba08', label: 'info' },
+        'warning': { accent: '#eab308', label: 'warning' },
+        'success': { accent: '#22c55e', label: 'success' },
+        'error': { accent: '#ef4444', label: 'error' }
       };
 
       const color = colors[type] || colors.info;
 
-    toast.className = `bg-white backdrop-blur-xl border ${color.border} px-5 md:px-7 py-4 md:py-6 rounded-2xl shadow-2xl flex items-center justify-between w-[calc(100vw-40px)] md:min-w-[380px] md:w-auto transform transition-all duration-700 translate-y-10 opacity-0 relative overflow-hidden`;
+    toast.className = `bg-white backdrop-blur-xl border border-slate-200 px-5 py-4 rounded-xl shadow-2xl flex items-center justify-between w-[calc(100vw-40px)] md:min-w-[380px] md:w-auto transform transition-all duration-700 translate-y-10 opacity-0`;
 
       toast.innerHTML = `
-        <div class="absolute left-0 top-0 bottom-0 w-1 ${color.bg}"></div>
-        <div class="flex items-center gap-4 relative z-10">
-          <div class="p-2 ${color.bg} rounded-xl flex-shrink-0">
-              <svg class="text-white" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-                </svg>
-            </div>
+        <div class="flex items-center gap-3">
+          <div class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background:${color.accent}"></div>
           <div class="flex flex-col min-w-0">
-              <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-extrabold text-slate-500 mb-0.5">${type} notification</span>
-              <span class="text-xs md:text-sm font-bold text-slate-900 truncate md:whitespace-normal">${message}</span>
+              <span class="text-[10px] uppercase tracking-widest font-medium text-slate-400">${color.label}</span>
+              <span class="text-sm font-medium text-slate-900">${message}</span>
             </div>
         </div>
-      <button class="ml-4 p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-600 flex-shrink-0 relative z-10" onclick="this.parentElement.remove()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button class="ml-3 p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-400 flex-shrink-0" onclick="this.parentElement.remove()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       `;
 
@@ -748,12 +657,11 @@
           } else {
             // Fallback if team is empty
             carousel.innerHTML = `
-              <a href="/meet-the-team" class="group flex items-center gap-4 p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-100 transition-all hover:scale-105">
-                <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold">AT</div>
-                <div class="text-left">
-                    <span class="text-[10px] font-extrabold text-slate-600 uppercase tracking-tighter block">The Visionaries</span>
-                    <span class="text-sm font-bold text-slate-900">ATENLANA TEAM</span>
-                    <span class="text-[9px] font-medium text-slate-500 block uppercase">MEET THE COLLECTIVE</span>
+              <a href="/meet-the-team" class="flex items-center gap-3 p-3 bg-slate-100 hover:bg-white rounded-xl border border-slate-200 transition-all">
+                <div class="w-8 h-8 rounded-lg bg-[#ffba08] flex items-center justify-center text-[#0b0c0f] font-bold text-xs">AT</div>
+                <div>
+                    <span class="text-xs font-medium text-slate-900">ATENLANA TEAM</span>
+                    <span class="text-[10px] text-slate-500 block">Meet the Collective</span>
                 </div>
               </a>`;
             carousel.classList.remove('opacity-0', 'translate-y-2');
@@ -775,14 +683,13 @@
         if (!m) return;
         const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
         carousel.innerHTML = `
-          <a href="/meet-the-team/${encodeURIComponent(m.role)}/${encodeURIComponent(m.name)}" class="group flex items-center gap-4 p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-100 transition-all hover:scale-105">
-            <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold group-hover:rotate-12 transition-transform">
+          <a href="/meet-the-team/${encodeURIComponent(m.role)}/${encodeURIComponent(m.name)}" class="flex items-center gap-3 p-3 bg-slate-100 hover:bg-white rounded-xl border border-slate-200 transition-all">
+            <div class="w-8 h-8 rounded-lg bg-[#ffba08] flex items-center justify-center text-[#0b0c0f] font-bold text-xs">
                 ${initials}
             </div>
-            <div class="text-left">
-                <span class="text-[10px] font-extrabold text-slate-600 uppercase tracking-tighter block">Team Visionary</span>
-                <span class="text-sm font-bold text-slate-900">${m.name.toUpperCase()}</span>
-                <span class="text-[9px] font-medium text-slate-500 block uppercase">${m.role}</span>
+            <div>
+                <span class="text-xs font-medium text-slate-900">${m.name.toUpperCase()}</span>
+                <span class="text-[10px] text-slate-500 block">${m.role}</span>
             </div>
           </a>`;
         if (currentIndex === 0) carousel.classList.remove('opacity-0', 'translate-y-2');
@@ -835,7 +742,7 @@
                 if (res.vpn_detected) {
                     showAlert('VPN Detected', 'We have detected that you are using a VPN or Proxy. To maintain system integrity and avoid account suspension, please turn off your VPN immediately.', {
                         confirmText: 'I Understand',
-                        confirmClass: 'bg-red-600'
+                        confirmClass: 'bg-[#ef4444] text-white'
                     });
                 }
             } catch (e) {}
